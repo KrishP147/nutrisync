@@ -5,7 +5,7 @@ import { useGoals } from '../contexts/GoalsContext';
 import { motion } from 'motion/react';
 import { Leaf, Timer } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
-import SetGoals from '../components/SetGoals';
+import FastingSettings from '../components/FastingSettings';
 
 const DIETARY_RESTRICTIONS = [
   { key: 'halal', label: 'Halal', description: 'Islamic dietary laws' },
@@ -311,7 +311,7 @@ export default function Profile() {
               activeTab === 'profile' ? 'bg-primary-700 text-white' : 'bg-white/5 text-white/60 hover:text-white'
             }`}
           >
-            Profile
+            Personal
           </button>
           <button
             onClick={() => setActiveTab('fasting')}
@@ -320,7 +320,7 @@ export default function Profile() {
             }`}
           >
             <Timer size={16} />
-            Fasting & Goals
+            Fasting
           </button>
           <button
             onClick={() => setActiveTab('dietary')}
@@ -338,7 +338,7 @@ export default function Profile() {
 
         {activeTab === 'fasting' ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <SetGoals />
+            <FastingSettings />
           </motion.div>
         ) : activeTab === 'profile' ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
@@ -511,6 +511,27 @@ export default function Profile() {
                 {saving ? 'Saving...' : 'Save Profile'}
               </button>
             </div>
+
+            {/* Change Password */}
+            <div className="mt-6 p-6 border-t border-white/10">
+              <div className="mb-6">
+                <h2 className="text-lg font-heading font-semibold text-white">Change Password</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="input-label">New Password</label>
+                  <input type="password" value={passwords.new} onChange={(e) => setPasswords({ ...passwords, new: e.target.value })} className="input" />
+                </div>
+                <div>
+                  <label className="input-label">Confirm Password</label>
+                  <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} className="input" />
+                </div>
+                <button onClick={handleChangePassword} disabled={saving || !passwords.new} className="btn-outline w-full">
+                  Update Password
+                </button>
+              </div>
+            </div>
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
@@ -593,27 +614,6 @@ export default function Profile() {
             </div>
           </motion.div>
         )}
-
-        {/* Change Password */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="card p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-heading font-semibold text-white">Change Password</h2>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="input-label">New Password</label>
-              <input type="password" value={passwords.new} onChange={(e) => setPasswords({ ...passwords, new: e.target.value })} className="input" />
-            </div>
-            <div>
-              <label className="input-label">Confirm Password</label>
-              <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} className="input" />
-            </div>
-            <button onClick={handleChangePassword} disabled={saving || !passwords.new} className="btn-outline w-full">
-              Update Password
-            </button>
-          </div>
-        </motion.div>
       </div>
     </Sidebar>
   );

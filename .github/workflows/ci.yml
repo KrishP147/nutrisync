@@ -33,6 +33,7 @@ jobs:
 
       - name: Run tests
         run: npm run test:run
+        timeout-minutes: 5
 
       - name: Build application
         run: npm run build
@@ -75,6 +76,7 @@ jobs:
 
       - name: Run tests with coverage
         run: pytest tests/ -v --cov=app --cov-report=xml --cov-report=term
+        timeout-minutes: 5
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

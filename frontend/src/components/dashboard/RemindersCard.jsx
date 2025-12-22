@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Bell, ChevronRight, Timer, Utensils, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useFasting } from '../../contexts/FastingContext';
 import { useGoals } from '../../contexts/GoalsContext';
 import { supabase } from '../../supabaseClient';
@@ -225,9 +226,9 @@ export default function RemindersCard() {
                     <p className="text-white/60 text-sm mt-0.5">{reminder.message}</p>
                 </div>
                 {reminder.type === 'meal_suggestion' && (
-                    <a href="/logging" className="text-primary-500 hover:text-primary-400 p-2">
+                    <Link to="/logging" className="text-primary-500 hover:text-primary-400 p-2">
                         <ChevronRight size={20} />
-                    </a>
+                    </Link>
                 )}
             </div>
         </motion.div>
