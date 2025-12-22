@@ -1,0 +1,15 @@
+[Unit]
+Description=NutriSync FastAPI Application
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/opt/nutrisync/backend
+Environment="PATH=/opt/nutrisync/backend/venv/bin"
+EnvironmentFile=/opt/nutrisync/backend/.env
+ExecStart=/opt/nutrisync/backend/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

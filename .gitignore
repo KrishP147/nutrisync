@@ -1,0 +1,25 @@
+# Dependencies
+**/node_modules/
+**/venv/
+**/.venv/
+**/__pycache__/
+
+# Environment
+**/.env
+**/.env.local
+
+# Build
+**/dist/
+**/build/
+
+# Testing
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+
+# Uploads and cache
+**/uploads/
+**/.cache/
+**/*.cache
+**/temp/
+**/tmp/
