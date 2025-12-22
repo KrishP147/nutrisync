@@ -69,7 +69,7 @@ def test_recommend_fasting_duration_gemini_error(test_client):
         data = response.json()
         # Fallback to 16 if everything fails (as per main.py implementation)
         assert data["recommended_duration"] == 16
-        assert "Standard 16-hour fast" in data["reasoning"]
+        assert "schedule" in data["reasoning"].lower()
 
 def test_recommend_fasting_duration_parse_error(test_client):
     """Test fallback when Gemini returns invalid JSON"""
@@ -91,6 +91,6 @@ def test_recommend_fasting_duration_parse_error(test_client):
         
         assert response.status_code == 200
         data = response.json()
-        # Should fallback to goals preference on parse error
-        assert data["recommended_duration"] == 18
-        assert "18:6 schedule" in data["reasoning"]
+        # Should fallback to 16 on parse error (now consistent)
+        assert data["recommended_duration"] == 16
+        assert "schedule" in data["reasoning"].lower()

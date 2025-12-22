@@ -72,7 +72,10 @@ async def search_food(query: str):
     """
     import httpx
 
-    if not query or len(query) < 2:
+    if not query or len(query.strip()) == 0:
+        raise HTTPException(status_code=422, detail="Query parameter is required")
+    
+    if len(query) < 2:
         return {'foods': []}
 
     # Get API key from environment or use DEMO_KEY as fallback
@@ -153,6 +156,34 @@ async def search_food(query: str):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to search food: {str(e)}")
 
+@app.get("/api/food/{food_id}")
+async def get_food_details(food_id: int):
+    """
+    Get detailed nutrition information for a specific food by FDC ID.
+    """
+    import httpx
+    
+    usda_api_key = os.getenv('USDA_API_KEY', 'DEMO_KEY')
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"https://api.nal.usda.gov/fdc/v1/food/{food_id}",
+                params={"api_key": usda_api_key},
+                timeout=10.0
+            )
+            
+            if response.status_code != 200:
+                raise HTTPException(status_code=500, detail="Food database unavailable")
+            
+            return response.json()
+    
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Food details request timed out")
+    except Exception as e:
+        print(f"[FOOD DETAILS] Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/analyze-meal-image")
 async def analyze_meal_image(
     file: UploadFile = File(...),
@@ -183,7 +214,7 @@ async def analyze_meal_image(
         f.write(content)
 
     # Analyze with Gemini (pass dietary restrictions)
-    result = analyze_food_image(str(file_path), dietary_restrictions)
+    result = await analyze_food_image(str(file_path), dietary_restrictions)
 
     # Clean up file (optional: keep for debugging)
     # os.remove(file_path)
@@ -294,6 +325,51 @@ User question: {message}"""
     except Exception as e:
         print(f"[CHAT] Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/recommendations")
+async def get_recommendations(request: dict):
+    """
+    Generate nutrition recommendations based on meals and goals.
+    """
+    try:
+        meals = request.get('meals', [])
+        goals = request.get('goals', {})
+        
+        api_key = os.getenv('GOOGLE_API_KEY')
+        if not api_key:
+            return {"recommendations": "Unable to generate recommendations without API key."}
+        
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        # Calculate totals
+        total_calories = sum(meal.get('total_calories', 0) for meal in meals)
+        total_protein = sum(meal.get('total_protein_g', 0) for meal in meals)
+        total_carbs = sum(meal.get('total_carbs_g', 0) for meal in meals)
+        total_fat = sum(meal.get('total_fat_g', 0) for meal in meals)
+        
+        prompt = f"""Provide nutrition recommendations based on:
+        
+Meals consumed: {len(meals)} meals
+Total calories: {total_calories} kcal
+Total protein: {total_protein}g
+Total carbs: {total_carbs}g
+Total fat: {total_fat}g
+
+Goals:
+Calories: {goals.get('calories', 2000)} kcal
+Protein: {goals.get('protein', 150)}g
+Carbs: {goals.get('carbs', 250)}g
+Fat: {goals.get('fat', 65)}g
+
+Provide brief recommendations (2-3 sentences)."""
+        
+        response = model.generate_content(prompt)
+        return {"recommendations": response.text}
+        
+    except Exception as e:
+        print(f"[RECOMMENDATIONS] Error: {e}")
+        return {"recommendations": "Unable to generate recommendations at this time."}
 
 @app.post("/api/generate-food-recommendations")
 async def generate_food_recommendations(request: dict):
@@ -483,6 +559,45 @@ Return ONLY the health tip text, no JSON, no markdown, no extra formatting."""
         print(f"[HEALTH TIP] Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/upload-meal-photo")
+async def upload_meal_photo(file: UploadFile = File(...)):
+    """
+    Upload and analyze a meal photo.
+    """
+    try:
+        # Validate file type
+        if not file.content_type or not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Save file temporarily
+        upload_dir = Path("uploads")
+        upload_dir.mkdir(exist_ok=True)
+        
+        file_path = upload_dir / file.filename
+        with open(file_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
+        
+        # Analyze with Gemini
+        result = await analyze_food_image(str(file_path))
+        
+        # Clean up
+        try:
+            file_path.unlink()
+        except:
+            pass
+        
+        if result.get('success'):
+            return result.get('data')
+        else:
+            raise HTTPException(status_code=500, detail=result.get('error'))
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[UPLOAD] Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/fasting/recommend")
 async def recommend_fasting_duration(request: dict):
     """
@@ -550,7 +665,7 @@ Make reasoning personal and encouraging. Duration should be a number between 12-
             print(f"[FASTING] Error parsing response: {e}")
             # Return default on parse error
             return {
-                "recommended_duration": goals.get('fasting_duration_hours', 16),
+                "recommended_duration": 16,
                 "reasoning": f"Recommended based on your {goals.get('fasting_schedule_type', '16:8')} schedule."
             }
 

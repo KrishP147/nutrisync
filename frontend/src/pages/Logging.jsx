@@ -444,7 +444,6 @@ export default function Logging() {
               </motion.div>
             )}
           </>
-        )}
       </div>
 
       {/* Lightbox Gallery */}

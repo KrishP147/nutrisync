@@ -20,7 +20,7 @@ api_key = os.getenv('GOOGLE_API_KEY')
 if api_key:
     genai.configure(api_key=api_key)
 
-def analyze_food_image(image_path: str, dietary_restrictions: list = None) -> dict:
+async def analyze_food_image(image_path: str, dietary_restrictions: list = None) -> dict:
     """
     Analyze a food image using Gemini Vision and return nutrition data.
 
