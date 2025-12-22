@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Outer sync circle -->
+  <circle cx="60" cy="60" r="50" stroke="#047857" stroke-width="3" fill="none" opacity="0.2"/>
+
+  <!-- Plate base -->
+  <circle cx="60" cy="60" r="35" fill="#047857" opacity="0.15"/>
+  <circle cx="60" cy="60" r="35" stroke="#047857" stroke-width="2" fill="none"/>
+
+  <!-- Top right curved arrow (clockwise) -->
+  <path
+    d="M 85 45 A 35 35 0 0 1 95 60"
+    stroke="#0ea5e9"
+    stroke-width="5"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <path
+    d="M 95 60 L 89 56 M 95 60 L 91 65"
+    stroke="#0ea5e9"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Bottom left curved arrow (clockwise) -->
+  <path
+    d="M 35 75 A 35 35 0 0 1 25 60"
+    stroke="#047857"
+    stroke-width="5"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <path
+    d="M 25 60 L 31 64 M 25 60 L 29 55"
+    stroke="#047857"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Food on plate - simplified and centered -->
+  <!-- Protein (orange circle) -->
+  <circle cx="55" cy="55" r="6" fill="#f59e0b"/>
+  <!-- Veggies (green) -->
+  <circle cx="68" cy="57" r="5" fill="#22c55e"/>
+  <!-- Grain (brown) -->
+  <circle cx="60" cy="67" r="5" fill="#d97706"/>
+</svg>

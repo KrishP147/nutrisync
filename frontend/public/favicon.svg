@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Compact version matching the new logo -->
+  <circle cx="32" cy="32" r="28" stroke="#047857" stroke-width="2" fill="none" opacity="0.2"/>
+
+  <!-- Plate base -->
+  <circle cx="32" cy="32" r="20" fill="#047857" opacity="0.15"/>
+  <circle cx="32" cy="32" r="20" stroke="#047857" stroke-width="1.5" fill="none"/>
+
+  <!-- Top right curved arrow -->
+  <path
+    d="M 47 26 A 20 20 0 0 1 52 32"
+    stroke="#0ea5e9"
+    stroke-width="3"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <path
+    d="M 52 32 L 48 30 M 52 32 L 50 35"
+    stroke="#0ea5e9"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Bottom left curved arrow -->
+  <path
+    d="M 17 38 A 20 20 0 0 1 12 32"
+    stroke="#047857"
+    stroke-width="3"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <path
+    d="M 12 32 L 16 34 M 12 32 L 14 29"
+    stroke="#047857"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Food on plate - simplified -->
+  <circle cx="29" cy="30" r="3.5" fill="#f59e0b"/>
+  <circle cx="37" cy="31" r="3" fill="#22c55e"/>
+  <circle cx="32" cy="37" r="3" fill="#d97706"/>
+</svg>

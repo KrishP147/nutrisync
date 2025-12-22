@@ -1,0 +1,330 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-white/10;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-black text-white antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  *:focus {
+    @apply outline-none;
+  }
+
+  *:focus-visible {
+    @apply ring-2 ring-primary-700 ring-offset-2 ring-offset-black;
+  }
+}
+
+@layer components {
+  /* Card component */
+  .card {
+    background-color: #0a0a0a;
+    @apply border border-white/10;
+  }
+
+  .card-hover {
+    background-color: #0a0a0a;
+    @apply border border-white/10 transition-all duration-200;
+  }
+
+  .card-hover:hover {
+    @apply border-primary-700/50;
+    box-shadow: 0 0 20px rgba(4, 120, 87, 0.3);
+  }
+
+  /* Button variants */
+  .btn {
+    @apply px-4 py-2 font-medium transition-all duration-200 inline-flex items-center justify-center gap-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-700 text-white shadow-md;
+  }
+
+  .btn-primary:hover {
+    @apply bg-primary-600;
+    box-shadow: 0 0 20px rgba(4, 120, 87, 0.3);
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary-500 text-white shadow-md;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-secondary-400;
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+
+  .btn-amber {
+    @apply btn bg-amber-500 text-black shadow-md;
+  }
+
+  .btn-amber:hover {
+    @apply bg-amber-400;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-white/70;
+  }
+
+  .btn-ghost:hover {
+    @apply text-white bg-white/5;
+  }
+
+  .btn-outline {
+    @apply btn bg-transparent border border-white/20 text-white;
+  }
+
+  .btn-outline:hover {
+    @apply border-primary-700 text-primary-500;
+  }
+
+  /* Input styles */
+  .input {
+    background-color: #0a0a0a;
+    @apply w-full px-4 py-3 border border-white/10 text-white placeholder-white/40 transition-all duration-200;
+  }
+
+  .input:focus {
+    @apply border-primary-700 ring-1 ring-primary-700;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-white/70 mb-2;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 text-xs font-medium border;
+  }
+
+  .badge-green {
+    @apply badge bg-primary-700/10 text-primary-500 border-primary-700/30;
+  }
+
+  .badge-blue {
+    @apply badge bg-secondary-500/10 text-secondary-400 border-secondary-500/30;
+  }
+
+  .badge-amber {
+    @apply badge bg-amber-500/10 text-amber-400 border-amber-500/30;
+  }
+
+  /* Stat card */
+  .stat-card {
+    background-color: #0a0a0a;
+    @apply border border-white/10 p-6;
+  }
+
+  .stat-value {
+    @apply text-3xl font-mono font-bold;
+  }
+
+  .stat-label {
+    @apply text-sm text-white/60 mt-1;
+  }
+
+  /* Navigation item */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3  text-white/70 transition-all duration-200;
+  }
+
+  .nav-item:hover {
+    @apply text-white bg-white/5;
+  }
+
+  .nav-item-active {
+    @apply flex items-center gap-3 px-4 py-3  text-white bg-primary-700/10 border-l-2 border-primary-700;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 bg-white/10  overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full  transition-all duration-500;
+  }
+
+  /* Section heading */
+  .section-heading {
+    @apply text-2xl font-heading font-bold text-white mb-6;
+  }
+
+  .section-subheading {
+    @apply text-white/60 text-lg mb-8;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-t border-white/10 my-6;
+  }
+
+  /* Nutrition badge */
+  .nutrition-badge {
+    background-color: rgba(255, 255, 255, 0.05);
+    @apply inline-flex flex-col items-center justify-center p-3  border border-white/10 min-w-[80px];
+  }
+
+  .nutrition-value {
+    @apply text-xl font-mono font-bold;
+  }
+
+  .nutrition-label {
+    @apply text-xs text-white/50 mt-1;
+  }
+}
+
+@layer utilities {
+  /* Text gradient */
+  .text-gradient-green {
+    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-secondary-400 to-secondary-600 bg-clip-text text-transparent;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Glass effect (subtle, not heavy) */
+  .glass {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Glow effects */
+  .glow-green {
+    box-shadow: 0 0 40px rgba(4, 120, 87, 0.2);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 40px rgba(14, 165, 233, 0.2);
+  }
+
+  .glow-amber {
+    box-shadow: 0 0 40px rgba(245, 158, 11, 0.2);
+  }
+
+  /* Line clamp */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Aspect ratio helpers */
+  .aspect-meal {
+    aspect-ratio: 4/3;
+  }
+
+  /* Animation delays */
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+}
+
+/* Custom Scrollbar - Dark Theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #047857;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+/* React Circular Progressbar overrides for dark theme */
+.CircularProgressbar .CircularProgressbar-text {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+}
+
+/* Recharts dark theme overrides */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.05) !important;
+}
+
+.recharts-text {
+  fill: rgba(255, 255, 255, 0.6) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #0a0a0a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+/* Remove number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Nivo chart tooltip overrides - ensure tooltips are visible above containers */
+div[style*="pointer-events: none"][style*="position: absolute"] {
+  z-index: 9999 !important;
+}
+
+/* Chart containers that need overflow visible for tooltips */
+.chart-container {
+  overflow: visible !important;
+}
+
+/* Nivo chart tooltip overrides - ensure tooltips are visible above containers */
+.nivo-tooltip-container {
+  z-index: 9999 !important;
+}
+
