@@ -2,6 +2,10 @@
 
 Personalized Health & Nutrition Tracking with AI-Powered Insights and Intermittent Fasting Support.
 
+> **Note**: This is a monorepo combining frontend and backend. For historical reference, see the original separate repositories:
+> - Frontend: [nutrisync-frontend](https://github.com/KrishP147/nutrisync-frontend) (archived)
+> - Backend: [nutrisync-backend](https://github.com/KrishP147/nutrisync-backend) (archived)
+
 ## 🌟 Features
 
 - **AI-Powered Food Recognition**: Upload meal photos for instant nutritional analysis using Google Gemini AI

@@ -11,7 +11,6 @@ const navItems = [
 ];
 
 const bottomItems = [
-  { path: '/pricing', label: 'Pricing' },
   { path: '/profile', label: 'Profile' },
 ];
 
