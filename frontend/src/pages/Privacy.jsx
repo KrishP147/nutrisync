@@ -9,7 +9,7 @@ export default function Privacy() {
       <header className="bg-black/90 border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.svg" alt="NutriSync" className="w-10 h-10" />
+            <img src="/logo.png" alt="NutriSync" className="w-10 h-10" />
             <span className="text-xl font-heading font-bold text-white">NutriSync</span>
           </Link>
           <Link to="/login" className="btn-ghost text-sm">

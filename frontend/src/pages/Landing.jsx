@@ -76,7 +76,7 @@ export default function Landing() {
       <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <img src="/logo.svg" alt="NutriSync" className="w-10 h-10" />
+            <img src="/logo.png" alt="NutriSync" className="w-10 h-10" />
             <span className="text-xl font-heading font-bold text-white">NutriSync</span>
           </div>
           <div className="flex items-center gap-3 sm:gap-6">
@@ -429,7 +429,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <img src="/logo.svg" alt="NutriSync" className="w-8 h-8" />
+              <img src="/logo.png" alt="NutriSync" className="w-8 h-8" />
               <span className="text-white/60 text-sm">
                 2025 NutriSync. Professional nutrition tracking.
               </span>

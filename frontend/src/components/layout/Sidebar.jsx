@@ -93,7 +93,7 @@ function Sidebar({ children }) {
         {/* Logo */}
         <div className="p-6 border-b border-white/10">
           <Link to="/dashboard" className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
-            <img src="/logo.svg" alt="NutriSync" className="w-10 h-10 flex-shrink-0" />
+            <img src="/logo.png" alt="NutriSync" className="w-10 h-10 flex-shrink-0" />
             {!collapsed && (
               <span className="text-xl font-heading font-bold text-white whitespace-nowrap overflow-hidden">
                 NutriSync

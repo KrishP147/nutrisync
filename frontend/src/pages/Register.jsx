@@ -118,7 +118,7 @@ export default function Register() {
           <div className="absolute inset-0 bg-gradient-to-br from-secondary-500/20 via-transparent to-primary-700/20" />
           <div className="absolute inset-0 flex items-center justify-center p-12">
             <div className="text-center">
-              <img src="/logo.svg" alt="NutriSync" className="w-24 h-24 mx-auto mb-8" />
+              <img src="/logo.png" alt="NutriSync" className="w-24 h-24 mx-auto mb-8" />
               <h2 className="text-3xl font-heading font-bold text-white mb-4">
                 Start Your Journey
               </h2>
@@ -139,7 +139,7 @@ export default function Register() {
         >
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 mb-12">
-            <img src="/logo.svg" alt="NutriSync" className="w-10 h-10" />
+            <img src="/logo.png" alt="NutriSync" className="w-10 h-10" />
             <span className="text-xl font-heading font-bold text-white">NutriSync</span>
           </Link>
 
