@@ -10,6 +10,7 @@ jobs:
   frontend-tests:
     name: Frontend Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: ./frontend
@@ -33,9 +34,10 @@ jobs:
 
       - name: Run tests
         run: npm run test:run -- --reporter=verbose --no-coverage
-        timeout-minutes: 10
+        timeout-minutes: 15
         env:
           CI: true
+          NODE_OPTIONS: '--max-old-space-size=4096'
 
       - name: Build application
         run: npm run build

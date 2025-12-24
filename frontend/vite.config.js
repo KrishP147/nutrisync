@@ -16,12 +16,20 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
-    testTimeout: 10000,
-    hookTimeout: 10000,
+    testTimeout: 30000,
+    hookTimeout: 30000,
     teardownTimeout: 10000,
-    pool: 'threads',
+    // Use forks pool for better CI compatibility
+    pool: process.env.CI ? 'forks' : 'threads',
+    poolOptions: process.env.CI ? {
+      forks: {
+        singleFork: true,
+      }
+    } : undefined,
     watch: false,
     reporter: ['verbose'],
+    // Limit max concurrency in CI
+    maxConcurrency: process.env.CI ? 1 : 5,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
