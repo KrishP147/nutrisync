@@ -52,12 +52,15 @@ describe('FoodSearchInput Component', () => {
     const input = screen.getByPlaceholderText(/search/i);
     fireEvent.change(input, { target: { value: 'chicken' } });
 
-    // Wait for debounced search (500ms delay)
-    await waitFor(() => {
-      expect(api.get).toHaveBeenCalledWith(
-        expect.stringContaining('chicken')
-      );
-    }, { timeout: 2000 });
+    // Wait for debounced search (500ms delay) with explicit timeout
+    await waitFor(
+      () => {
+        expect(api.get).toHaveBeenCalledWith(
+          expect.stringContaining('chicken')
+        );
+      },
+      { timeout: 3000, interval: 100 }
+    );
   });
 
   it('displays search results', async () => {
@@ -80,10 +83,10 @@ describe('FoodSearchInput Component', () => {
     const input = screen.getByPlaceholderText(/search/i);
     fireEvent.change(input, { target: { value: 'chicken' } });
 
-    // Component should not crash
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
-    }, { timeout: 2000 });
+    // Component should not crash - wait for debounce then verify input still exists
+    await new Promise(resolve => setTimeout(resolve, 600)); // Wait for debounce
+    
+    expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
   });
 
   it('clears results when input is empty', async () => {

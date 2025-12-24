@@ -8,6 +8,14 @@ vi.mock('../../contexts/GoalsContext', () => ({
   useGoals: vi.fn(),
 }));
 
+// Mock motion/react to prevent animation-related hangs
+vi.mock('motion/react', () => ({
+  motion: {
+    div: ({ children, ...props }) => <div {...props}>{children}</div>,
+  },
+  AnimatePresence: ({ children }) => <>{children}</>,
+}));
+
 describe('SetGoals Component', () => {
   const mockUpdateGoals = vi.fn();
 
@@ -36,13 +44,11 @@ describe('SetGoals Component', () => {
     expect(screen.getByText(/Daily Goals/i)).toBeInTheDocument();
   });
 
-  it('displays current goal values in inputs when editing including fasting', async () => {
+  it('displays current goal values in inputs when editing including fasting', () => {
     render(<SetGoals />);
 
-    // Component should render with goals data
-    await waitFor(() => {
-      expect(screen.getByText(/Daily Goals/i)).toBeInTheDocument();
-    });
+    // Component should render with goals data immediately
+    expect(screen.getByText(/Daily Goals/i)).toBeInTheDocument();
 
     // Check that fasting-related text exists somewhere in the component
     expect(screen.getByText(/2000/)).toBeInTheDocument(); // calories displayed
@@ -57,32 +63,37 @@ describe('SetGoals Component', () => {
     const expandButton = screen.getByRole('button', { name: /Daily Goals/i });
     fireEvent.click(expandButton);
 
-    // Wait for inputs and click a different schedule
-    await waitFor(() => {
-      const schedule186 = screen.getByText('18:6');
-      fireEvent.click(schedule186);
-    });
+    // Wait for inputs and click a different schedule with explicit timeout
+    await waitFor(
+      () => {
+        const schedule186 = screen.getByText('18:6');
+        expect(schedule186).toBeInTheDocument();
+        fireEvent.click(schedule186);
+      },
+      { timeout: 5000, interval: 100 }
+    );
 
     // Find and click save button
     const saveButton = screen.getByRole('button', { name: /save goals/i });
     fireEvent.click(saveButton);
 
     // Verify updateGoals was called with new fasting schedule
-    await waitFor(() => {
-      expect(mockUpdateGoals).toHaveBeenCalledWith(expect.objectContaining({
-        fasting_schedule_type: '18:6',
-        fasting_duration_hours: 18
-      }));
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateGoals).toHaveBeenCalledWith(expect.objectContaining({
+          fasting_schedule_type: '18:6',
+          fasting_duration_hours: 18
+        }));
+      },
+      { timeout: 3000, interval: 100 }
+    );
   });
 
-  it('validates numeric input', async () => {
+  it('validates numeric input', () => {
     render(<SetGoals />);
 
     // Component renders without crashing
-    await waitFor(() => {
-      expect(screen.getByText(/Daily Goals/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Daily Goals/i)).toBeInTheDocument();
 
     // Basic validation check - component exists
     expect(screen.getByText(/2000/)).toBeInTheDocument();

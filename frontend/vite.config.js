@@ -19,13 +19,8 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     teardownTimeout: 10000,
-    // Use forks pool for better CI compatibility (Vitest 4 migration)
-    pool: process.env.CI ? 'forks' : 'threads',
-    // Migrated from poolOptions: singleFork is now maxWorkers: 1, isolate: false
-    ...(process.env.CI ? {
-      maxWorkers: 1,
-      isolate: false,
-    } : {}),
+    // Use threads pool (default) - works better with async operations
+    // The deprecated poolOptions has been removed per Vitest 4 migration
     watch: false,
     reporter: ['verbose'],
     // Limit max concurrency in CI
