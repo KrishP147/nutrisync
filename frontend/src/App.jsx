@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import ChangeEmail from './pages/ChangeEmail';
 import ChangePassword from './pages/ChangePassword';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
@@ -63,6 +64,7 @@ function App() {
             <Route path="/register" element={!session ? <Register /> : <Navigate to="/dashboard" />} />
             <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/change-email" element={<ChangeEmail />} />
             <Route path="/change-password" element={session ? <ChangePassword /> : <Navigate to="/login" />} />
             <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
             <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />

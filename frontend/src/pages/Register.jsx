@@ -93,14 +93,26 @@ export default function Register() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="card p-12 max-w-md w-full text-center"
+          className="card p-12 max-w-md w-full text-center border border-white/10"
         >
-          <div className="w-16 h-16  bg-primary-700/20 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 size={32} className="text-primary-500" />
+          <div className="w-20 h-20 bg-primary-700/20 flex items-center justify-center mx-auto mb-6">
+            <Mail size={40} className="text-primary-500" />
           </div>
-          <h2 className="text-2xl font-heading font-bold text-white mb-4">Check your email</h2>
-          <p className="text-white/60 mb-8">
-            We've sent a confirmation link to <span className="text-white">{email}</span>. Click the link to activate your account.
+          <h2 className="text-3xl font-heading font-bold text-white mb-4">Check Your Email!</h2>
+          <p className="text-white/70 mb-4 text-lg">
+            We've sent a confirmation link to:
+          </p>
+          <p className="text-primary-400 font-semibold mb-6 text-lg">{email}</p>
+          <div className="bg-white/5 border border-white/10 p-4 mb-6 text-left">
+            <p className="text-white/60 text-sm mb-2">📧 <strong className="text-white">Next Steps:</strong></p>
+            <ol className="text-white/60 text-sm space-y-2 ml-4 list-decimal">
+              <li>Check your inbox (and spam folder)</li>
+              <li>Click the confirmation link in the email</li>
+              <li>You'll be redirected to sign in</li>
+            </ol>
+          </div>
+          <p className="text-white/50 text-sm mb-6">
+            Didn't receive the email? Check your spam folder or try signing up again.
           </p>
           <Link to="/login" className="btn-primary w-full">
             Back to Sign In

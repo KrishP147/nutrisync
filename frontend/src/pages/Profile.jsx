@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useGoals } from '../contexts/GoalsContext';
 import { motion } from 'motion/react';
-import { Leaf } from 'lucide-react';
+import { Leaf, Mail } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 
 const DIETARY_RESTRICTIONS = [
@@ -36,9 +36,9 @@ export default function Profile() {
   const [bmi, setBmi] = useState(null);
   const [bmiCategory, setBmiCategory] = useState('');
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'dietary'
-  const [passwords, setPasswords] = useState({
-    current: '', new: '', confirm: ''
-  });
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
 
   useEffect(() => {
     fetchUser();
@@ -237,20 +237,44 @@ export default function Profile() {
     }
   };
 
-  const handleChangePassword = async () => {
-    if (passwords.new !== passwords.confirm) {
-      setMessage({ type: 'error', text: 'Passwords do not match' });
-      return;
-    }
-
+  const handleResetPassword = async () => {
+    if (!user?.email) return;
+    
     setSaving(true);
     setMessage({ type: '', text: '' });
 
     try {
-      const { error } = await supabase.auth.updateUser({ password: passwords.new });
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
       if (error) throw error;
-      setMessage({ type: 'success', text: 'Password updated successfully!' });
-      setPasswords({ current: '', new: '', confirm: '' });
+      setShowPasswordPopup(true);
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChangeEmail = async () => {
+    if (!newEmail || !newEmail.includes('@')) {
+      setMessage({ type: 'error', text: 'Please enter a valid email address' });
+      return;
+    }
+    
+    setSaving(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const { error } = await supabase.auth.updateUser(
+        { email: newEmail },
+        { emailRedirectTo: `${window.location.origin}/change-email` }
+      );
+      
+      if (error) throw error;
+      setShowEmailPopup(true);
+      setNewEmail('');
     } catch (error) {
       setMessage({ type: 'error', text: error.message });
     } finally {
@@ -498,24 +522,37 @@ export default function Profile() {
               </button>
             </div>
 
-            {/* Change Password */}
-            <div className="mt-6 p-6 border-t border-white/10">
-              <div className="mb-6">
-                <h2 className="text-lg font-heading font-semibold text-white">Change Password</h2>
+            {/* Password & Email Management */}
+            <div className="mt-6 p-6 border-t border-white/10 space-y-6">
+              {/* Reset Password */}
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-lg font-heading font-semibold text-white">Password</h2>
+                  <p className="text-sm text-white/50 mt-1">Reset your password via email</p>
+                </div>
+                <button onClick={handleResetPassword} disabled={saving} className="btn-outline w-full">
+                  {saving ? 'Sending...' : 'Send Password Reset Email'}
+                </button>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="input-label">New Password</label>
-                  <input type="password" value={passwords.new} onChange={(e) => setPasswords({ ...passwords, new: e.target.value })} className="input" />
+              {/* Change Email */}
+              <div className="pt-6 border-t border-white/10">
+                <div className="mb-4">
+                  <h2 className="text-lg font-heading font-semibold text-white">Email Address</h2>
+                  <p className="text-sm text-white/50 mt-1">Current: {user?.email}</p>
                 </div>
-                <div>
-                  <label className="input-label">Confirm Password</label>
-                  <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} className="input" />
+                <div className="space-y-3">
+                  <input
+                    type="email"
+                    placeholder="Enter new email address"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className="input w-full"
+                  />
+                  <button onClick={handleChangeEmail} disabled={saving || !newEmail} className="btn-outline w-full">
+                    {saving ? 'Sending...' : 'Send Email Change Confirmation'}
+                  </button>
                 </div>
-                <button onClick={handleChangePassword} disabled={saving || !passwords.new} className="btn-outline w-full">
-                  Update Password
-                </button>
               </div>
             </div>
           </motion.div>
@@ -599,6 +636,48 @@ export default function Profile() {
               </button>
             </div>
           </motion.div>
+        )}
+
+        {/* Password Reset Email Sent Popup */}
+        {showPasswordPopup && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={() => setShowPasswordPopup(false)}>
+            <div className="card p-8 max-w-md w-full border border-white/10" onClick={(e) => e.stopPropagation()}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Mail size={32} className="text-primary-400" />
+                </div>
+                <h3 className="text-2xl font-heading font-bold text-white mb-2">Check Your Email</h3>
+                <p className="text-white/70 mb-6">
+                  We've sent a password reset link to <span className="text-white font-medium">{user?.email}</span>. 
+                  Click the link in the email to reset your password.
+                </p>
+                <button onClick={() => setShowPasswordPopup(false)} className="btn-primary w-full">
+                  Got It
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Email Change Confirmation Popup */}
+        {showEmailPopup && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={() => setShowEmailPopup(false)}>
+            <div className="card p-8 max-w-md w-full border border-white/10" onClick={(e) => e.stopPropagation()}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-secondary-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Mail size={32} className="text-secondary-400" />
+                </div>
+                <h3 className="text-2xl font-heading font-bold text-white mb-2">Confirm Email Change</h3>
+                <p className="text-white/70 mb-6">
+                  We've sent confirmation links to both your current email (<span className="text-white font-medium">{user?.email}</span>) 
+                  and your new email address. Please check both inboxes and click the confirmation links to complete the change.
+                </p>
+                <button onClick={() => setShowEmailPopup(false)} className="btn-primary w-full">
+                  Got It
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </Sidebar>
