@@ -3,6 +3,20 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SetGoals from '../SetGoals';
 import { useGoals } from '../../contexts/GoalsContext';
 
+// Mock supabaseClient before any imports that use it
+vi.mock('../../supabaseClient', () => ({
+  supabase: {
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user' } } }),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+}));
+
 // Mock the GoalsContext
 vi.mock('../../contexts/GoalsContext', () => ({
   useGoals: vi.fn(),
@@ -14,6 +28,11 @@ vi.mock('motion/react', () => ({
     div: ({ children, ...props }) => <div {...props}>{children}</div>,
   },
   AnimatePresence: ({ children }) => <>{children}</>,
+}));
+
+// Mock UserProfile component to avoid supabase dependency
+vi.mock('../UserProfile', () => ({
+  default: () => null,
 }));
 
 describe('SetGoals Component', () => {

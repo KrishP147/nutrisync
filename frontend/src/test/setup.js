@@ -51,21 +51,29 @@ if (typeof globalThis !== 'undefined') {
 
 // Mock motion/react globally to prevent animation-related hangs in CI
 // Using React.createElement instead of JSX since this is a .js file
+// Filter out motion-specific props to avoid React warnings
+const createMotionElement = (tag) => ({ children, whileInView, initial, animate, exit, transition, ...props }) => {
+  return React.createElement(tag, props, children);
+};
+
 vi.mock('motion/react', () => ({
   motion: {
-    div: ({ children, ...props }) => React.createElement('div', props, children),
-    section: ({ children, ...props }) => React.createElement('section', props, children),
-    h1: ({ children, ...props }) => React.createElement('h1', props, children),
-    h2: ({ children, ...props }) => React.createElement('h2', props, children),
-    h3: ({ children, ...props }) => React.createElement('h3', props, children),
-    p: ({ children, ...props }) => React.createElement('p', props, children),
-    span: ({ children, ...props }) => React.createElement('span', props, children),
-    button: ({ children, ...props }) => React.createElement('button', props, children),
-    a: ({ children, ...props }) => React.createElement('a', props, children),
-    nav: ({ children, ...props }) => React.createElement('nav', props, children),
-    ul: ({ children, ...props }) => React.createElement('ul', props, children),
-    li: ({ children, ...props }) => React.createElement('li', props, children),
-    img: (props) => React.createElement('img', props),
+    div: createMotionElement('div'),
+    section: createMotionElement('section'),
+    h1: createMotionElement('h1'),
+    h2: createMotionElement('h2'),
+    h3: createMotionElement('h3'),
+    p: createMotionElement('p'),
+    span: createMotionElement('span'),
+    button: createMotionElement('button'),
+    a: createMotionElement('a'),
+    nav: createMotionElement('nav'),
+    ul: createMotionElement('ul'),
+    li: createMotionElement('li'),
+    img: (props) => {
+      const { whileInView, initial, animate, exit, transition, ...rest } = props;
+      return React.createElement('img', rest);
+    },
   },
   AnimatePresence: ({ children }) => children,
 }));

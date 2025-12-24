@@ -81,10 +81,13 @@ describe('FoodSearchInput Component', () => {
     render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
 
     const input = screen.getByPlaceholderText(/search/i);
-    fireEvent.change(input, { target: { value: 'chicken' } });
-
-    // Component should not crash - wait for debounce then verify input still exists
-    await new Promise(resolve => setTimeout(resolve, 600)); // Wait for debounce
+    
+    // Use act to wrap state updates
+    await waitFor(async () => {
+      fireEvent.change(input, { target: { value: 'chicken' } });
+      // Wait for debounce
+      await new Promise(resolve => setTimeout(resolve, 600));
+    }, { timeout: 2000 });
     
     expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
   });
