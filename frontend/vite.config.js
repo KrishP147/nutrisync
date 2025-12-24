@@ -19,8 +19,9 @@ export default defineConfig({
     testTimeout: 10000,
     hookTimeout: 10000,
     teardownTimeout: 10000,
-    pool: 'forks',
-    singleFork: true,
+    pool: 'threads',
+    watch: false,
+    reporter: ['verbose'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

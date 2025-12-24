@@ -431,7 +431,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
         </div>
         <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 ">
           <p className="text-amber-400 text-sm">
-            Generating recommendations... This may take 1-2 minutes.
+            Generating recommendations... This may take 1-2 minutes as we analyze your goals and intake.
           </p>
         </div>
         <div className="space-y-3">

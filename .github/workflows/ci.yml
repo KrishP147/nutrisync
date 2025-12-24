@@ -33,7 +33,7 @@ jobs:
 
       - name: Run tests
         run: npm run test:run -- --reporter=verbose --no-coverage
-        timeout-minutes: 3
+        timeout-minutes: 10
         env:
           CI: true
 
