@@ -3,9 +3,8 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useGoals } from '../contexts/GoalsContext';
 import { motion } from 'motion/react';
-import { Leaf, Timer } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
-import FastingSettings from '../components/FastingSettings';
 
 const DIETARY_RESTRICTIONS = [
   { key: 'halal', label: 'Halal', description: 'Islamic dietary laws' },
@@ -36,7 +35,7 @@ export default function Profile() {
   const [weightUnit, setWeightUnit] = useState('kg');
   const [bmi, setBmi] = useState(null);
   const [bmiCategory, setBmiCategory] = useState('');
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile', 'dietary', or 'fasting'
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'dietary'
   const [passwords, setPasswords] = useState({
     current: '', new: '', confirm: ''
   });
@@ -314,15 +313,6 @@ export default function Profile() {
             Personal
           </button>
           <button
-            onClick={() => setActiveTab('fasting')}
-            className={`flex items-center gap-2 px-4 py-2  font-medium transition ${
-              activeTab === 'fasting' ? 'bg-primary-700 text-white' : 'bg-white/5 text-white/60 hover:text-white'
-            }`}
-          >
-            <Timer size={16} />
-            Fasting
-          </button>
-          <button
             onClick={() => setActiveTab('dietary')}
             className={`flex items-center gap-2 px-4 py-2  font-medium transition ${
               activeTab === 'dietary' ? 'bg-primary-700 text-white' : 'bg-white/5 text-white/60 hover:text-white'
@@ -336,11 +326,7 @@ export default function Profile() {
           </button>
         </div>
 
-        {activeTab === 'fasting' ? (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <FastingSettings />
-          </motion.div>
-        ) : activeTab === 'profile' ? (
+        {activeTab === 'profile' ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
             <div className="mb-6">
               <h2 className="text-lg font-heading font-semibold text-white">Personal Details</h2>
