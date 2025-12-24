@@ -44,14 +44,16 @@ describe('ChartErrorBoundary', () => {
   });
 
   it('displays error icon when error occurs', () => {
-    render(
+    const { container } = render(
       <ChartErrorBoundary>
         <ThrowError />
       </ChartErrorBoundary>
     );
 
-    // Check for error state container
-    const errorContainer = screen.getByText(/chart failed to load/i).closest('div');
+    // Check for error state container - use getAllByText and take first
+    const errorTexts = screen.getAllByText(/chart failed to load/i);
+    expect(errorTexts.length).toBeGreaterThan(0);
+    const errorContainer = errorTexts[0].closest('div');
     expect(errorContainer).toBeInTheDocument();
   });
 

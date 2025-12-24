@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useGoals } from '../contexts/GoalsContext';
 import { motion, AnimatePresence } from 'motion/react';
-import { User, X, Leaf } from 'lucide-react';
+import { User, X, Leaf, Calculator, Save, AlertTriangle } from 'lucide-react';
 
 const DIETARY_RESTRICTIONS = [
   { key: 'halal', label: 'Halal', description: 'Islamic dietary laws' },

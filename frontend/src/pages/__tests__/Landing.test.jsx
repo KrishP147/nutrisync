@@ -61,7 +61,10 @@ describe('Landing Page', () => {
       </MockRouter>
     );
 
-    expect(screen.getByText(/privacy/i)).toBeInTheDocument();
-    expect(screen.getByText(/terms/i)).toBeInTheDocument();
+    // Use getAllByText for multiple matches
+    const privacyLinks = screen.getAllByText(/privacy/i);
+    expect(privacyLinks.length).toBeGreaterThan(0);
+    const termsLinks = screen.getAllByText(/terms/i);
+    expect(termsLinks.length).toBeGreaterThan(0);
   });
 });
