@@ -27,15 +27,27 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  takeRecords() {
-    return [];
-  }
-  unobserve() {}
-};
+if (typeof globalThis !== 'undefined') {
+  globalThis.IntersectionObserver = class IntersectionObserver {
+    constructor() {}
+    disconnect() {}
+    observe() {}
+    takeRecords() {
+      return [];
+    }
+    unobserve() {}
+  };
+} else if (typeof global !== 'undefined') {
+  global.IntersectionObserver = class IntersectionObserver {
+    constructor() {}
+    disconnect() {}
+    observe() {}
+    takeRecords() {
+      return [];
+    }
+    unobserve() {}
+  };
+}
 
 // Mock motion/react globally to prevent animation-related hangs in CI
 // Using React.createElement instead of JSX since this is a .js file
