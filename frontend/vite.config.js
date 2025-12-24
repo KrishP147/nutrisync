@@ -23,8 +23,15 @@ export default defineConfig({
     // The deprecated poolOptions has been removed per Vitest 4 migration
     watch: false,
     reporter: ['verbose'],
-    // Limit max concurrency in CI
+    // Limit max concurrency in CI to prevent resource issues
     maxConcurrency: process.env.CI ? 1 : 5,
+    // Ensure tests exit properly in CI
+    bail: 0, // Don't bail on first failure, run all tests
+    // Force sequential execution in CI to avoid race conditions
+    sequence: {
+      shuffle: false,
+      concurrent: !process.env.CI,
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
