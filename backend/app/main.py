@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Header
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import uuid
@@ -8,8 +8,21 @@ from pathlib import Path
 from app.services.gemini_service import analyze_food_image
 import google.generativeai as genai
 from datetime import datetime, timedelta
+from supabase import create_client, Client
+from typing import Optional
 
 app = FastAPI(title="NutriSync API")
+
+# Initialize Supabase client
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")  # Service role key for admin operations
+supabase: Client = None
+
+if supabase_url and supabase_service_key:
+    supabase = create_client(supabase_url, supabase_service_key)
+    print("[STARTUP] Supabase admin client initialized")
+else:
+    print("[STARTUP] WARNING: Supabase credentials not found - admin features disabled")
 
 # Simple in-memory cache for recommendations (expires after 1 minute to reduce repetition)
 recommendations_cache = {}
@@ -892,3 +905,74 @@ def get_fallback_reminder(is_fasting, hour, todays_calories, goals):
         "icon": "trending",
         "timestamp": datetime.now().isoformat()
     }
+
+
+@app.delete("/api/user/{user_id}")
+async def delete_user_account(user_id: str, authorization: Optional[str] = Header(None)):
+    """
+    Delete a user account and all associated data.
+    Requires authentication token in Authorization header.
+    """
+    if not supabase:
+        raise HTTPException(status_code=503, detail="Supabase not configured")
+    
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required")
+    
+    try:
+        # Extract token from "Bearer <token>"
+        token = authorization.replace("Bearer ", "")
+        
+        # Verify the token belongs to the user being deleted
+        user_response = supabase.auth.get_user(token)
+        if not user_response or not user_response.user:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        if user_response.user.id != user_id:
+            raise HTTPException(status_code=403, detail="Cannot delete another user's account")
+        
+        # Delete data from all tables (in order to handle foreign key constraints)
+        tables_to_clean = [
+            'meals',
+            'fasting_schedules', 
+            'weight_tracking',
+            'user_goals',
+            'user_profile'
+        ]
+        
+        for table in tables_to_clean:
+            try:
+                supabase.table(table).delete().eq('user_id', user_id).execute()
+                print(f"[DELETE] Deleted {table} data for user {user_id}")
+            except Exception as e:
+                print(f"[DELETE] Warning: Failed to delete from {table}: {str(e)}")
+        
+        # Delete user's uploaded photos from storage
+        try:
+            # List all files in the user's folder
+            files = supabase.storage.from_('meal-photos').list(user_id)
+            if files:
+                file_paths = [f"{user_id}/{file['name']}" for file in files]
+                supabase.storage.from_('meal-photos').remove(file_paths)
+                print(f"[DELETE] Deleted {len(file_paths)} photos for user {user_id}")
+        except Exception as e:
+            print(f"[DELETE] Warning: Failed to delete photos: {str(e)}")
+        
+        # Finally, delete the auth user (this must be done with service role key)
+        try:
+            supabase.auth.admin.delete_user(user_id)
+            print(f"[DELETE] Deleted auth user {user_id}")
+        except Exception as e:
+            print(f"[DELETE] Error deleting auth user: {str(e)}")
+            raise HTTPException(status_code=500, detail="Failed to delete user account")
+        
+        return {
+            "success": True,
+            "message": "User account and all data deleted successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[DELETE] Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete account: {str(e)}")
