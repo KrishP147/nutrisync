@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useGoals } from '../contexts/GoalsContext';
 import { motion } from 'motion/react';
-import { Leaf, Mail } from 'lucide-react';
+import { Leaf, Mail, AlertCircle } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 
 const DIETARY_RESTRICTIONS = [
@@ -38,6 +38,8 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'dietary'
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [newEmail, setNewEmail] = useState('');
 
   useEffect(() => {
@@ -279,6 +281,50 @@ export default function Profile() {
       setMessage({ type: 'error', text: error.message });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      setMessage({ type: 'error', text: 'Please type DELETE to confirm' });
+      return;
+    }
+
+    setSaving(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      // Call backend API to delete account
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://nutrisync-backend.onrender.com';
+      const response = await fetch(`${backendUrl}/api/user/${user.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to delete account');
+      }
+
+      // Sign out after successful deletion
+      await supabase.auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message || 'Failed to delete account. Please contact support.' });
+      console.error('Delete account error:', error);
+    } finally {
+      setSaving(false);
+      setShowDeleteConfirm(false);
+      setDeleteConfirmText('');
     }
   };
 
@@ -554,6 +600,20 @@ export default function Profile() {
                   </button>
                 </div>
               </div>
+
+              {/* Delete Account */}
+              <div className="pt-6 border-t border-red-500/20">
+                <div className="mb-4">
+                  <h2 className="text-lg font-heading font-semibold text-red-400">Danger Zone</h2>
+                  <p className="text-sm text-white/50 mt-1">Permanently delete your account and all data</p>
+                </div>
+                <button 
+                  onClick={() => setShowDeleteConfirm(true)} 
+                  className="w-full px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-500/50 text-red-400 font-medium transition"
+                >
+                  Delete Account
+                </button>
+              </div>
             </div>
           </motion.div>
         ) : (
@@ -674,6 +734,68 @@ export default function Profile() {
                 </p>
                 <button onClick={() => setShowEmailPopup(false)} className="btn-primary w-full">
                   Got It
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Account Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50" onClick={() => setShowDeleteConfirm(false)}>
+            <div className="card p-8 max-w-md w-full border border-red-500/30" onClick={(e) => e.stopPropagation()}>
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle size={32} className="text-red-400" />
+                </div>
+                <h3 className="text-2xl font-heading font-bold text-white mb-2">Delete Account?</h3>
+                <p className="text-white/70">
+                  This action cannot be undone. All your data will be permanently deleted.
+                </p>
+              </div>
+
+              <div className="bg-red-500/10 border border-red-500/30 p-4 mb-6 text-left">
+                <p className="text-red-400 text-sm font-semibold mb-2">⚠️ This will delete:</p>
+                <ul className="text-white/60 text-sm space-y-1 ml-4 list-disc">
+                  <li>Your profile and account settings</li>
+                  <li>All meal logs and nutrition data</li>
+                  <li>Fasting schedules and history</li>
+                  <li>Progress charts and analytics</li>
+                  <li>Uploaded meal photos</li>
+                </ul>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-white/70 text-sm mb-2">
+                  Type <span className="text-red-400 font-bold">DELETE</span> to confirm:
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  className="input w-full"
+                  placeholder="Type DELETE"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteConfirmText('');
+                  }}
+                  className="btn-outline flex-1"
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE' || saving}
+                  className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed text-white font-semibold transition"
+                >
+                  {saving ? 'Deleting...' : 'Delete Forever'}
                 </button>
               </div>
             </div>
