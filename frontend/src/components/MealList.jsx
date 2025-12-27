@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import ReplaceFoodModal from './ReplaceFoodModal';
 
-export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated, limit, variant = 'purple', specificDate }) {
+export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated, limit, specificDate }) {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingMealId, setEditingMealId] = useState(null);
@@ -45,6 +45,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
 
   useEffect(() => {
     fetchMeals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshTrigger]);
 
   const fetchMeals = async () => {

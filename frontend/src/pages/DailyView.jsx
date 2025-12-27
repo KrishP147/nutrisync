@@ -20,6 +20,7 @@ export default function DailyView() {
 
   useEffect(() => {
     fetchDayData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, refreshTrigger]);
 
   const fetchDayData = async () => {

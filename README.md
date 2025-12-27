@@ -1,191 +1,163 @@
 # NutriSync
 
-Personalized Health & Nutrition Tracking with AI-Powered Insights and Intermittent Fasting Support.
+Full-stack nutrition tracking application with AI-powered food recognition and intermittent fasting support.
 
-> **Note**: This is a monorepo combining frontend and backend. For historical reference, see the original separate repositories:
-> - Frontend: [nutrisync-frontend](https://github.com/KrishP147/nutrisync-frontend) (archived)
-> - Backend: [nutrisync-backend](https://github.com/KrishP147/nutrisync-backend) (archived)
+## Overview
 
-## 🌟 Features
+NutriSync combines intelligent meal logging, personalized nutrition tracking, and fasting features into a comprehensive health platform. Upload food photos for instant AI analysis, search a database of 400,000+ foods, track macros against custom goals, and monitor fasting schedules with built-in timers.
 
-- **AI-Powered Food Recognition**: Upload meal photos for instant nutritional analysis using Google Gemini AI
-- **Comprehensive Meal Logging**: Search USDA FoodData Central database with 400,000+ foods
-- **Intermittent Fasting Tracking**: Built-in fasting timer with customizable schedules (16:8, 18:6, 20:4, OMAD)
-- **Smart Recommendations**: AI-generated dietary insights based on your nutrition history and goals
-- **Progress Visualization**: Interactive charts tracking macros, calories, and trends over time
-- **Photo Gallery**: Visual meal history with searchable photo archive
-- **Dietary Preferences**: Support for Halal, Kosher, Vegetarian, Vegan, Gluten-Free, and Dairy-Free diets
-- **Personalized Goals**: Calculate and track custom calorie and macro targets based on BMR/TDEE
+**Note**: This monorepo combines frontend and backend. Original separate repositories ([frontend](https://github.com/KrishP147/nutrisync-frontend), [backend](https://github.com/KrishP147/nutrisync-backend)) are archived.
 
-## 🏗️ Tech Stack
+## Features
 
-### Frontend
-- **React 18** with **Vite** for fast development and optimized builds
-- **React Router** for client-side routing
-- **Motion (Framer Motion)** for smooth animations
-- **Tailwind CSS** for responsive, dark-mode UI
-- **Plotly.js** for interactive data visualization
-- **Lucide React** for beautiful icons
-- **Supabase Client** for authentication and database
-- **Vitest + React Testing Library** for component testing
+**Core Functionality**
+- AI food recognition via photo upload (Google Gemini AI)
+- Comprehensive food database search (USDA FoodData Central - 400,000+ foods)
+- Customizable nutrition goals with BMR/TDEE calculations
+- Intermittent fasting tracking (16:8, 18:6, 20:4, OMAD schedules)
+- Progress visualization with interactive charts
+- Achievement system for goal streaks
+- Dietary restriction support (Halal, Kosher, Vegan, Vegetarian, Gluten-Free, etc.)
 
-### Backend
-- **FastAPI** - Modern Python web framework with automatic API documentation
-- **Google Gemini AI** - Advanced multimodal AI for image recognition and recommendations
-- **USDA FoodData Central API** - Comprehensive nutrition database
-- **Supabase** - PostgreSQL database with Row Level Security (RLS)
-- **pytest** - Python testing framework with 35% code coverage
+**Technical Features**
+- Google OAuth authentication
+- Row Level Security (RLS) for data privacy
+- Real-time meal photo storage
+- AI nutrition assistant chatbot
+- Responsive design with dark mode
 
-### Infrastructure
-- **Supabase**: Authentication, PostgreSQL database, file storage
-- **Digital Ocean**: Backend API hosting
-- **Vercel**: Frontend hosting (recommended)
-- **GitHub Actions**: CI/CD pipelines for automated testing and deployment
+## Tech Stack
 
-## 📁 Repository Structure
+**Frontend**: React 18, Vite, Tailwind CSS, Plotly.js, Supabase Client
 
-- **`backend/`**: FastAPI application, Gemini AI services, and Digital Ocean deployment scripts
-- **`frontend/`**: React + Vite application with premium dark-mode UI
-- **`reference-files/`**: SQL migrations, documentation, and project guides
-- **`.github/workflows/`**: CI/CD pipeline configurations
+**Backend**: FastAPI, Google Gemini AI, USDA API, Supabase
 
-## 🚀 Quick Start
+**Infrastructure**: Supabase (PostgreSQL + Auth + Storage), Digital Ocean (Backend), Vercel (Frontend), GitHub Actions (CI/CD)
 
-### Prerequisites
-- Node.js 18+ and npm
-- Python 3.11+
-- Supabase account
-- Google Gemini API key (optional, for AI features)
-- USDA FoodData Central API key (optional)
+## Documentation
 
-### Backend Setup
+Complete setup instructions: **[docs/README.md](docs/README.md)**
+
+### Quick Links
+
+1. [Prerequisites](docs/01-prerequisites.md) - Required software and accounts
+2. [Database Setup](docs/02-database-setup.md) - Supabase and migrations
+3. [API Configuration](docs/03-api-configuration.md) - External APIs
+4. [Running Locally](docs/04-running-locally.md) - Development setup
+5. [Google OAuth](docs/05-google-oauth.md) - Optional OAuth setup
+6. [Testing](docs/06-testing.md) - Running tests
+7. [Deployment](docs/07-deployment.md) - Production deployment
+8. [Troubleshooting](docs/08-troubleshooting.md) - Common issues and solutions
+
+## Quick Start
+
+### Install Dependencies
+
+Backend:
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # venv\Scripts\activate on Windows
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys
-
-# Run the server
-uvicorn app.main:app --reload
 ```
 
-Backend will be available at `http://localhost:8000`
-API Documentation: `http://localhost:8000/docs`
-
-### Frontend Setup
+Frontend:
 ```bash
 cd frontend
 npm install
+```
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your Supabase credentials
+### Configure Environment
 
-# Run development server
+Create `backend/.env`:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SUPABASE_KEY=your_anon_key
+GOOGLE_API_KEY=your_gemini_api_key
+USDA_API_KEY=your_usda_key
+```
+
+Create `frontend/.env.local`:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_API_URL=http://localhost:8000
+```
+
+### Run Application
+
+Backend:
+```bash
+cd backend
+uvicorn app.main:app --reload
+```
+
+Frontend:
+```bash
+cd frontend
 npm run dev
 ```
 
-Frontend will be available at `http://localhost:5173`
+Access at `http://localhost:5173`
 
-### Database Setup
-Run the SQL migrations in Supabase SQL Editor:
-1. [reference-files/fasting_migration.sql](./reference-files/fasting_migration.sql) - Fasting tables and policies
-2. Follow instructions in [DATABASE_SETUP.md](./DATABASE_SETUP.md)
+## Project Structure
 
-## 🧪 Testing
-
-### Frontend Tests
-```bash
-cd frontend
-npm test              # Run all tests
-npm run test:ui       # Run with Vitest UI
-npm run test:coverage # Generate coverage report
+```
+nutrisync/
+├── backend/              # FastAPI application
+│   ├── app/
+│   │   ├── main.py      # API routes (13 endpoints)
+│   │   └── services/    # Gemini AI integration
+│   ├── tests/           # Backend tests (78 tests, 74% coverage)
+│   ├── migrations/      # Database migrations (8 files)
+│   └── deploy.sh        # Deployment script
+├── frontend/            # React application
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   ├── pages/       # Page routes
+│   │   └── services/    # API clients
+│   └── tests/           # Frontend tests (87 tests)
+├── docs/                # Setup documentation
+└── .github/workflows/   # CI/CD configuration
 ```
 
-**Test Results**: 14 passing / 24 tests (component and integration tests)
+## Testing
 
-### Backend Tests
+Backend:
 ```bash
 cd backend
-pytest tests/ -v                    # Verbose output
+pytest tests/ -v
 pytest tests/ --cov=app --cov-report=html  # With coverage
 ```
 
-**Test Results**: 17 passing / 31 tests, 35% code coverage
-
-## 🚢 Deployment
-
-### Backend Deployment (Digital Ocean)
+Frontend:
 ```bash
-cd backend
-chmod +x deploy.sh
-./deploy.sh
+cd frontend
+npm test
+npm run test:coverage  # With coverage
 ```
 
-See [backend/DEPLOYMENT.md](./backend/DEPLOYMENT.md) for detailed instructions.
+## Deployment
 
-**Environment Variables Required**:
-- `SUPABASE_URL` - Your Supabase project URL
-- `SUPABASE_KEY` - Your Supabase anon/public key
-- `GEMINI_API_KEY` - Google Gemini API key
-- `USDA_API_KEY` - USDA FoodData Central API key
+**Backend**: Digital Ocean App Platform via `backend/deploy.sh`
 
-### Frontend Deployment (Vercel)
-1. Connect GitHub repository to Vercel
-2. Set root directory to `frontend/`
-3. Add environment variables in Vercel dashboard
-4. Deploy
+**Frontend**: Vercel with automatic GitHub integration
 
-## 🔐 Environment Variables
+See [Deployment Guide](docs/07-deployment.md) for detailed instructions.
 
-### Backend (.env)
-```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-anon-key
-GEMINI_API_KEY=your-gemini-key
-USDA_API_KEY=your-usda-key
-ENVIRONMENT=production
-```
+## License
 
-### Frontend (.env)
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-VITE_API_URL=https://your-backend-url.com
-```
+MIT License - see [LICENSE](LICENSE) file
 
-## 📊 CI/CD Pipelines
-
-Automated workflows via GitHub Actions:
-
-- **Backend CI**: Python testing, linting, coverage reporting (Codecov)
-- **Frontend CI**: Node.js testing, build verification
-- **Backend CD**: Automated deployment to Digital Ocean on main branch push
-- **Frontend CD**: Automated deployment to Vercel on main branch push
-
-See [.github/workflows/](./.github/workflows/) for pipeline configurations.
-
-## 📖 Documentation
-
-- [THOROUGH_PROJECT_DESC.md](./reference-files/THOROUGH_PROJECT_DESC.md) - Comprehensive project documentation
-- [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Database migration guide
-- [FASTING_WARNING_UPDATE.md](./FASTING_WARNING_UPDATE.md) - Fasting feature documentation
-- [backend/DEPLOYMENT.md](./backend/DEPLOYMENT.md) - Backend deployment guide
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/name`)
+3. Commit changes (`git commit -m 'Add feature'`)
+4. Push to branch (`git push origin feature/name`)
 5. Open a Pull Request
 
-## 📄 License
-See [LICENSE](./LICENSE) for details.
-
-## 📧 Contact
-For questions or support, contact: krishnet1@hotmail.com
+Run tests before submitting:
+- Backend: `pytest tests/`
+- Frontend: `npm test`

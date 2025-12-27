@@ -33,7 +33,7 @@ jobs:
         run: npm run lint || true
 
       - name: Run tests
-        run: npm run test:run -- --reporter=verbose --no-coverage
+        run: npm run test:run -- --reporter=verbose --coverage
         timeout-minutes: 15
         env:
           CI: true

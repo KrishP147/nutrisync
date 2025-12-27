@@ -125,6 +125,7 @@ export default function Logging() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [galleryOpen, allPhotos.length]);
 
   // Format elapsed time for display

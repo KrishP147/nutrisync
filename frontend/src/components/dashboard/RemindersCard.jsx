@@ -16,6 +16,7 @@ export default function RemindersCard() {
         generateReminder();
         const interval = setInterval(generateReminder, 60000); // Update every minute
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isFasting, activeFast, goals]);
 
     const generateReminder = async () => {

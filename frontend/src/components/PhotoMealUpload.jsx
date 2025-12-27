@@ -94,7 +94,7 @@ export default function PhotoMealUpload({ onMealAdded }) {
       const fileName = `${user.id}/${Date.now()}.jpg`;
 
       // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('meal-photos')
         .upload(fileName, compressedFile, {
           cacheControl: '3600',

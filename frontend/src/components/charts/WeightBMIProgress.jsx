@@ -46,6 +46,7 @@ export default function WeightBMIProgress({ goals, timeRange = 'weekly', current
 
   useEffect(() => {
     fetchWeightHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRange, currentDate]);
 
   const fetchWeightHistory = async () => {

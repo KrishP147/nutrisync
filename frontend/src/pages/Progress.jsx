@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { motion } from 'motion/react';
 import {
@@ -46,6 +46,7 @@ export default function Progress() {
 
   useEffect(() => {
     fetchProgressData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [goals, timeRange, currentDate]);
 
   const formatDateLocal = (dateObj) => {

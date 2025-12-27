@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Database, Star, Plus, X, Loader2, Check } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import FoodSearchInput from './FoodSearchInput';
 

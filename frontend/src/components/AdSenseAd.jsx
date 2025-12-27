@@ -9,7 +9,7 @@ export default function AdSenseAd({ slot, format = 'auto', style = {} }) {
   useEffect(() => {
     try {
       // Push ad to AdSense
-      if (window.adsbygoogle && process.env.NODE_ENV === 'production') {
+      if (window.adsbygoogle && import.meta.env.MODE === 'production') {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       }
     } catch (error) {
@@ -18,7 +18,7 @@ export default function AdSenseAd({ slot, format = 'auto', style = {} }) {
   }, []);
 
   // Only show ads in production
-  if (process.env.NODE_ENV !== 'production') {
+  if (import.meta.env.MODE !== 'production') {
     return (
       <div className="bg-slate-100 border border-slate-300  p-8 text-center">
         <p className="text-sm text-slate-500">
