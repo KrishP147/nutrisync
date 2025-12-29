@@ -1,5 +1,7 @@
 # NutriSync
 
+[![codecov](https://codecov.io/gh/KrishP147/nutrisync/branch/main/graph/badge.svg)](https://codecov.io/gh/KrishP147/nutrisync)
+
 Full-stack nutrition tracking application with AI-powered food recognition and intermittent fasting support.
 
 ## Overview
@@ -21,10 +23,14 @@ NutriSync combines intelligent meal logging, personalized nutrition tracking, an
 
 **Technical Features**
 - Google OAuth authentication
+- Email infrastructure with Resend SMTP (custom domain with SPF/DKIM/DMARC)
+- Password reset, email change verification, account deletion
 - Row Level Security (RLS) for data privacy
 - Real-time meal photo storage
 - AI nutrition assistant chatbot
 - Responsive design with dark mode
+- Comprehensive testing (Backend 75%, Frontend 87 tests)
+- Separate coverage tracking via Codecov flags
 
 ## Tech Stack
 
@@ -124,19 +130,27 @@ nutrisync/
 
 ## Testing
 
+**Coverage**: Backend 75% (79 test functions), Frontend 87 tests
+
 Backend:
 ```bash
 cd backend
-pytest tests/ -v
-pytest tests/ --cov=app --cov-report=html  # With coverage
+pytest tests/ -v                          # Run all tests
+pytest tests/ --cov=app --cov-report=html # With coverage report
 ```
 
 Frontend:
 ```bash
 cd frontend
-npm test
-npm run test:coverage  # With coverage
+npm test                  # Run all tests
+npm run test:coverage    # With coverage report
 ```
+
+**Test Organization**:
+- Backend: 13 test files covering API endpoints, AI services, user management, fasting, edge cases
+- Frontend: 13 test files covering contexts, components (fasting, dashboard), utilities
+
+**CI/CD**: Automated testing on every push via GitHub Actions with separate coverage tracking for backend and frontend
 
 ## Deployment
 

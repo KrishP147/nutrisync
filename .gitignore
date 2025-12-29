@@ -17,6 +17,7 @@
 **/.coverage
 **/coverage.xml
 **/htmlcov/
+**/coverage/
 
 # Uploads and cache
 **/uploads/

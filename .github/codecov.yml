@@ -1,0 +1,47 @@
+codecov:
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
+
+coverage:
+  status:
+    project:
+      default:
+        target: 60%
+        threshold: 2%
+    patch:
+      default:
+        target: 70%
+
+# Separate coverage flags for backend and frontend
+flag_management:
+  default_rules:
+    carryforward: true
+    
+flags:
+  backend:
+    paths:
+      - backend/
+    carryforward: true
+      
+  frontend:
+    paths:
+      - frontend/src/
+    carryforward: true
+
+ignore:
+  - "**/*.md"
+  - "**/*.txt"
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/__tests__/**"
+  - "**/tests/**"
+  - "backend/htmlcov/**"
+  - "frontend/public/**"
+  - "reference-files/**"
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false

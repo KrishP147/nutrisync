@@ -1,5 +1,7 @@
 # API Configuration
 
+**Estimated time**: 10-15 minutes
+
 Configure external APIs required for NutriSync features.
 
 ## Google Gemini AI
@@ -43,40 +45,83 @@ Use `DEMO_KEY` instead of registering:
 
 ### Backend Configuration
 
-Create `backend/.env`:
+Create `backend/.env` (new file in backend folder):
 
 ```env
-# Supabase
+# Supabase Configuration
 SUPABASE_URL=https://[your-project-ref].supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-SUPABASE_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+SUPABASE_KEY=your_anon_key_here
 
 # Google Gemini AI
-GOOGLE_API_KEY=your_gemini_api_key
+GOOGLE_API_KEY=AIzaSy_your_key_here
 
 # USDA FoodData Central
-USDA_API_KEY=your_usda_key
+USDA_API_KEY=your_usda_key_here
 # Or for testing: USDA_API_KEY=DEMO_KEY
 ```
 
-**Important**:
-- No quotes around values
-- `SUPABASE_SERVICE_ROLE_KEY` must be kept secret (never commit or expose in frontend)
-- Use the service_role key from Supabase dashboard (not anon key)
+**Important Notes**:
+- **No quotes** around values
+- Replace `[your-project-ref]` with your actual Supabase project reference
+- `SUPABASE_SERVICE_ROLE_KEY` must be kept **secret** (never commit to git or expose in frontend)
+- Use the **service_role** key from Supabase dashboard (not anon key)
+- `GOOGLE_API_KEY` must start with `AIzaSy`
+- This file should already be in `.gitignore` - verify it's not tracked by git
+
+**Security Checklist**:
+- [ ] File named exactly `.env` (not `.env.txt` or `.env.example`)
+- [ ] Located in `backend/` directory
+- [ ] Listed in `.gitignore`
+- [ ] No quotes around any values
+- [ ] All keys are from your Supabase Project Settings > API page
 
 ### Frontend Configuration
 
-Create `frontend/.env.local`:
+Create `frontend/.env.local` (new file in frontend folder):
 
 ```env
+# Supabase Configuration (Frontend)
 VITE_SUPABASE_URL=https://[your-project-ref].supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
+
+# Backend API
 VITE_API_URL=http://localhost:8000
 ```
 
-**Important**:
-- All frontend variables must have `VITE_` prefix
-- Use anon key (not service_role key)
-- `VITE_API_URL` points to your backend server
+**Important Notes**:
+- File **must** be named `.env.local` (not `.env`)
+- All frontend variables **must** have `VITE_` prefix
+- Use **anon** key (not service_role key) - safe for public exposure
+- `VITE_API_URL` points to your backend server (localhost for development)
+- No quotes around values
+- **Restart dev server** after creating or modifying this file
+
+**Verification**:
+After creating the file, verify it's loaded:
+1. Start frontend dev server: `npm run dev`
+2. Open browser console (F12)
+3. Type: `console.log(import.meta.env.VITE_SUPABASE_URL)`
+4. Should show your Supabase URL (not `undefined`)
+
+**Security Checklist**:
+- [ ] File named exactly `.env.local`
+- [ ] Located in `frontend/` directory
+- [ ] All variables have `VITE_` prefix
+- [ ] Using anon key (not service_role key)
+- [ ] Listed in `.gitignore`
+
+### Environment Variable Reference
+
+| Variable | Location | Value From | Public? |
+|----------|----------|------------|---------|
+| `SUPABASE_URL` | Backend | Supabase Project Settings > API | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Backend | Supabase Project Settings > API (service_role) | **No** - Keep secret |
+| `SUPABASE_KEY` | Backend | Supabase Project Settings > API (anon) | Yes |
+| `GOOGLE_API_KEY` | Backend | Google AI Studio | **No** - Keep secret |
+| `USDA_API_KEY` | Backend | USDA API Key Signup | No |
+| `VITE_SUPABASE_URL` | Frontend | Same as backend SUPABASE_URL | Yes |
+| `VITE_SUPABASE_ANON_KEY` | Frontend | Same as backend SUPABASE_KEY | Yes |
+| `VITE_API_URL` | Frontend | `http://localhost:8000` (dev) | Yes |
 
 Next: [Running the Application](04-running-locally.md)

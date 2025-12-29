@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 
 export default function Privacy() {
@@ -20,12 +19,7 @@ export default function Privacy() {
       </header>
 
       {/* Main Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto px-6 py-16"
-      >
+      <div className="max-w-4xl mx-auto px-6 py-16">
         <div className="mb-12">
           <h1 className="text-4xl font-heading font-bold text-white mb-4">Privacy Policy</h1>
           <p className="text-white/50">Last updated: January 2025</p>
@@ -106,7 +100,7 @@ export default function Privacy() {
             Back to Home
           </Link>
         </div>
-      </motion.div>
+      </div>
 
       {/* Footer */}
       <footer className="border-t border-white/10 py-8">

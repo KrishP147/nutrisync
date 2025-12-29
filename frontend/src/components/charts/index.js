@@ -20,4 +20,3 @@ export { default as WeeklyTrends } from './WeeklyTrends';
 
 // New interactive charts
 export { default as MealTimingSunburst } from './MealTimingSunburst';
-export { default as MealNutrientSpace3D } from './MealNutrientSpace3D';

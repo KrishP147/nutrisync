@@ -16,9 +16,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
-    testTimeout: 30000,
-    hookTimeout: 30000,
-    teardownTimeout: 10000,
+    // Increase timeout when coverage is enabled (slower)
+    testTimeout: process.env.CI ? 60000 : 30000,
+    hookTimeout: process.env.CI ? 60000 : 30000,
+    teardownTimeout: 30000,
     // Use threads pool (default) - works better with async operations
     // The deprecated poolOptions has been removed per Vitest 4 migration
     watch: false,

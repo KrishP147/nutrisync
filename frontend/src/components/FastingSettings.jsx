@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useGoals } from '../contexts/GoalsContext';
-import { motion } from 'motion/react';
 import { Timer, Bell, Save, X } from 'lucide-react';
 
 export default function FastingSettings() {

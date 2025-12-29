@@ -604,7 +604,7 @@ export default function Profile() {
               {/* Delete Account */}
               <div className="pt-6 border-t border-red-500/20">
                 <div className="mb-4">
-                  <h2 className="text-lg font-heading font-semibold text-red-400">Danger Zone</h2>
+                  <h2 className="text-lg font-heading font-semibold text-red-400">Clear Data</h2>
                   <p className="text-sm text-white/50 mt-1">Permanently delete your account and all data</p>
                 </div>
                 <button 
@@ -755,7 +755,7 @@ export default function Profile() {
               </div>
 
               <div className="bg-red-500/10 border border-red-500/30 p-4 mb-6 text-left">
-                <p className="text-red-400 text-sm font-semibold mb-2">⚠️ This will delete:</p>
+                <p className="text-red-400 text-sm font-semibold mb-2">This will delete:</p>
                 <ul className="text-white/60 text-sm space-y-1 ml-4 list-disc">
                   <li>Your profile and account settings</li>
                   <li>All meal logs and nutrition data</li>
