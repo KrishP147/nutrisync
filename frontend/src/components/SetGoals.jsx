@@ -88,12 +88,13 @@ export default function SetGoals() {
           <div className="w-10 h-10  bg-primary-700/10 flex items-center justify-center">
             <Target size={20} className="text-primary-500" strokeWidth={2} />
           </div>
-          <div className="text-left">
+          <div className="text-left min-w-0 flex-1">
             <h3 className="font-heading font-semibold text-white">Daily Goals</h3>
-            <p className="text-white/50 text-sm">
-              {goals?.calories || 2000} kcal | {goals?.protein || 150}g P | {goals?.carbs || 250}g C | {goals?.fat || 65}g F
+            <p className="text-white/50 text-xs sm:text-sm truncate">
+              <span className="hidden sm:inline">{goals?.calories || 2000} kcal | {goals?.protein || 150}g P | {goals?.carbs || 250}g C | {goals?.fat || 65}g F</span>
+              <span className="sm:hidden">{goals?.calories || 2000}cal {goals?.protein || 150}P {goals?.carbs || 250}C {goals?.fat || 65}F</span>
               {goals?.fasting_enabled && (
-                <span className="text-orange-400"> | {goals.fasting_schedule_type} Fasting</span>
+                <span className="text-orange-400"> | {goals.fasting_schedule_type}</span>
               )}
             </p>
           </div>

@@ -89,23 +89,53 @@ export function adjustCaloriesForGoal(tdee, goalType, customAmount = null) {
 }
 
 /**
+ * Get protein intake target (g/kg/day) based on goal and activity level
+ * @param {string} goalType - 'lose', 'maintain', or 'gain'
+ * @param {string} activityLevel - Activity level
+ * @returns {number} Protein per kg (midpoint of range)
+ */
+export function getProteinPerKg(goalType, activityLevel) {
+  // Protein targets in g/kg/day based on goal and activity level
+  // Values are midpoints of the ranges from research-based guidelines
+  const proteinTargets = {
+    lose: {
+      sedentary: 1.7,        // 1.6-1.8
+      lightly_active: 1.9,   // 1.8-2.0
+      moderately_active: 2.1, // 2.0-2.2
+      very_active: 2.3,      // 2.2-2.4
+      extra_active: 2.45     // 2.3-2.6
+    },
+    maintain: {
+      sedentary: 1.3,        // 1.2-1.4
+      lightly_active: 1.5,   // 1.4-1.6
+      moderately_active: 1.7, // 1.6-1.8
+      very_active: 1.9,      // 1.8-2.0
+      extra_active: 2.1      // 2.0-2.2
+    },
+    gain: {
+      sedentary: 1.7,        // 1.6-1.8
+      lightly_active: 1.9,   // 1.8-2.0
+      moderately_active: 2.1, // 2.0-2.2
+      very_active: 2.3,      // 2.2-2.4
+      extra_active: 2.5      // 2.4-2.6
+    }
+  };
+
+  const goalTargets = proteinTargets[goalType] || proteinTargets.maintain;
+  return goalTargets[activityLevel] || goalTargets.sedentary;
+}
+
+/**
  * Calculate macronutrient targets
  * @param {number} calories - Total daily calories
  * @param {number} weight_kg - Weight in kilograms
  * @param {string} goalType - 'lose', 'maintain', or 'gain'
+ * @param {string} activityLevel - Activity level
  * @returns {Object} Macro targets {protein, carbs, fat, fiber}
  */
-export function calculateMacros(calories, weight_kg, goalType) {
-  // Protein: 1.8-2.2g per kg for muscle maintenance/growth
-  // Higher protein when cutting, moderate when maintaining/bulking
-  let proteinPerKg;
-  if (goalType === 'lose') {
-    proteinPerKg = 2.2; // Higher protein to preserve muscle while cutting
-  } else if (goalType === 'gain') {
-    proteinPerKg = 1.8; // Moderate protein for muscle building
-  } else {
-    proteinPerKg = 2.0; // Maintenance
-  }
+export function calculateMacros(calories, weight_kg, goalType, activityLevel = 'sedentary') {
+  // Get protein target based on goal and activity level
+  const proteinPerKg = getProteinPerKg(goalType, activityLevel);
 
   const protein = Math.round(weight_kg * proteinPerKg);
   const proteinCalories = protein * 4; // 4 calories per gram of protein

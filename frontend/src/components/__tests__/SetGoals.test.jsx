@@ -117,8 +117,8 @@ describe('SetGoals Component', () => {
   it('shows fasting indicator when fasting is enabled', () => {
     render(<SetGoals />);
 
-    // Should show fasting schedule type in summary
-    expect(screen.getByText(/16:8 Fasting/i)).toBeInTheDocument();
+    // Should show fasting schedule type in summary (just "16:8" without "Fasting" word)
+    expect(screen.getByText(/16:8/)).toBeInTheDocument();
   });
 
   it('does not show fasting indicator when disabled', () => {
