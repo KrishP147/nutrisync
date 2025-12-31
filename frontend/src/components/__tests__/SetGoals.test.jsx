@@ -113,4 +113,52 @@ describe('SetGoals Component', () => {
     const dailyGoalsTexts = screen.getAllByText(/Daily Goals/i);
     expect(dailyGoalsTexts.length).toBeGreaterThan(0);
   });
+
+  it('shows fasting indicator when fasting is enabled', () => {
+    render(<SetGoals />);
+
+    // Should show fasting schedule type in summary
+    expect(screen.getByText(/16:8 Fasting/i)).toBeInTheDocument();
+  });
+
+  it('does not show fasting indicator when disabled', () => {
+    useGoals.mockReturnValue({
+      goals: {
+        calories: 2000,
+        protein: 150,
+        carbs: 250,
+        fat: 65,
+        fiber: 28,
+        fasting_enabled: false,
+      },
+      updateGoals: mockUpdateGoals,
+      loading: false,
+    });
+
+    render(<SetGoals />);
+
+    // Should not show fasting indicator
+    expect(screen.queryByText(/Fasting/i)).not.toBeInTheDocument();
+  });
+
+  it('displays protein, carbs, and fat in summary', () => {
+    render(<SetGoals />);
+
+    expect(screen.getByText(/150g P/)).toBeInTheDocument();
+    expect(screen.getByText(/250g C/)).toBeInTheDocument();
+    expect(screen.getByText(/65g F/)).toBeInTheDocument();
+  });
+
+  it('uses default values when goals are null', () => {
+    useGoals.mockReturnValue({
+      goals: null,
+      updateGoals: mockUpdateGoals,
+      loading: false,
+    });
+
+    render(<SetGoals />);
+
+    // Should show default values
+    expect(screen.getByText(/2000 kcal/)).toBeInTheDocument();
+  });
 });

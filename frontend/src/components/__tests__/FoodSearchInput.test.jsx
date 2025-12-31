@@ -100,4 +100,42 @@ describe('FoodSearchInput Component', () => {
     fireEvent.change(input, { target: { value: '' } });
     expect(input.value).toBe('');
   });
+
+  it('has quantity input field', () => {
+    render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+    
+    const qtyInput = screen.getByPlaceholderText(/qty/i);
+    expect(qtyInput).toBeInTheDocument();
+    expect(qtyInput).toHaveAttribute('type', 'number');
+  });
+
+  it('allows changing quantity', () => {
+    render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+    
+    const qtyInput = screen.getByPlaceholderText(/qty/i);
+    fireEvent.change(qtyInput, { target: { value: '2' } });
+    expect(qtyInput.value).toBe('2');
+  });
+
+  it('defaults quantity to 1', () => {
+    render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+    
+    const qtyInput = screen.getByPlaceholderText(/qty/i);
+    expect(qtyInput.value).toBe('1');
+  });
+
+  it('accepts decimal quantities', () => {
+    render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+    
+    const qtyInput = screen.getByPlaceholderText(/qty/i);
+    fireEvent.change(qtyInput, { target: { value: '1.5' } });
+    expect(qtyInput.value).toBe('1.5');
+  });
+
+  it('accepts initialValue prop', () => {
+    render(<FoodSearchInput onFoodSelect={mockOnSelect} initialValue="chicken" />);
+    
+    const searchInput = screen.getByPlaceholderText(/search/i);
+    expect(searchInput.value).toBe('chicken');
+  });
 });

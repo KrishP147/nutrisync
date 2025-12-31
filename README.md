@@ -1,6 +1,11 @@
 # NutriSync
 
+[![Live Demo](https://img.shields.io/badge/demo-nutrisync.me-brightgreen)](https://nutrisync.me)
+[![CI](https://github.com/KrishP147/nutrisync/actions/workflows/ci.yml/badge.svg)](https://github.com/KrishP147/nutrisync/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/KrishP147/nutrisync/branch/main/graph/badge.svg)](https://codecov.io/gh/KrishP147/nutrisync)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Node 18+](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)
 
 Full-stack nutrition tracking application with AI-powered food recognition and intermittent fasting support.
 
@@ -29,7 +34,7 @@ NutriSync combines intelligent meal logging, personalized nutrition tracking, an
 - Real-time meal photo storage
 - AI nutrition assistant chatbot
 - Responsive design with dark mode
-- Comprehensive testing (Backend 75%, Frontend 87 tests)
+- Comprehensive testing (Backend 74.5%, Frontend 60.4% coverage)
 - Separate coverage tracking via Codecov flags
 
 ## Tech Stack
@@ -115,7 +120,7 @@ nutrisync/
 │   ├── app/
 │   │   ├── main.py      # API routes (13 endpoints)
 │   │   └── services/    # Gemini AI integration
-│   ├── tests/           # Backend tests (78 tests, 74% coverage)
+│   ├── tests/           # Backend tests (85 tests, 74.5% coverage)
 │   ├── migrations/      # Database migrations (8 files)
 │   └── deploy.sh        # Deployment script
 ├── frontend/            # React application
@@ -123,14 +128,14 @@ nutrisync/
 │   │   ├── components/  # React components
 │   │   ├── pages/       # Page routes
 │   │   └── services/    # API clients
-│   └── tests/           # Frontend tests (87 tests)
+│   └── tests/           # Frontend tests (137 tests, 60.4% coverage)
 ├── docs/                # Setup documentation
 └── .github/workflows/   # CI/CD configuration
 ```
 
 ## Testing
 
-**Coverage**: Backend 75% (79 test functions), Frontend 87 tests
+**Coverage**: Backend 74.5% | Frontend 60.4% | Overall 65.28%
 
 Backend:
 ```bash
@@ -147,8 +152,8 @@ npm run test:coverage    # With coverage report
 ```
 
 **Test Organization**:
-- Backend: 13 test files covering API endpoints, AI services, user management, fasting, edge cases
-- Frontend: 13 test files covering contexts, components (fasting, dashboard), utilities
+- Backend: 85 tests across 13 files (API endpoints, AI services, user management, fasting, edge cases)
+- Frontend: 137 tests across 16 files (contexts, components, pages, charts)
 
 **CI/CD**: Automated testing on every push via GitHub Actions with separate coverage tracking for backend and frontend
 

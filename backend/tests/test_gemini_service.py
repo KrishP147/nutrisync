@@ -141,3 +141,85 @@ def test_gemini_model_configuration():
     # the service can be imported without errors
     from app.services import gemini_service
     assert gemini_service is not None
+
+
+@pytest.mark.asyncio
+async def test_analyze_food_image_no_api_key():
+    """Test handling of missing API key"""
+    with patch('os.getenv', return_value=None):
+        result = await analyze_food_image("fake_path.jpg")
+        
+        assert result is not None
+        assert result['success'] is False
+        assert 'API' in result.get('error', '').upper() or 'KEY' in result.get('error', '').upper()
+
+
+@pytest.mark.asyncio
+async def test_analyze_food_image_with_dietary_restrictions():
+    """Test analysis with dietary restrictions"""
+    mock_response = Mock()
+    mock_response.text = """
+    {
+        "foods": [{
+            "name": "Tofu Stir Fry",
+            "portion": "200g",
+            "calories": 180,
+            "protein_g": 15,
+            "carbs_g": 10,
+            "fat_g": 8,
+            "fiber_g": 3,
+            "confidence": 0.85,
+            "dietary_warnings": []
+        }],
+        "total_nutrition": {
+            "calories": 180,
+            "protein_g": 15,
+            "carbs_g": 10,
+            "fat_g": 8,
+            "fiber_g": 3
+        }
+    }
+    """
+
+    with patch('google.generativeai.GenerativeModel') as mock_model:
+        mock_model.return_value.generate_content.return_value = mock_response
+        with patch('builtins.open', create=True) as mock_open:
+            mock_open.return_value.__enter__.return_value.read.return_value = b"fake_image_data"
+            
+            result = await analyze_food_image("fake_path.jpg", dietary_restrictions=["vegan", "gluten_free"])
+
+            assert result is not None
+            assert result['success'] is True
+
+
+@pytest.mark.asyncio
+async def test_analyze_food_image_markdown_response():
+    """Test handling of markdown-wrapped JSON response"""
+    mock_response = Mock()
+    mock_response.text = """```json
+    {
+        "foods": [{
+            "name": "Salad",
+            "portion": "100g",
+            "calories": 50,
+            "protein_g": 2,
+            "carbs_g": 8,
+            "fat_g": 1,
+            "fiber_g": 3
+        }],
+        "total_nutrition": {
+            "calories": 50
+        }
+    }
+    ```"""
+
+    with patch('google.generativeai.GenerativeModel') as mock_model:
+        mock_model.return_value.generate_content.return_value = mock_response
+        with patch('builtins.open', create=True) as mock_open:
+            mock_open.return_value.__enter__.return_value.read.return_value = b"fake_image_data"
+            
+            result = await analyze_food_image("fake_path.jpg")
+
+            assert result is not None
+            # Should parse markdown-wrapped JSON
+            assert result['success'] is True

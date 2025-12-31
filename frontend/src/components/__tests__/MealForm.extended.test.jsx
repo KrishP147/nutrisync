@@ -3,28 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import MealForm from '../MealForm';
 
-// Mock Supabase
-const createMockFrom = () => {
-  const mockInsert = vi.fn(() => ({
-    select: vi.fn().mockResolvedValue({
-      data: [{ id: 'meal-1', meal_name: 'Test Food' }],
-      error: null
-    })
-  }));
-  
-  return {
-    insert: mockInsert,
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({
-      data: { calories: 2000 },
-      error: null
-    })
-  };
-};
-
-const mockFrom = vi.fn(createMockFrom);
-
+// All vi.mock calls MUST use inline factory functions (no external const references)
 vi.mock('../../supabaseClient', () => ({
   supabase: {
     auth: {
@@ -33,7 +12,20 @@ vi.mock('../../supabaseClient', () => ({
         error: null
       })
     },
-    from: mockFrom,
+    from: vi.fn(() => ({
+      insert: vi.fn(() => ({
+        select: vi.fn().mockResolvedValue({
+          data: [{ id: 'meal-1', meal_name: 'Test Food' }],
+          error: null
+        })
+      })),
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: { calories: 2000 },
+        error: null
+      })
+    })),
     storage: {
       from: vi.fn(() => ({
         upload: vi.fn().mockResolvedValue({ data: { path: 'photo.jpg' }, error: null }),
@@ -132,8 +124,6 @@ describe('MealForm - Comprehensive Tests', () => {
     );
     
     const buttons = screen.getAllByRole('button');
-    
-    // Button may or may not be visible depending on UI state
     expect(buttons.length).toBeGreaterThan(0);
   });
 
@@ -144,7 +134,6 @@ describe('MealForm - Comprehensive Tests', () => {
       </BrowserRouter>
     );
     
-    // Look for mode toggle
     const buttons = screen.getAllByRole('button');
     const toggleButton = buttons.find(btn => 
       btn.textContent.toLowerCase().includes('manual') ||
@@ -155,7 +144,6 @@ describe('MealForm - Comprehensive Tests', () => {
       fireEvent.click(toggleButton);
       
       await waitFor(() => {
-        // Manual mode should show text inputs
         const textInputs = screen.queryAllByRole('textbox');
         expect(textInputs.length).toBeGreaterThan(0);
       });
@@ -173,7 +161,6 @@ describe('MealForm - Comprehensive Tests', () => {
     fireEvent.click(selectButton);
     
     await waitFor(() => {
-      // Should show nutrition totals
       const content = document.body.textContent;
       expect(content.includes('100') || content.includes('Total')).toBe(true);
     });
@@ -187,7 +174,6 @@ describe('MealForm - Comprehensive Tests', () => {
       </BrowserRouter>
     );
     
-    // Add a food
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
     
@@ -195,7 +181,6 @@ describe('MealForm - Comprehensive Tests', () => {
       expect(screen.getByText(/test food/i)).toBeInTheDocument();
     });
     
-    // Find submit button - wait for it to be enabled
     const submitButton = await waitFor(() => {
       const buttons = screen.getAllByRole('button');
       const btn = buttons.find(b => {
@@ -210,10 +195,8 @@ describe('MealForm - Comprehensive Tests', () => {
       return btn;
     }, { timeout: 3000 });
     
-    // Click submit
     fireEvent.click(submitButton);
     
-    // Wait for form submission to complete and callback to be called
     await waitFor(() => {
       expect(onMealAdded).toHaveBeenCalled();
     }, { timeout: 5000 });
@@ -226,7 +209,6 @@ describe('MealForm - Comprehensive Tests', () => {
       </BrowserRouter>
     );
     
-    // Add food and submit
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
     
@@ -257,7 +239,6 @@ describe('MealForm - Comprehensive Tests', () => {
       expect(screen.getByText(/test food/i)).toBeInTheDocument();
     });
     
-    // Look for remove/delete button (usually an X or trash icon)
     const allButtons = screen.getAllByRole('button');
     const removeButton = allButtons.find(btn => 
       btn.textContent.includes('×') ||
@@ -269,7 +250,6 @@ describe('MealForm - Comprehensive Tests', () => {
       fireEvent.click(removeButton);
       
       await waitFor(() => {
-        // Food might be removed
         expect(allButtons.length).toBeGreaterThan(0);
       });
     }
@@ -292,7 +272,6 @@ describe('MealForm - Comprehensive Tests', () => {
       fireEvent.change(notesField, { target: { value: 'Test notes' } });
       expect(notesField.value).toBe('Test notes');
     } else {
-      // Component rendered
       expect(screen.getAllByRole('button').length).toBeGreaterThan(0);
     }
   });
@@ -308,7 +287,6 @@ describe('MealForm - Comprehensive Tests', () => {
     fireEvent.click(selectButton);
     
     await waitFor(() => {
-      // Should display nutrition info (calories, protein, etc)
       const content = document.body.textContent;
       const hasNutritionInfo = content.includes('cal') || 
                                content.includes('protein') ||
@@ -324,7 +302,6 @@ describe('MealForm - Comprehensive Tests', () => {
       </BrowserRouter>
     );
     
-    // Try to submit without adding food
     const buttons = screen.getAllByRole('button');
     const submitButton = buttons.find(btn => 
       btn.textContent.toLowerCase().includes('save') ||
@@ -332,7 +309,6 @@ describe('MealForm - Comprehensive Tests', () => {
     );
     
     if (submitButton) {
-      // Button might be disabled without food
       expect(submitButton).toBeInTheDocument();
     }
   });
@@ -348,7 +324,6 @@ describe('MealForm - Comprehensive Tests', () => {
     fireEvent.click(selectButton);
     
     await waitFor(() => {
-      // Look for portion/serving size inputs
       const numberInputs = screen.queryAllByRole('spinbutton');
       if (numberInputs.length > 0) {
         fireEvent.change(numberInputs[0], { target: { value: '2' } });
@@ -372,7 +347,6 @@ describe('MealForm - Comprehensive Tests', () => {
       if (numberInputs.length > 0) {
         fireEvent.change(numberInputs[0], { target: { value: '3' } });
         
-        // Nutrition should update
         const updatedContent = document.body.textContent;
         expect(updatedContent).toBeTruthy();
       }

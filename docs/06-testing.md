@@ -30,8 +30,8 @@ backend/tests/
 
 ### Current Status
 
-- Total tests: 78
-- Coverage: 74%
+- Total tests: 85
+- Coverage: 74.5%
 - All critical paths tested
 
 ## Frontend Tests
@@ -75,8 +75,9 @@ frontend/src/
 
 ### Current Status
 
-- Total tests: 87
-- Passing: 43
+- Total tests: 137
+- Passing: 137
+- Coverage: 60.4%
 - Framework: Vitest + React Testing Library
 
 ## Continuous Integration

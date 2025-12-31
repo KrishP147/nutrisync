@@ -26,6 +26,14 @@ vi.mock('../../supabaseClient', () => ({
               }))
             }))
           })),
+          not: vi.fn(() => ({
+            order: vi.fn(() => ({
+              limit: vi.fn(() => Promise.resolve({
+                data: [],
+                error: null
+              }))
+            }))
+          })),
           single: vi.fn(() => Promise.resolve({
             data: { calories: 2000 },
             error: null
@@ -116,4 +124,37 @@ describe('Logging Page', () => {
     // Just verify the component renders without crashing
     expect(container).toBeTruthy();
   });
+
+  it('displays sidebar navigation', async () => {
+    render(
+      <BrowserRouter>
+        <Logging />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+    });
+  });
+
+  it('renders page container', () => {
+    const { container } = render(
+      <BrowserRouter>
+        <Logging />
+      </BrowserRouter>
+    );
+
+    expect(container.querySelector('div')).toBeTruthy();
+  });
+
+  it('handles component mounting without errors', async () => {
+    expect(() => {
+      render(
+        <BrowserRouter>
+          <Logging />
+        </BrowserRouter>
+      );
+    }).not.toThrow();
+  });
 });
+

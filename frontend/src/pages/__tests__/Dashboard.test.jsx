@@ -145,5 +145,37 @@ describe('Dashboard Page', () => {
     // Just verify the component renders without crashing
     expect(container).toBeTruthy();
   });
+
+  it('displays sidebar navigation', async () => {
+    render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+    });
+  });
+
+  it('handles component mounting without errors', () => {
+    expect(() => {
+      render(
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      );
+    }).not.toThrow();
+  });
+
+  it('renders page container', () => {
+    const { container } = render(
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
+    );
+
+    expect(container.querySelector('div')).toBeTruthy();
+  });
 });
 

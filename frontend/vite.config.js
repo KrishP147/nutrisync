@@ -31,7 +31,7 @@ export default defineConfig({
     // Force sequential execution in CI to avoid race conditions
     sequence: {
       shuffle: false,
-      concurrent: true,
+      concurrent: false,
     },
     coverage: {
       provider: 'v8',
