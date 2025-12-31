@@ -1,6 +1,6 @@
 import { ResponsiveSunburst } from '@nivo/sunburst';
 import { useMemo } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { PieChart } from 'lucide-react';
 
 const MEAL_TYPE_COLORS = {
@@ -47,8 +47,7 @@ export default function MealTypeDistribution({ meals }) {
     <div className="relative" style={{ overflow: 'visible' }}>
       <div className="flex flex-col lg:flex-row gap-4 items-center justify-center lg:justify-center">
         {/* Sunburst Chart */}
-        <motion.div
-          initial={{ opacity: 0 }}
+        <Motion.div           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="h-64 w-64 flex-shrink-0"
@@ -99,7 +98,7 @@ export default function MealTypeDistribution({ meals }) {
             motionConfig="gentle"
             transitionMode="pushIn"
           />
-        </motion.div>
+        </Motion.div>
 
         {/* Legend - Side Labels */}
         <div className="flex flex-col gap-2 flex-shrink-0">

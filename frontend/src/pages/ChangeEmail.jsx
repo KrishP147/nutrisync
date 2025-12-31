@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function ChangeEmail() {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();

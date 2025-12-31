@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
 import { useState } from 'react';
@@ -57,21 +57,20 @@ export default function Pricing() {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <motion.h1
+          <Motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl font-heading font-bold text-white mb-4"
           >
             Simple, Transparent Pricing
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/60 text-lg max-w-2xl mx-auto">
             Start free, upgrade when you're ready. No hidden fees.
           </p>
         </div>
 
         {/* Billing Cycle Toggle */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="flex justify-center items-center gap-4"
@@ -83,8 +82,7 @@ export default function Pricing() {
             onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
             className="relative w-14 h-7 bg-white/10  transition-colors hover:bg-white/20"
           >
-            <motion.div
-              animate={{ x: billingCycle === 'yearly' ? 28 : 2 }}
+            <Motion.div               animate={{ x: billingCycle === 'yearly' ? 28 : 2 }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               className="absolute top-1 w-5 h-5 bg-primary-700 "
             />
@@ -93,13 +91,12 @@ export default function Pricing() {
             Yearly
             <span className="ml-2 text-xs text-green-400">(Save 17%)</span>
           </span>
-        </motion.div>
+        </Motion.div>
 
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-2 gap-8 mt-12">
           {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
+            <Motion.div               key={plan.name}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 + 0.2 }}
@@ -178,13 +175,12 @@ export default function Pricing() {
                   </ul>
                 </div>
               )}
-            </motion.div>
+            </Motion.div>
           ))}
         </div>
 
         {/* FAQ Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="mt-16"
@@ -218,11 +214,10 @@ export default function Pricing() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Footer CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="text-center mt-16 card p-8 bg-gradient-to-r from-primary-700/20 to-secondary-500/20 border border-primary-700/30"
@@ -239,7 +234,7 @@ export default function Pricing() {
           >
             Get Started Free
           </Link>
-        </motion.div>
+        </Motion.div>
       </div>
     </Sidebar>
   );

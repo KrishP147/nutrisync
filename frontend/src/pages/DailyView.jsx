@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useGoals } from '../contexts/GoalsContext';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Flame, Beef, Wheat, Droplets, Leaf } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 import MealList from '../components/MealList';
@@ -105,9 +105,9 @@ export default function DailyView() {
           <button onClick={() => navigate('/progress')} className="p-2 bg-white/5 text-white/60 hover:text-white hover:bg-white/10 transition mb-4">
             Back
           </button>
-          <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
+          <Motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
             Daily Summary
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/50 mt-1">{formatDate(date)}</p>
         </div>
 
@@ -119,8 +119,7 @@ export default function DailyView() {
             const progress = getProgress(macro.value, macro.goal);
             
             return (
-              <motion.div
-                key={macro.label}
+              <Motion.div                 key={macro.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -138,20 +137,20 @@ export default function DailyView() {
                   <div className={`progress-fill ${macro.barColor}`} style={{ width: `${progress}%` }} />
                 </div>
                 <p className="text-xs text-white/30 mt-1">{progress}% of {macro.goal}{macro.unit}</p>
-              </motion.div>
+              </Motion.div>
             );
           })}
         </div>
 
         {/* Nutrition Timeline */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="card p-6">
+        <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="card p-6">
           <h2 className="text-lg font-heading font-semibold text-white mb-4">Nutrition Timeline</h2>
           <NutritionTimeline meals={meals} />
-        </motion.div>
+        </Motion.div>
 
         {/* Calorie Flow Sankey */}
         {meals.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card p-6">
+          <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="card p-6">
             <div className="mb-6">
               <h2 className="text-lg font-heading font-semibold text-white">Calorie Flow</h2>
               <p className="text-white/50 text-sm">From meals to macros (Note: values measured in kcal)</p>
@@ -159,12 +158,12 @@ export default function DailyView() {
             <ChartErrorBoundary>
               <CalorieFlowSankey meals={meals} />
             </ChartErrorBoundary>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Nutrient Density Scatter */}
         {meals.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="card p-6">
+          <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="card p-6">
             <div className="mb-6">
               <h2 className="text-lg font-heading font-semibold text-white">Meal Quality</h2>
               <p className="text-white/50 text-sm">Nutrient density per meal</p>
@@ -172,12 +171,12 @@ export default function DailyView() {
             <ChartErrorBoundary>
               <NutrientDensityScatter meals={meals} />
             </ChartErrorBoundary>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Macro Ratio Ternary */}
         {meals.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="card p-6">
+          <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="card p-6">
             <div className="mb-6">
               <h2 className="text-lg font-heading font-semibold text-white">Macro Ratios</h2>
               <p className="text-white/50 text-sm">P/C/F balance per meal</p>
@@ -185,11 +184,11 @@ export default function DailyView() {
             <ChartErrorBoundary>
               <MacroRatioTernary meals={meals} />
             </ChartErrorBoundary>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Meals List */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+        <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
           <h2 className="text-xl font-heading font-semibold text-white mb-4">
             Meals on {formatDate(date)}
           </h2>
@@ -201,7 +200,7 @@ export default function DailyView() {
               onMealUpdated={handleMealChange}
             />
           </div>
-        </motion.div>
+        </Motion.div>
       </div>
     </Sidebar>
   );

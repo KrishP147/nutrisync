@@ -77,7 +77,7 @@ export default function ChangePassword() {
           navigate('/dashboard');
         }, 2000);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }

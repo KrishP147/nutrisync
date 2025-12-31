@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion as Motion } from 'motion/react';
+import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -11,14 +11,22 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Check for OAuth signup error on mount
+  useEffect(() => {
+    const oauthError = localStorage.getItem('oauth_login_error');
+    if (oauthError) {
+      setError(oauthError);
+      localStorage.removeItem('oauth_login_error');
+    }
+  }, []);
 
   const validatePassword = (pwd) => {
     const checks = {
       length: pwd.length >= 8,
-      uppercase: /[A-Z]/.test(pwd),
-      lowercase: /[a-z]/.test(pwd),
-      number: /[0-9]/.test(pwd),
+      special: /[^A-Za-z0-9]/.test(pwd),
     };
     return checks;
   };
@@ -48,18 +56,33 @@ export default function Register() {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        },
       });
 
       if (error) {
-        setError(error.message);
+        // Check for specific error messages related to existing users
+        if (error.message.toLowerCase().includes('already registered') ||
+            error.message.toLowerCase().includes('user already exists') ||
+            error.message.toLowerCase().includes('email already in use')) {
+          setError('This email is already in use. Please log in instead or use a different email.');
+        } else {
+          setError(error.message);
+        }
+      } else if (data?.user?.identities?.length === 0) {
+        // Supabase returns empty identities array if email already exists
+        // This happens when the email is already registered (via email or OAuth)
+        setError('This email is already in use. Please log in instead or use a different email.');
       } else {
         setSuccess(true);
       }
-    } catch {
+    } catch (err) {
       setError('An unexpected error occurred. Please try again.');
+      console.error('Registration error:', err);
     } finally {
       setLoading(false);
     }
@@ -68,20 +91,30 @@ export default function Register() {
   const handleGoogleSignup = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
+      // Store that OAuth flow started from register page
+      localStorage.setItem('oauth_flow_origin', 'register');
+      // We can't check if account exists before OAuth, so we'll check after
+      // Set a flag indicating this is a signup attempt
+      localStorage.setItem('oauth_account_check', 'signup_attempt');
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://nutrisync.me/dashboard'
+          redirectTo: `${window.location.origin}/dashboard`
         }
       });
-      
+
       if (error) {
         setError(error.message);
+        localStorage.removeItem('oauth_flow_origin');
+        localStorage.removeItem('oauth_account_check');
       }
     } catch {
       setError('Failed to connect to Google. Please try again.');
+      localStorage.removeItem('oauth_flow_origin');
+      localStorage.removeItem('oauth_account_check');
     } finally {
       setLoading(false);
     }
@@ -90,8 +123,7 @@ export default function Register() {
   if (success) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-8">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+        <Motion.div           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="card p-12 max-w-md w-full text-center border border-white/10"
         >
@@ -108,16 +140,16 @@ export default function Register() {
             <ol className="text-white/60 text-sm space-y-2 ml-4 list-decimal">
               <li>Check your inbox (and spam folder)</li>
               <li>Click the confirmation link in the email</li>
-              <li>You'll be redirected to sign in</li>
+              <li>You'll be redirected to login</li>
             </ol>
           </div>
           <p className="text-white/50 text-sm mb-6">
             Didn't receive the email? Check your spam folder or try signing up again.
           </p>
           <Link to="/login" className="btn-primary w-full">
-            Back to Sign In
+            Back to Login
           </Link>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -144,8 +176,7 @@ export default function Register() {
 
       {/* Right side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md"
         >
@@ -163,14 +194,22 @@ export default function Register() {
 
           {/* Error Message */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
+            <Motion.div               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3  mb-6"
+              className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3  mb-6"
             >
-              <AlertCircle size={20} />
-              <span>{error}</span>
-            </motion.div>
+              <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <span>{error}</span>
+                {(error.includes('already in use') || error.includes('already exists') || error.includes('already has an account')) && (
+                  <div className="mt-2">
+                    <Link to="/login" className="text-primary-500 hover:text-primary-400 font-medium underline">
+                      Go to Login
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </Motion.div>
           )}
 
           {/* Form */}
@@ -195,13 +234,20 @@ export default function Register() {
               <div className="relative">
                 <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-12"
+                  className="input pl-12 pr-12"
                   placeholder="Create a password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
               
               {/* Password requirements */}
@@ -209,9 +255,7 @@ export default function Register() {
                 <div className="mt-3 space-y-1.5">
                   {[
                     { key: 'length', label: 'At least 8 characters' },
-                    { key: 'uppercase', label: 'One uppercase letter' },
-                    { key: 'lowercase', label: 'One lowercase letter' },
-                    { key: 'number', label: 'One number' },
+                    { key: 'special', label: 'One special character' },
                   ].map(({ key, label }) => (
                     <div key={key} className="flex items-center gap-2 text-xs">
                       <div className={`w-4 h-4  flex items-center justify-center ${
@@ -233,13 +277,20 @@ export default function Register() {
               <div className="relative">
                 <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="input pl-12"
+                  className="input pl-12 pr-12"
                   placeholder="Confirm your password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition"
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
               {confirmPassword && password !== confirmPassword && (
                 <p className="text-red-400 text-xs mt-2">Passwords do not match</p>
@@ -273,14 +324,14 @@ export default function Register() {
             Continue with Google
           </button>
 
-          {/* Sign in link */}
+          {/* Login link */}
           <p className="mt-8 text-center text-white/50">
             Already have an account?{' '}
             <Link to="/login" className="text-primary-500 hover:text-primary-400 font-medium">
-              Sign in
+              Login
             </Link>
           </p>
-        </motion.div>
+        </Motion.div>
       </div>
     </div>
   );

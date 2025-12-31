@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { useGoals } from '../contexts/GoalsContext';
-import { motion } from 'motion/react';
-import { Leaf, Mail, AlertCircle } from 'lucide-react';
+import { motion as Motion } from 'motion/react';
+import { Leaf, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 
 const DIETARY_RESTRICTIONS = [
@@ -37,10 +37,10 @@ export default function Profile() {
   const [bmiCategory, setBmiCategory] = useState('');
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'dietary'
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
-  const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  const [newEmail, setNewEmail] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [showDeletePassword, setShowDeletePassword] = useState(false);
 
   useEffect(() => {
     fetchUser();
@@ -259,41 +259,38 @@ export default function Profile() {
     }
   };
 
-  const handleChangeEmail = async () => {
-    if (!newEmail || !newEmail.includes('@')) {
-      setMessage({ type: 'error', text: 'Please enter a valid email address' });
-      return;
-    }
-    
-    setSaving(true);
-    setMessage({ type: '', text: '' });
-
-    try {
-      const { error } = await supabase.auth.updateUser(
-        { email: newEmail },
-        { emailRedirectTo: `${window.location.origin}/change-email` }
-      );
-      
-      if (error) throw error;
-      setShowEmailPopup(true);
-      setNewEmail('');
-    } catch (error) {
-      setMessage({ type: 'error', text: error.message });
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleDeleteAccount = async () => {
-    if (deleteConfirmText !== 'DELETE') {
-      setMessage({ type: 'error', text: 'Please type DELETE to confirm' });
+    // Verify password before deletion
+    if (!deleteConfirmText) {
+      setDeleteError('Please enter your password to confirm');
       return;
     }
 
     setSaving(true);
-    setMessage({ type: '', text: '' });
+    setDeleteError('');
 
     try {
+      // Check if this is an OAuth-only account
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const isOAuthOnly = currentUser?.app_metadata?.provider && currentUser?.app_metadata?.provider !== 'email';
+
+      // First, verify the password by attempting to sign in
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: deleteConfirmText,
+      });
+
+      if (signInError) {
+        // Check if this is an OAuth account without a password set
+        if (isOAuthOnly && signInError.message.toLowerCase().includes('invalid')) {
+          setDeleteError('Please set a password for your account above before deleting it.');
+        } else {
+          setDeleteError('Incorrect password. Please try again.');
+        }
+        setSaving(false);
+        return;
+      }
+
       // Get the current session token
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -301,7 +298,7 @@ export default function Profile() {
       }
 
       // Call backend API to delete account
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://nutrisync-backend.onrender.com';
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000';
       const response = await fetch(`${backendUrl}/api/user/${user.id}`, {
         method: 'DELETE',
         headers: {
@@ -319,12 +316,17 @@ export default function Profile() {
       await supabase.auth.signOut();
       navigate('/login');
     } catch (error) {
-      setMessage({ type: 'error', text: error.message || 'Failed to delete account. Please contact support.' });
+      setDeleteError(error.message || 'Failed to delete account. Please contact support.');
       console.error('Delete account error:', error);
-    } finally {
       setSaving(false);
-      setShowDeleteConfirm(false);
-      setDeleteConfirmText('');
+    } finally {
+      // Only reset if successful (navigated away)
+      if (!error) {
+        setSaving(false);
+        setShowDeleteConfirm(false);
+        setDeleteConfirmText('');
+        setDeleteError('');
+      }
     }
   };
 
@@ -350,27 +352,27 @@ export default function Profile() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
+          <Motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
             Profile Settings
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/50 mt-1">Manage your account and preferences</p>
         </div>
 
         {/* Message */}
         {message.text && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          <Motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             className={`flex items-center gap-3 p-4  ${message.type === 'success' ? 'bg-primary-700/10 border border-primary-700/30 text-primary-500' : 'bg-red-500/10 border border-red-500/30 text-red-400'}`}>
             {message.text}
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Account Info */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
+        <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
           <div className="mb-4">
             <h2 className="text-lg font-heading font-semibold text-white">Account</h2>
             <p className="text-white/50 text-sm">{user?.email}</p>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Tab Navigation */}
         <div className="flex gap-2 flex-wrap">
@@ -397,7 +399,7 @@ export default function Profile() {
         </div>
 
         {activeTab === 'profile' ? (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
+          <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
             <div className="mb-6">
               <h2 className="text-lg font-heading font-semibold text-white">Personal Details</h2>
             </div>
@@ -532,7 +534,7 @@ export default function Profile() {
 
               {/* Calculated Goals */}
               {calculatedGoals && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="card p-4 border-primary-700/30 bg-primary-700/5">
+                <Motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="card p-4 border-primary-700/30 bg-primary-700/5">
                   <h3 className="font-medium text-white mb-4">Recommended Daily Goals</h3>
                   <div className="grid grid-cols-5 gap-4 text-center">
                     <div>
@@ -559,7 +561,7 @@ export default function Profile() {
                   <button onClick={handleApplyGoals} disabled={saving} className="btn-primary w-full mt-4">
                     Apply These Goals
                   </button>
-                </motion.div>
+                </Motion.div>
               )}
 
               {/* Save Button */}
@@ -581,26 +583,6 @@ export default function Profile() {
                 </button>
               </div>
 
-              {/* Change Email */}
-              <div className="pt-6 border-t border-white/10">
-                <div className="mb-4">
-                  <h2 className="text-lg font-heading font-semibold text-white">Email Address</h2>
-                  <p className="text-sm text-white/50 mt-1">Current: {user?.email}</p>
-                </div>
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Enter new email address"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    className="input w-full"
-                  />
-                  <button onClick={handleChangeEmail} disabled={saving || !newEmail} className="btn-outline w-full">
-                    {saving ? 'Sending...' : 'Send Email Change Confirmation'}
-                  </button>
-                </div>
-              </div>
-
               {/* Delete Account */}
               <div className="pt-6 border-t border-red-500/20">
                 <div className="mb-4">
@@ -615,9 +597,9 @@ export default function Profile() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         ) : (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
+          <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card p-6">
             <div className="mb-6">
               <h2 className="text-lg font-heading font-semibold text-white">Dietary Restrictions</h2>
             </div>
@@ -695,7 +677,7 @@ export default function Profile() {
                 Save Dietary Preferences
               </button>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Password Reset Email Sent Popup */}
@@ -712,27 +694,6 @@ export default function Profile() {
                   Click the link in the email to reset your password.
                 </p>
                 <button onClick={() => setShowPasswordPopup(false)} className="btn-primary w-full">
-                  Got It
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Email Change Confirmation Popup */}
-        {showEmailPopup && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={() => setShowEmailPopup(false)}>
-            <div className="card p-8 max-w-md w-full border border-white/10" onClick={(e) => e.stopPropagation()}>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-secondary-500/20 flex items-center justify-center mx-auto mb-4">
-                  <Mail size={32} className="text-secondary-400" />
-                </div>
-                <h3 className="text-2xl font-heading font-bold text-white mb-2">Confirm Email Change</h3>
-                <p className="text-white/70 mb-6">
-                  We've sent confirmation links to both your current email (<span className="text-white font-medium">{user?.email}</span>) 
-                  and your new email address. Please check both inboxes and click the confirmation links to complete the change.
-                </p>
-                <button onClick={() => setShowEmailPopup(false)} className="btn-primary w-full">
                   Got It
                 </button>
               </div>
@@ -765,34 +726,54 @@ export default function Profile() {
                 </ul>
               </div>
 
+              {deleteError && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 mb-4 flex items-center gap-3">
+                  <AlertCircle size={20} />
+                  <span className="text-sm">{deleteError}</span>
+                </div>
+              )}
+
               <div className="mb-6">
                 <label className="block text-white/70 text-sm mb-2">
-                  Type <span className="text-red-400 font-bold">DELETE</span> to confirm:
+                  Enter your password to confirm:
                 </label>
-                <input
-                  type="text"
-                  value={deleteConfirmText}
-                  onChange={(e) => setDeleteConfirmText(e.target.value)}
-                  className="input w-full"
-                  placeholder="Type DELETE"
-                  autoFocus
-                />
+                <div className="relative">
+                  <input
+                    type={showDeletePassword ? 'text' : 'password'}
+                    value={deleteConfirmText}
+                    onChange={(e) => {
+                      setDeleteConfirmText(e.target.value);
+                      setDeleteError(''); // Clear error when typing
+                    }}
+                    className="input w-full pr-12"
+                    placeholder="Enter your password"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDeletePassword(!showDeletePassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition"
+                  >
+                    {showDeletePassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => {
                     setShowDeleteConfirm(false);
                     setDeleteConfirmText('');
+                    setDeleteError('');
                   }}
                   className="btn-outline flex-1"
                   disabled={saving}
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleDeleteAccount}
-                  disabled={deleteConfirmText !== 'DELETE' || saving}
+                  disabled={!deleteConfirmText || saving}
                   className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed text-white font-semibold transition"
                 >
                   {saving ? 'Deleting...' : 'Delete Forever'}

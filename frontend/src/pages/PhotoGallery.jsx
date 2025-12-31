@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import { Image, X, Trash2, Calendar, Flame } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 
@@ -100,9 +100,9 @@ export default function PhotoGallery() {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
+          <Motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
             Photo Gallery
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/50 mt-1">{photos.length} meal photos</p>
         </div>
 
@@ -116,8 +116,7 @@ export default function PhotoGallery() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {photos.map((meal, index) => (
-              <motion.div
-                key={meal.id}
+              <Motion.div                 key={meal.id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
@@ -153,7 +152,7 @@ export default function PhotoGallery() {
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         )}
@@ -161,15 +160,13 @@ export default function PhotoGallery() {
         {/* Photo Modal */}
         <AnimatePresence>
           {viewingPhoto && (
-            <motion.div
-              initial={{ opacity: 0 }}
+            <Motion.div               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
               onClick={() => setViewingPhoto(null)}
             >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
+              <Motion.div                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 className="relative max-w-4xl w-full"
@@ -211,8 +208,8 @@ export default function PhotoGallery() {
                     Delete Photo
                   </button>
                 </div>
-              </motion.div>
-            </motion.div>
+              </Motion.div>
+            </Motion.div>
           )}
         </AnimatePresence>
       </div>

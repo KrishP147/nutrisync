@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 
 const getColor = (percent) => {
   if (percent > 100) return '#0ea5e9'; // Sky blue - exceeding
@@ -17,8 +17,7 @@ function ProgressRing({ value, max, label, unit, color, delay = 0 }) {
   const ringColor = color || getColor(percent);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+    <Motion.div       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.4, ease: 'easeOut' }}
       className="flex flex-col items-center group"
@@ -35,8 +34,7 @@ function ProgressRing({ value, max, label, unit, color, delay = 0 }) {
             strokeWidth={strokeWidth}
           />
           {/* Progress ring */}
-          <motion.circle
-            cx="64"
+          <Motion.circle             cx="64"
             cy="64"
             r={radius}
             fill="none"
@@ -52,15 +50,14 @@ function ProgressRing({ value, max, label, unit, color, delay = 0 }) {
         
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.span
-            initial={{ opacity: 0 }}
+          <Motion.span             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delay + 0.5, duration: 0.3 }}
             className="text-2xl font-mono font-bold"
             style={{ color: ringColor }}
           >
             {Math.round(percent)}%
-          </motion.span>
+          </Motion.span>
           <span className="text-xs text-white/40 mt-0.5">{label}</span>
         </div>
       </div>
@@ -77,7 +74,7 @@ function ProgressRing({ value, max, label, unit, color, delay = 0 }) {
       <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-8 left-1/2 -translate-x-1/2 bg-[#0a0a0a] border border-white/10  px-2 py-1 text-xs text-white/70 whitespace-nowrap z-10">
         {max - value > 0 ? `${Math.round(max - value)}${unit} remaining` : 'Goal reached!'}
       </div>
-    </motion.div>
+    </Motion.div>
   );
 }
 

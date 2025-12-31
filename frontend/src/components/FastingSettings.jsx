@@ -104,7 +104,7 @@ export default function FastingSettings() {
 
         {/* Fasting Options */}
         {tempGoals.fasting_enabled && (
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -166,7 +166,7 @@ export default function FastingSettings() {
                 This is when you typically finish your last meal and begin fasting
               </p>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
       </div>
 

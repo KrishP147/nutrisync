@@ -88,6 +88,7 @@ export default function NutritionTimeline({ meals = [] }) {
     <div>
       {/* View Mode Toggle */}
       <div className="flex flex-wrap gap-2 mb-6">
+        {/* eslint-disable-next-line no-unused-vars */}
         {modes.map(({ key, label, icon: Icon, color }) => (
           <button
             key={key}

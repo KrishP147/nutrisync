@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient';
 
 const FastingContext = createContext();
 
+/* eslint-disable react-refresh/only-export-components */
 export function useFasting() {
     const context = useContext(FastingContext);
     if (!context) {

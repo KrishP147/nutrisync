@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { useGoals } from '../contexts/GoalsContext';
 import { useFasting } from '../contexts/FastingContext';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Leaf, Droplets } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 import Recommendations from '../components/Recommendations';
@@ -10,7 +10,7 @@ import api from '../services/api';
 
 export default function RecommendationsPage() {
   const { goals } = useGoals();
-  const { isFasting, elapsedTime, activeFast, remainingTime } = useFasting();
+  const { isFasting, elapsedTime, remainingTime } = useFasting();
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [chatLoading, setChatLoading] = useState(false);
@@ -142,16 +142,15 @@ export default function RecommendationsPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
+          <Motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-heading font-bold text-white">
             AI Insights
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/50 mt-1">Personalized nutrition recommendations</p>
         </div>
 
         {/* Fasting Mode Banner */}
         {isFasting && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
+          <Motion.div             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="card p-6 border-orange-500/50 bg-orange-500/5"
           >
@@ -170,13 +169,12 @@ export default function RecommendationsPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Active Dietary Restrictions */}
         {dietaryRestrictions.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
+          <Motion.div             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-3 p-4 bg-primary-700/10 border border-primary-700/30 "
           >
@@ -189,22 +187,21 @@ export default function RecommendationsPage() {
                 </span>
               ))}
             </div>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* AI Recommendations from Dashboard - Only show when not fasting */}
         {!isFasting && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
             <Recommendations limit={5} refreshTrigger={recommendationsRefreshTrigger} />
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* AI Chat Section */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="card p-6">
+        <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="card p-6">
           <div className="mb-6">
             <h2 className="text-lg font-heading font-semibold text-white">Chat with NutriSync AI</h2>
             <p className="text-white/50 text-sm">Get personalized nutrition advice</p>
@@ -251,7 +248,7 @@ export default function RecommendationsPage() {
               Ask
             </button>
           </div>
-        </motion.div>
+        </Motion.div>
       </div>
     </Sidebar>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import { AlertTriangle, X } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import Sidebar from '../components/layout/Sidebar';
@@ -9,7 +9,7 @@ import MealList from '../components/MealList';
 import { useFasting } from '../contexts/FastingContext';
 
 export default function Logging() {
-  const { isFasting, activeFast, elapsedTime, endFast } = useFasting();
+  const { isFasting, elapsedTime, endFast } = useFasting();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [activeTab, setActiveTab] = useState('photo');
   const [allPhotos, setAllPhotos] = useState([]);
@@ -152,20 +152,19 @@ export default function Logging() {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <motion.h1
+          <Motion.h1
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl font-heading font-bold text-white"
           >
             Log Meals
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/50 mt-1">Track your nutrition throughout the day</p>
         </div>
 
         {/* Fasting Warning Banner (non-blocking) */}
         {isFasting && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
+          <Motion.div             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="card p-4 border-orange-500/30 bg-orange-500/5 flex items-center gap-4"
           >
@@ -178,21 +177,19 @@ export default function Logging() {
                 You've been fasting for <span className="text-orange-400 font-mono">{formatElapsedTime(elapsedTime)}</span>. Logging food will show a warning.
               </p>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Fasting Warning Modal */}
         <AnimatePresence>
           {showFastingWarning && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setShowFastingWarning(false)}>
-              <motion.div
-                initial={{ opacity: 0 }}
+              <Motion.div                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              <Motion.div                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
@@ -238,7 +235,7 @@ export default function Logging() {
                     End Fast & Log Meal
                   </button>
                 </div>
-              </motion.div>
+              </Motion.div>
             </div>
           )}
         </AnimatePresence>
@@ -274,8 +271,7 @@ export default function Logging() {
             </div>
 
             {/* Logging Form - wrapping with click handler */}
-            <motion.div
-              key={activeTab}
+            <Motion.div               key={activeTab}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -287,11 +283,10 @@ export default function Logging() {
               ) : (
                 <MealForm onMealAdded={handleMealAdded} disabled={isFasting} />
               )}
-            </motion.div>
+            </Motion.div>
 
             {/* Logged Today Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            <Motion.div               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
@@ -304,11 +299,10 @@ export default function Logging() {
                   limit={20}
                 />
               </div>
-            </motion.div>
+            </Motion.div>
 
             {/* My Foods Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            <Motion.div               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="card p-6"
@@ -404,12 +398,11 @@ export default function Logging() {
                   ))
                 )}
               </div>
-            </motion.div>
+            </Motion.div>
 
             {/* Photo Gallery */}
             {allPhotos.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
+              <Motion.div                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 className="card p-6"
@@ -442,7 +435,7 @@ export default function Logging() {
                     </button>
                   ))}
                 </div>
-              </motion.div>
+              </Motion.div>
             )}
           </>
       </div>
@@ -450,8 +443,7 @@ export default function Logging() {
       {/* Lightbox Gallery */}
       <AnimatePresence>
         {galleryOpen && allPhotos[currentPhotoIndex] && (
-          <motion.div
-            initial={{ opacity: 0 }}
+          <Motion.div             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
@@ -474,8 +466,7 @@ export default function Logging() {
             </button>
 
             {/* Image */}
-            <motion.div
-              key={currentPhotoIndex}
+            <Motion.div               key={currentPhotoIndex}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
@@ -496,7 +487,7 @@ export default function Logging() {
                   {new Date(allPhotos[currentPhotoIndex].consumed_at).toLocaleDateString()}
                 </p>
               </div>
-            </motion.div>
+            </Motion.div>
 
             {/* Next button */}
             <button
@@ -510,7 +501,7 @@ export default function Logging() {
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/10 px-4 py-2  text-white text-sm font-mono">
               {currentPhotoIndex + 1} / {allPhotos.length}
             </div>
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </Sidebar>

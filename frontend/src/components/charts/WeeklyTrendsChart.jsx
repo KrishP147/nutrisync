@@ -1,5 +1,5 @@
 import { ResponsiveLine } from '@nivo/line';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { TrendingUp, Calendar } from 'lucide-react';
 
 const MACRO_COLORS = {
@@ -10,7 +10,7 @@ const MACRO_COLORS = {
   Fiber: '#ef4444',
 };
 
-export default function WeeklyTrendsChart({ data, goals, showGoalLines = true }) {
+export default function WeeklyTrendsChart({ data }) {
   // data format: [{ date: 'Mon', calories, protein, carbs, fat, fiber }, ...]
   
   if (!data || data.length === 0) {
@@ -62,8 +62,7 @@ export default function WeeklyTrendsChart({ data, goals, showGoalLines = true })
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
+    <Motion.div       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className="h-72"
@@ -161,7 +160,7 @@ export default function WeeklyTrendsChart({ data, goals, showGoalLines = true })
         }}
         motionConfig="gentle"
       />
-    </motion.div>
+    </Motion.div>
   );
 }
 

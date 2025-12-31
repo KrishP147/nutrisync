@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useGoals } from '../../contexts/GoalsContext';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { TrendingUp, TrendingDown, Minus, Calendar, Flame, Beef, Wheat, Droplets, Leaf, Info } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
@@ -181,6 +181,7 @@ export default function WeeklyTrends() {
 
       {/* View Toggle */}
       <div className="flex flex-wrap gap-2 mb-6">
+        {/* eslint-disable-next-line no-unused-vars */}
         {views.map(({ key, label, icon: Icon, color }) => (
           <button
             key={key}

@@ -44,7 +44,7 @@ describe('ChartErrorBoundary', () => {
   });
 
   it('displays error icon when error occurs', () => {
-    const { container } = render(
+    render(
       <ChartErrorBoundary>
         <ThrowError />
       </ChartErrorBoundary>

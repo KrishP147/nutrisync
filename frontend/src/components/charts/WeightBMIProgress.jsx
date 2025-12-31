@@ -1,23 +1,16 @@
 import { ResponsiveLine } from '@nivo/line';
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Scale, Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 
-export default function WeightBMIProgress({ goals, timeRange = 'weekly', currentDate = new Date() }) {
+export default function WeightBMIProgress({ timeRange = 'weekly', currentDate = new Date() }) {
   const [showInfo, setShowInfo] = useState(false);
   const [weightData, setWeightData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [trend, setTrend] = useState(null);
   const [unit, setUnit] = useState('kg'); // kg or lbs
   const [viewMode, setViewMode] = useState('weight'); // weight or bmi
-
-  const formatDateLocal = (dateObj) => {
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
   const getDateRange = () => {
     const start = new Date(currentDate);
@@ -273,8 +266,7 @@ export default function WeightBMIProgress({ goals, timeRange = 'weekly', current
           </p>
         </div>
       ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
+        <Motion.div           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="h-64"
           style={{ overflow: 'visible' }}
@@ -329,7 +321,7 @@ export default function WeightBMIProgress({ goals, timeRange = 'weekly', current
               }
             }}
           />
-        </motion.div>
+        </Motion.div>
       )}
     </div>
   );

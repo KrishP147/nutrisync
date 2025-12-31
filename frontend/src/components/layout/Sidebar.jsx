@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, memo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../../supabaseClient';
 
 const navItems = [
@@ -67,8 +67,7 @@ function Sidebar({ children }) {
       {/* Mobile overlay */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
+          <Motion.div             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setMobileOpen(false)}
@@ -78,8 +77,7 @@ function Sidebar({ children }) {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <motion.aside
-        initial={false}
+      <Motion.aside         initial={false}
         animate={{
           width: collapsed ? 0 : 260,
           x: mobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024) ? -260 : 0
@@ -136,19 +134,18 @@ function Sidebar({ children }) {
             {'<'}
           </button>
         )}
-      </motion.aside>
+      </Motion.aside>
 
       {/* Expand button - shows when collapsed */}
       {collapsed && (
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
+        <Motion.button           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           onClick={() => setCollapsed(false)}
           className="hidden lg:flex fixed left-2 top-1/2 -translate-y-1/2 w-8 h-8  bg-[#0a0a0a] border border-white/10 items-center justify-center text-white/60 hover:text-white transition-all z-50 hover:w-10"
         >
           {'>'}
-        </motion.button>
+        </Motion.button>
       )}
 
       {/* Main content */}

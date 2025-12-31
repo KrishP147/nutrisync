@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
+import { motion as Motion } from 'motion/react';
+import { Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -10,7 +10,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  // Check for OAuth login error on mount
+  useEffect(() => {
+    const oauthError = localStorage.getItem('oauth_login_error');
+    if (oauthError) {
+      setError(oauthError);
+      localStorage.removeItem('oauth_login_error');
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -51,18 +61,27 @@ export default function Login() {
     setError(null);
 
     try {
+      // Store that OAuth flow started from login page
+      localStorage.setItem('oauth_flow_origin', 'login');
+      // Set a flag indicating this is a login attempt
+      localStorage.setItem('oauth_account_check', 'login_attempt');
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://nutrisync.me/dashboard'
+          redirectTo: `${window.location.origin}/dashboard`
         }
       });
 
       if (error) {
         setError(error.message);
+        localStorage.removeItem('oauth_flow_origin');
+        localStorage.removeItem('oauth_account_check');
       }
     } catch {
       setError('Failed to connect to Google. Please try again.');
+      localStorage.removeItem('oauth_flow_origin');
+      localStorage.removeItem('oauth_account_check');
     } finally {
       setLoading(false);
     }
@@ -72,8 +91,7 @@ export default function Login() {
     <div className="min-h-screen bg-black flex">
       {/* Left side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md"
         >
@@ -86,19 +104,27 @@ export default function Login() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-heading font-bold text-white mb-2">Welcome back</h1>
-            <p className="text-white/50">Sign in to continue tracking your nutrition</p>
+            <p className="text-white/50">Login to continue tracking your nutrition</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
+            <Motion.div               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 mb-6"
+              className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 mb-6"
             >
-              <AlertCircle size={20} />
-              <span>{error}</span>
-            </motion.div>
+              <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <span>{error}</span>
+                {error.includes('No account found') && (
+                  <div className="mt-2">
+                    <Link to="/register" className="text-primary-500 hover:text-primary-400 font-medium underline">
+                      Go to Signup
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </Motion.div>
           )}
 
           {/* Form */}
@@ -128,13 +154,20 @@ export default function Login() {
               <div className="relative">
                 <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#0a0a0a] border border-white/10 px-4 py-3 pl-12 text-white placeholder-white/30 focus:outline-none focus:border-primary-700"
+                  className="w-full bg-[#0a0a0a] border border-white/10 px-4 py-3 pl-12 pr-12 text-white placeholder-white/30 focus:outline-none focus:border-primary-700"
                   placeholder="Enter your password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </div>
 
@@ -156,7 +189,7 @@ export default function Login() {
               disabled={loading}
               className="btn-primary w-full py-3 text-base"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Logging in...' : 'Login'}
               {!loading && <ArrowRight size={18} />}
             </button>
           </form>
@@ -178,14 +211,14 @@ export default function Login() {
             Continue with Google
           </button>
 
-          {/* Sign up link */}
+          {/* Signup link */}
           <p className="mt-8 text-center text-white/50">
             Don't have an account?{' '}
             <Link to="/register" className="text-primary-500 hover:text-primary-400 font-medium">
-              Sign up
+              Signup
             </Link>
           </p>
-        </motion.div>
+        </Motion.div>
       </div>
 
       {/* Right side - Image/Branding */}

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ export default function Navigation() {
                   to={item.path}
                   className="relative"
                 >
-                  <motion.div
+                  <Motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`px-3 py-2  transition-all ${
@@ -53,9 +53,9 @@ export default function Navigation() {
                     }`}
                   >
                     <span className="text-sm font-medium">{item.label}</span>
-                  </motion.div>
+                  </Motion.div>
                   {isActive(item.path) && (
-                    <motion.div
+                    <Motion.div
                       layoutId="activeTab"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500"
                     />

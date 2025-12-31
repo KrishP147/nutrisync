@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import {
   Flame,
   Beef,
@@ -132,13 +132,13 @@ export default function Dashboard() {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div>
-          <motion.h1
+          <Motion.h1
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl font-heading font-bold text-white"
           >
             Dashboard
-          </motion.h1>
+          </Motion.h1>
           <p className="text-white/50 mt-1">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
@@ -157,8 +157,7 @@ export default function Dashboard() {
             const progress = getProgress(macro.current, macro.goal);
 
             return (
-              <motion.div
-                key={macro.label}
+              <Motion.div                 key={macro.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -181,15 +180,14 @@ export default function Dashboard() {
                 </div>
 
                 <div className="progress-bar">
-                  <motion.div
-                    initial={{ width: 0 }}
+                  <Motion.div                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.8, delay: index * 0.1 }}
                     className={`progress-fill ${macro.barColor}`}
                   />
                 </div>
                 <p className="text-xs text-white/40 mt-2">{progress}% of daily goal</p>
-              </motion.div>
+              </Motion.div>
             );
           })}
         </div>
@@ -197,8 +195,7 @@ export default function Dashboard() {
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Nutrition Timeline */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             className="lg:col-span-2"
@@ -213,11 +210,10 @@ export default function Dashboard() {
                 <NutritionTimeline meals={todaysMeals} />
               )}
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Right Column - Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
             className="space-y-6"
@@ -238,8 +234,7 @@ export default function Dashboard() {
                 <span className="text-white/40">/ {goals?.fiber || 30}g</span>
               </div>
               <div className="progress-bar">
-                <motion.div
-                  initial={{ width: 0 }}
+                <Motion.div                   initial={{ width: 0 }}
                   animate={{ width: `${getProgress(totals.fiber, goals?.fiber || 30)}%` }}
                   transition={{ duration: 0.8 }}
                   className="progress-fill bg-blue-500"
@@ -263,13 +258,12 @@ export default function Dashboard() {
               </p>
               <p className="text-white/40 text-xs mt-1">kcal left today</p>
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
 
         {/* Calorie Flow Sankey */}
         {todaysMeals.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
             className="card p-6"
@@ -281,13 +275,12 @@ export default function Dashboard() {
             <ChartErrorBoundary>
               <CalorieFlowSankey meals={todaysMeals} />
             </ChartErrorBoundary>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Nutrient Density Scatter */}
         {todaysMeals.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65 }}
             className="card p-6"
@@ -299,13 +292,12 @@ export default function Dashboard() {
             <ChartErrorBoundary>
               <NutrientDensityScatter meals={todaysMeals} />
             </ChartErrorBoundary>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Macro Ratio Ternary */}
         {todaysMeals.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
             className="card p-6"
@@ -317,12 +309,11 @@ export default function Dashboard() {
             <ChartErrorBoundary>
               <MacroRatioTernary meals={todaysMeals} />
             </ChartErrorBoundary>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Recent Meals */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.75 }}
         >
@@ -341,7 +332,7 @@ export default function Dashboard() {
               limit={5}
             />
           </div>
-        </motion.div>
+        </Motion.div>
       </div>
     </Sidebar>
   );

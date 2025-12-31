@@ -1,6 +1,6 @@
 import { ResponsiveScatterPlot } from '@nivo/scatterplot';
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Crosshair, Info } from 'lucide-react';
 
 const MEAL_TYPE_COLORS = {
@@ -32,7 +32,7 @@ export default function NutrientDensityScatter({ meals, onMealClick }) {
   }
 
   // Group meals by type for the scatter plot
-  const scatterData = Object.entries(MEAL_TYPE_COLORS).map(([type, color]) => ({
+  const scatterData = Object.entries(MEAL_TYPE_COLORS).map(([type]) => ({
     id: type.charAt(0).toUpperCase() + type.slice(1),
     data: meals
       .filter(m => (m.meal_type || 'snack').toLowerCase() === type)
@@ -115,8 +115,7 @@ export default function NutrientDensityScatter({ meals, onMealClick }) {
         </button>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="h-80"
         style={{ overflow: 'visible' }}
@@ -187,7 +186,7 @@ export default function NutrientDensityScatter({ meals, onMealClick }) {
             }
           }}
         />
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }

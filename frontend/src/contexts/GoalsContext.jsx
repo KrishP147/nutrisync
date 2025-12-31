@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient';
 
 const GoalsContext = createContext();
 
+/* eslint-disable react-refresh/only-export-components */
 export function useGoals() {
   const context = useContext(GoalsContext);
   if (!context) {

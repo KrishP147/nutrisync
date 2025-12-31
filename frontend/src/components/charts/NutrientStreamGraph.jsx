@@ -1,6 +1,6 @@
 import { ResponsiveStream } from '@nivo/stream';
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Waves, Info } from 'lucide-react';
 
 const STREAM_COLORS = ['#ef4444', '#eab308', '#a855f7', '#3b82f6']; // Red (Protein), Yellow (Carbs), Purple (Fat), Blue (Fiber)
@@ -51,8 +51,7 @@ export default function NutrientStreamGraph({ data }) {
         )}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         className="h-72"
@@ -167,7 +166,7 @@ export default function NutrientStreamGraph({ data }) {
           }}
           animate={true}
         />
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useGoals } from '../contexts/GoalsContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import { User, X, Leaf, Calculator, Save, AlertTriangle } from 'lucide-react';
 
 const DIETARY_RESTRICTIONS = [
@@ -243,9 +243,9 @@ export default function UserProfile() {
         {isOpen && (
           <div className="fixed inset-0 z-[9999] overflow-y-auto">
             <div className="min-h-full flex items-center justify-center p-4">
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/80" />
+              <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/80" />
               
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              <Motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
                 className="relative card p-8 max-w-2xl w-full my-8 border-primary-700/30 max-h-[90vh] overflow-y-auto custom-scrollbar">
                 
                 <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 p-2  bg-white/5 text-white/60 hover:text-white">
@@ -411,7 +411,7 @@ export default function UserProfile() {
 
                     {/* Calculated Goals */}
                     {calculatedGoals && (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="card p-4 border-primary-700/30 bg-primary-700/5">
+                      <Motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="card p-4 border-primary-700/30 bg-primary-700/5">
                         <h3 className="font-medium text-white mb-4">Recommended Daily Goals</h3>
                         <div className="grid grid-cols-5 gap-4 text-center">
                           <div>
@@ -438,7 +438,7 @@ export default function UserProfile() {
                         <button onClick={handleApplyGoals} disabled={loading} className="btn-primary w-full mt-4">
                           <Save size={18} /> Apply These Goals
                         </button>
-                      </motion.div>
+                      </Motion.div>
                     )}
                   </div>
                 ) : (
@@ -522,7 +522,7 @@ export default function UserProfile() {
                     </button>
                   </div>
                 )}
-              </motion.div>
+              </Motion.div>
             </div>
           </div>
         )}

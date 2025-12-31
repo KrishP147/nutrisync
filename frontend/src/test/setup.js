@@ -1,7 +1,25 @@
-import { expect, afterEach, vi } from 'vitest';
+import { expect, afterEach, vi, beforeAll, afterAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import React from 'react';
+
+// Suppress act() warnings in tests - they're often false positives with async operations
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('not wrapped in act(...)')
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});
 
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
@@ -37,23 +55,15 @@ if (typeof globalThis !== 'undefined') {
     }
     unobserve() {}
   };
-} else if (typeof global !== 'undefined') {
-  global.IntersectionObserver = class IntersectionObserver {
-    constructor() {}
-    disconnect() {}
-    observe() {}
-    takeRecords() {
-      return [];
-    }
-    unobserve() {}
-  };
 }
 
 // Mock motion/react globally to prevent animation-related hangs in CI
 // Using React.createElement instead of JSX since this is a .js file
 // Filter out motion-specific props to avoid React warnings
-const createMotionElement = (tag) => ({ children, whileInView, initial, animate, exit, transition, ...props }) => {
-  return React.createElement(tag, props, children);
+const createMotionElement = (tag) => ({ children, ...props }) => {
+  // Remove motion props: whileInView, initial, animate, exit, transition
+  const { whileInView: _whileInView, initial: _initial, animate: _animate, exit: _exit, transition: _transition, ...cleanProps } = props;
+  return React.createElement(tag, cleanProps, children);
 };
 
 vi.mock('motion/react', () => ({
@@ -71,7 +81,7 @@ vi.mock('motion/react', () => ({
     ul: createMotionElement('ul'),
     li: createMotionElement('li'),
     img: (props) => {
-      const { whileInView, initial, animate, exit, transition, ...rest } = props;
+      const { whileInView: _whileInView, initial: _initial, animate: _animate, exit: _exit, transition: _transition, ...rest } = props;
       return React.createElement('img', rest);
     },
   },

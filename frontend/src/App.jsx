@@ -23,7 +23,8 @@ import Pricing from './pages/Pricing';
 
 function App() {
   const [session, setSession] = useState(null);
-  const [loading, setloading] = useState(true)
+  const [loading, setloading] = useState(true);
+  const [checkingOAuth, setCheckingOAuth] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -33,20 +34,121 @@ function App() {
     });
 
     // Listen for auth changes
-    const { data: { subscription }, } = supabase.auth.onAuthStateChange((event, session) => {
-      // Don't set session for password recovery events
-      // Let the ResetPassword component handle it
-      if (event === 'PASSWORD_RECOVERY') {
-        setSession(null);
-      } else {
-        setSession(session);
+    const { data: { subscription }, } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // IMPORTANT: Don't set session immediately - wait for OAuth checks to complete
+      // This prevents the dashboard from flashing before blocking
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        const isOAuth = session.user.app_metadata?.provider !== 'email';
+
+        if (isOAuth) {
+          // Check where the OAuth flow originated from
+          const oauthOrigin = localStorage.getItem('oauth_flow_origin');
+
+          if (oauthOrigin === 'register') {
+            // Keep loading state active during OAuth checks
+            setCheckingOAuth(true);
+
+            // User clicked "Continue with Google" on register page
+            // Use Supabase's identity metadata to determine if this is truly a new account
+            // When OAuth creates a new account, the user object is created fresh
+            // When OAuth logs into existing account, the user object already existed
+
+            console.log('OAuth signup attempt');
+            console.log('User created_at:', session.user.created_at);
+            console.log('User email confirmed:', session.user.email_confirmed_at);
+            console.log('User identities:', session.user.identities);
+
+            // Check if user was created very recently (within last 3 seconds)
+            const createdAt = new Date(session.user.created_at);
+            const now = new Date();
+            const accountAge = now - createdAt;
+
+            console.log('Account age (ms):', accountAge);
+            console.log('Account age (seconds):', accountAge / 1000);
+
+            // If account is more than 3 seconds old, it's an existing account trying to sign up
+            if (accountAge > 3000) {
+              console.log('Blocking OAuth signup - account exists (age > 3s)');
+              await supabase.auth.signOut();
+              localStorage.removeItem('oauth_flow_origin');
+              localStorage.removeItem('oauth_account_check');
+              localStorage.setItem('oauth_login_error', 'An account with this Google account already exists. Please login instead.');
+              setCheckingOAuth(false);
+              window.location.replace('/register');
+              return;
+            }
+
+            // Account is brand new (< 3 seconds old) - allow signup
+            console.log('New OAuth signup - allowing (account age < 3s)');
+            localStorage.removeItem('oauth_flow_origin');
+            localStorage.removeItem('oauth_account_check');
+            setCheckingOAuth(false);
+            setSession(session);
+            return;
+          } else if (oauthOrigin === 'login') {
+            // Keep loading state active during OAuth checks
+            setCheckingOAuth(true);
+
+            // User clicked "Continue with Google" on login page
+            try {
+              const { data: profileData, error: profileError } = await supabase
+                .from('user_profile')
+                .select('user_id')
+                .eq('user_id', session.user.id)
+                .maybeSingle();
+
+              const hasProfile = profileData !== null && !profileError;
+
+              console.log('OAuth login - Profile exists:', hasProfile);
+
+              if (!hasProfile) {
+                // No profile found - brand new account created during login attempt
+                // DO NOT set session - this prevents dashboard from showing
+                console.log('New account created during login - blocking');
+                await supabase.auth.signOut();
+                localStorage.removeItem('oauth_flow_origin');
+                localStorage.removeItem('oauth_account_check');
+                localStorage.setItem('oauth_login_error', 'No account found with this Google account. Please signup first.');
+                setCheckingOAuth(false);
+                window.location.replace('/login');
+                return; // Exit without setting session
+              } else {
+                // Existing account - allow login
+                console.log('Existing OAuth user logging in - allowing');
+                localStorage.removeItem('oauth_flow_origin');
+                localStorage.removeItem('oauth_account_check');
+                setCheckingOAuth(false);
+                setSession(session);
+                return;
+              }
+            } catch (err) {
+              console.error('Error checking profile:', err);
+              // On error, default to allowing (fail open for better UX)
+              localStorage.removeItem('oauth_flow_origin');
+              localStorage.removeItem('oauth_account_check');
+              setCheckingOAuth(false);
+              setSession(session);
+              return;
+            }
+          } else {
+            // No origin stored (direct navigation or page refresh) - allow through
+            localStorage.removeItem('oauth_flow_origin');
+            localStorage.removeItem('oauth_account_check');
+            setSession(session);
+            return;
+          }
+        }
       }
+
+      // For non-OAuth or SIGNED_OUT events, just set the session normally
+      setSession(session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) {
+  if (loading || checkingOAuth) {
     return (
       <div className="min-h-screen bg-dark-primary flex items-center justify-center">
         <div className="text-matrix-green-400 text-xl">Loading...</div>

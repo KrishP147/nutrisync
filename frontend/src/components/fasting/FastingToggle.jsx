@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState } from 'react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import { Timer, Play, Square, Edit2, Sparkles } from 'lucide-react';
 import { useFasting } from '../../contexts/FastingContext';
 import { useGoals } from '../../contexts/GoalsContext';
@@ -11,7 +11,6 @@ export default function FastingToggle() {
         isFasting,
         loading,
         elapsedTime,
-        remainingTime,
         progress,
         isComplete,
         startFast,
@@ -92,7 +91,7 @@ export default function FastingToggle() {
         }
     };
 
-    const handleCancelFast = async () => {
+    const _handleCancelFast = async () => {
         if (confirm('Are you sure you want to cancel your fast? This will mark it as cancelled.')) {
             await endFast(true);
         }
@@ -155,8 +154,7 @@ export default function FastingToggle() {
                             {/* Progress indicator */}
                             <div className="hidden sm:flex items-center gap-2 mr-4">
                                 <div className="w-24 h-2 bg-white/10 overflow-hidden">
-                                    <motion.div
-                                        className={`h-full ${isComplete ? 'bg-green-500' : 'bg-orange-500'}`}
+                                    <Motion.div                                         className={`h-full ${isComplete ? 'bg-green-500' : 'bg-orange-500'}`}
                                         initial={{ width: 0 }}
                                         animate={{ width: `${progress}%` }}
                                     />
@@ -212,8 +210,7 @@ export default function FastingToggle() {
             {/* Edit Duration Panel */}
             <AnimatePresence>
                 {showEdit && isFasting && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
+                    <Motion.div                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden"
@@ -236,22 +233,20 @@ export default function FastingToggle() {
                                 ×
                             </button>
                         </div>
-                    </motion.div>
+                    </Motion.div>
                 )}
             </AnimatePresence>
 
             {/* AI Recommendation Modal */}
             <AnimatePresence>
                 {showRecommendation && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
+                    <Motion.div                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
                         onClick={cancelStartFast}
                     >
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
+                        <Motion.div                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
                             onClick={(e) => e.stopPropagation()}
@@ -306,8 +301,8 @@ export default function FastingToggle() {
                                     Cancel
                                 </button>
                             </div>
-                        </motion.div>
-                    </motion.div>
+                        </Motion.div>
+                    </Motion.div>
                 )}
             </AnimatePresence>
         </div>

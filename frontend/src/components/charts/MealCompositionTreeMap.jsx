@@ -1,6 +1,6 @@
 import { ResponsiveTreeMap } from '@nivo/treemap';
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { LayoutGrid, Info } from 'lucide-react';
 
 const MACRO_COLORS = {
@@ -88,7 +88,7 @@ export default function MealCompositionTreeMap({ meals }) {
       name: category,
       color: MACRO_COLORS[category],
       children: Object.entries(foods)
-        .filter(([_, cal]) => cal > 0)
+        .filter(([, cal]) => cal > 0)
         .map(([food, calories]) => ({
           name: food,
           displayName: truncateName(food),
@@ -133,8 +133,7 @@ export default function MealCompositionTreeMap({ meals }) {
       </div>
 
       <div className="overflow-x-auto -mx-4 px-4" style={{ overflow: 'visible' }}>
-        <motion.div
-          initial={{ opacity: 0 }}
+        <Motion.div           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="h-80 mt-6"
           style={{ overflow: 'visible', minWidth: isMobile ? '600px' : 'auto', position: 'relative', zIndex: 1 }}
@@ -175,7 +174,7 @@ export default function MealCompositionTreeMap({ meals }) {
           nodeOpacity={0.9}
           tooltip={CustomTooltip}
           isInteractive={true}
-          onClick={(node) => {
+          onClick={() => {
             // Tooltip will show on hover/click automatically
           }}
             theme={{
@@ -199,7 +198,7 @@ export default function MealCompositionTreeMap({ meals }) {
           animate={true}
           motionConfig="gentle"
         />
-        </motion.div>
+        </Motion.div>
       </div>
     </div>
   );

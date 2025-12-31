@@ -1,5 +1,5 @@
 import { ResponsiveRadar } from '@nivo/radar';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Target } from 'lucide-react';
 
 export default function GoalAchievementRadar({ currentData, goals, previousData }) {
@@ -77,8 +77,7 @@ export default function GoalAchievementRadar({ currentData, goals, previousData 
 
   return (
     <div className="space-y-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+      <Motion.div         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="h-72"
@@ -120,11 +119,10 @@ export default function GoalAchievementRadar({ currentData, goals, previousData 
             }
           }}
         />
-      </motion.div>
+      </Motion.div>
 
       {/* Achievement badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
+      <Motion.div         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
         className="flex justify-center"
@@ -147,7 +145,7 @@ export default function GoalAchievementRadar({ currentData, goals, previousData 
                 : `Average: ${Math.round(avgCurrent)}% of goals`
           }
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }

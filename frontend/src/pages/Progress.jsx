@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import {
   Flame,
   Beef,
@@ -29,11 +29,8 @@ export default function Progress() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [barChartView, setBarChartView] = useState('all');
-  const [showStreakInfo, setShowStreakInfo] = useState(false);
   const [meals, setMeals] = useState([]);
   const [weeklyPatternView, setWeeklyPatternView] = useState('calories');
-  const [showInfoMealDist, setShowInfoMealDist] = useState(false);
-  const [showInfoWeekly, setShowInfoWeekly] = useState(false);
   const [weeklyData, setWeeklyData] = useState([]);
   const { getFastingHistory, getFastingStats } = useFasting();
   const [fastingHistory, setFastingHistory] = useState([]);
@@ -529,13 +526,13 @@ export default function Progress() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <motion.h1
+              <Motion.h1
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-3xl font-heading font-bold text-white"
               >
                 Progress
-              </motion.h1>
+              </Motion.h1>
               <p className="text-white/50 mt-1">Track your nutrition journey over time</p>
             </div>
           </div>
@@ -599,8 +596,7 @@ export default function Progress() {
           {/* Streak Display and Stats */}
           {stats && (
             <div className="flex flex-wrap gap-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+              <Motion.div                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className={`card px-6 py-4 flex items-center gap-4 relative ${stats.goalsMetStreak > 0 ? 'border-amber-500/30' : ''}`}
               >
@@ -610,26 +606,24 @@ export default function Progress() {
                   </p>
                   <p className="text-white/50 text-sm">Day Streak</p>
                 </div>
-              </motion.div>
+              </Motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
+              <Motion.div                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="card p-5"
               >
                 <p className="text-3xl font-mono font-bold text-primary-500">{stats.totalMeals}</p>
                 <p className="text-white/50 text-sm mt-1">Total Meals</p>
-              </motion.div>
+              </Motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
+              <Motion.div                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 className="card p-5"
               >
                 <p className="text-3xl font-mono font-bold text-secondary-400">{stats.avgCaloriesPerMeal}</p>
                 <p className="text-white/50 text-sm mt-1">Avg Cal/Meal</p>
-              </motion.div>
+              </Motion.div>
             </div>
           )}
         </div>
@@ -645,8 +639,7 @@ export default function Progress() {
               const styles = colorStyles[stat.color];
 
               return (
-                <motion.div
-                  key={stat.label}
+                <Motion.div                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
@@ -663,15 +656,14 @@ export default function Progress() {
                   {stat.goal && (
                     <p className="text-xs text-white/30 mt-1">Goal: {stat.goal}{stat.unit}</p>
                   )}
-                </motion.div>
+                </Motion.div>
               );
             })}
           </div>
         )}
 
         {/* Heatmap */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="card p-6"
@@ -681,13 +673,12 @@ export default function Progress() {
             <p className="text-white/50 text-sm">Click on a day to see detailed breakdown</p>
           </div>
           <GitHubHeatmap data={heatmapData} goals={goals} timeRange={timeRange} currentDate={currentDate} />
-        </motion.div>
+        </Motion.div>
 
 
 
         {/* Bar Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="card p-6"
@@ -771,11 +762,10 @@ export default function Progress() {
               )}
             </BarChart>
           </ResponsiveContainer>
-        </motion.div>
+        </Motion.div>
 
         {/* Meal Type Distribution */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="card p-6"
@@ -787,11 +777,10 @@ export default function Progress() {
           <ChartErrorBoundary>
             <MealTypeDistribution meals={meals} />
           </ChartErrorBoundary>
-        </motion.div>
+        </Motion.div>
 
         {/* Weekly Pattern */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
           className="card p-6"
@@ -821,11 +810,10 @@ export default function Progress() {
                 radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </motion.div>
+        </Motion.div>
 
         {/* Nutrient Flow */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
           className="card p-6"
@@ -843,12 +831,11 @@ export default function Progress() {
               fiber: d['Avg Fiber']
             }))} />
           </ChartErrorBoundary>
-        </motion.div>
+        </Motion.div>
 
         {/* Fasting Overview Section */}
         {fastingStats && fastingHistory.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.75 }}
             className="space-y-6"
@@ -955,12 +942,11 @@ export default function Progress() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
 
         {/* Weight/BMI Progress */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
           className="card p-6"
@@ -970,7 +956,7 @@ export default function Progress() {
             <p className="text-white/50 text-sm">Track your weight over time</p>
           </div>
           <WeightBMIProgress goals={goals} timeRange={timeRange} currentDate={currentDate} />
-        </motion.div>
+        </Motion.div>
       </div>
     </Sidebar>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Bell, ChevronRight, Timer, Utensils, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useFasting } from '../../contexts/FastingContext';
@@ -213,8 +213,7 @@ export default function RemindersCard() {
     const Icon = reminder.icon;
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
+        <Motion.div             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`card p-4 border ${colors.border}`}
         >
@@ -232,6 +231,6 @@ export default function RemindersCard() {
                     </Link>
                 )}
             </div>
-        </motion.div>
+        </Motion.div>
     );
 }

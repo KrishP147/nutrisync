@@ -17,21 +17,21 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
     // Increase timeout when coverage is enabled (slower)
-    testTimeout: process.env.CI ? 60000 : 30000,
-    hookTimeout: process.env.CI ? 60000 : 30000,
+    testTimeout: 60000,
+    hookTimeout: 60000,
     teardownTimeout: 30000,
     // Use threads pool (default) - works better with async operations
     // The deprecated poolOptions has been removed per Vitest 4 migration
     watch: false,
     reporter: ['verbose'],
     // Limit max concurrency in CI to prevent resource issues
-    maxConcurrency: process.env.CI ? 1 : 5,
+    maxConcurrency: 5,
     // Ensure tests exit properly in CI
     bail: 0, // Don't bail on first failure, run all tests
     // Force sequential execution in CI to avoid race conditions
     sequence: {
       shuffle: false,
-      concurrent: !process.env.CI,
+      concurrent: true,
     },
     coverage: {
       provider: 'v8',

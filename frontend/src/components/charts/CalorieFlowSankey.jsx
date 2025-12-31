@@ -1,6 +1,6 @@
 import { ResponsiveSankey } from '@nivo/sankey';
 import { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { GitBranch, Info } from 'lucide-react';
 
 const COLORS = {
@@ -102,8 +102,7 @@ export default function CalorieFlowSankey({ meals }) {
         )}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         className="h-80"
@@ -182,7 +181,7 @@ export default function CalorieFlowSankey({ meals }) {
           animate={true}
           motionConfig="gentle"
         />
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }

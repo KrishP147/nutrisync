@@ -4,6 +4,27 @@ import { BrowserRouter } from 'react-router-dom';
 import MealForm from '../MealForm';
 
 // Mock Supabase
+const createMockFrom = () => {
+  const mockInsert = vi.fn(() => ({
+    select: vi.fn().mockResolvedValue({
+      data: [{ id: 'meal-1', meal_name: 'Test Food' }],
+      error: null
+    })
+  }));
+  
+  return {
+    insert: mockInsert,
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    single: vi.fn().mockResolvedValue({
+      data: { calories: 2000 },
+      error: null
+    })
+  };
+};
+
+const mockFrom = vi.fn(createMockFrom);
+
 vi.mock('../../supabaseClient', () => ({
   supabase: {
     auth: {
@@ -12,20 +33,10 @@ vi.mock('../../supabaseClient', () => ({
         error: null
       })
     },
-    from: vi.fn(() => ({
-      insert: vi.fn(() => Promise.resolve({ data: { id: 'meal-1' }, error: null })),
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: { calories: 2000 },
-            error: null
-          }))
-        }))
-      }))
-    })),
+    from: mockFrom,
     storage: {
       from: vi.fn(() => ({
-        upload: vi.fn(() => Promise.resolve({ data: { path: 'photo.jpg' }, error: null })),
+        upload: vi.fn().mockResolvedValue({ data: { path: 'photo.jpg' }, error: null }),
         getPublicUrl: vi.fn(() => ({ data: { publicUrl: 'http://test.com/photo.jpg' } }))
       }))
     }
@@ -41,7 +52,7 @@ vi.mock('../../contexts/GoalsContext', () => ({
 
 // Mock updateDailyAchievement
 vi.mock('../../utils/updateDailyAchievement', () => ({
-  updateDailyAchievement: vi.fn()
+  updateDailyAchievement: vi.fn().mockResolvedValue(undefined)
 }));
 
 // Mock FoodSearchInput
@@ -184,21 +195,28 @@ describe('MealForm - Comprehensive Tests', () => {
       expect(screen.getByText(/test food/i)).toBeInTheDocument();
     });
     
-    // Find and click submit/save button
-    const buttons = screen.getAllByRole('button');
-    const submitButton = buttons.find(btn => 
-      btn.textContent.toLowerCase().includes('save') ||
-      btn.textContent.toLowerCase().includes('log') ||
-      btn.textContent.toLowerCase().includes('add')
-    );
+    // Find submit button - wait for it to be enabled
+    const submitButton = await waitFor(() => {
+      const buttons = screen.getAllByRole('button');
+      const btn = buttons.find(b => {
+        const text = b.textContent.toLowerCase();
+        return (text.includes('log') || text.includes('save') || text.includes('add')) &&
+               !b.disabled &&
+               !text.includes('logging');
+      });
+      if (!btn) {
+        throw new Error('Submit button not found or still disabled');
+      }
+      return btn;
+    }, { timeout: 3000 });
     
-    if (submitButton && !submitButton.disabled) {
-      fireEvent.click(submitButton);
-      
-      await waitFor(() => {
-        expect(onMealAdded).toHaveBeenCalled();
-      }, { timeout: 2000 });
-    }
+    // Click submit
+    fireEvent.click(submitButton);
+    
+    // Wait for form submission to complete and callback to be called
+    await waitFor(() => {
+      expect(onMealAdded).toHaveBeenCalled();
+    }, { timeout: 5000 });
   });
 
   it('shows loading state during submission', async () => {

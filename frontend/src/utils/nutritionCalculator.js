@@ -74,12 +74,14 @@ export function calculateTDEE(bmr, activityLevel) {
  */
 export function adjustCaloriesForGoal(tdee, goalType, customAmount = null) {
   switch (goalType) {
-    case 'lose':
+    case 'lose': {
       const deficit = customAmount || 500;
       return Math.round(tdee - deficit);
-    case 'gain':
+    }
+    case 'gain': {
       const surplus = customAmount || 300;
       return Math.round(tdee + surplus);
+    }
     case 'maintain':
     default:
       return tdee;

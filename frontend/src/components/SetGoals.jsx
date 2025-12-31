@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useGoals } from '../contexts/GoalsContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import { Target, ChevronDown, Timer, Bell, Save, X } from 'lucide-react';
 import UserProfile from './UserProfile';
 
@@ -113,8 +113,7 @@ export default function SetGoals() {
       {/* Expanded Content */}
       <AnimatePresence>
         {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
+          <Motion.div             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
@@ -213,8 +212,7 @@ export default function SetGoals() {
 
                 {/* Fasting Options (only show when enabled) */}
                 {tempGoals.fasting_enabled && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
+                  <Motion.div                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-4"
@@ -267,7 +265,7 @@ export default function SetGoals() {
                         />
                       </div>
                     </div>
-                  </motion.div>
+                  </Motion.div>
                 )}
               </div>
 
@@ -306,7 +304,7 @@ export default function SetGoals() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>

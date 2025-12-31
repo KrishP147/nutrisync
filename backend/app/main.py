@@ -907,6 +907,46 @@ def get_fallback_reminder(is_fasting, hour, todays_calories, goals):
     }
 
 
+@app.get("/api/user/{user_id}")
+async def get_user_profile(user_id: str, authorization: Optional[str] = Header(None)):
+    """
+    Check if a user profile exists.
+    Returns 200 if profile exists, 404 if not.
+    Requires authentication token in Authorization header.
+    """
+    if not supabase:
+        raise HTTPException(status_code=503, detail="Supabase not configured")
+
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required")
+
+    try:
+        # Extract token from "Bearer <token>"
+        token = authorization.replace("Bearer ", "")
+
+        # Verify the token is valid
+        user_response = supabase.auth.get_user(token)
+        if not user_response or not user_response.user:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        # Check if user profile exists in database
+        result = supabase.table('user_profile').select('*').eq('user_id', user_id).execute()
+
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=404, detail="User profile not found")
+
+        return {
+            "exists": True,
+            "user_id": user_id
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[GET USER] Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to check user profile")
+
+
 @app.delete("/api/user/{user_id}")
 async def delete_user_account(user_id: str, authorization: Optional[str] = Header(None)):
     """

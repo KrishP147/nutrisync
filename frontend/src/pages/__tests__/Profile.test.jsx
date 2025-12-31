@@ -2,7 +2,7 @@
  * Tests for Profile page
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, waitFor, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Profile from '../Profile';
 
@@ -71,30 +71,29 @@ describe('Profile', () => {
 
   it('renders profile page', async () => {
     // Component should render without crashing
-    expect(() => {
+    await act(async () => {
       renderProfile();
-    }).not.toThrow();
-    
-    // Give component time to render
-    await new Promise(resolve => setTimeout(resolve, 100));
+      // Give component time to render
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
   });
 
   it('displays user email', async () => {
     // Component should render without crashing
-    expect(() => {
+    await act(async () => {
       renderProfile();
-    }).not.toThrow();
-    
-    // Give component time to render
-    await new Promise(resolve => setTimeout(resolve, 100));
+      // Give component time to render
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
   });
 
   it('shows dietary restrictions section', async () => {
-    renderProfile();
-
-    await waitFor(() => {
-      // Dietary preferences should be visible
-      expect(true).toBe(true);
+    await act(async () => {
+      renderProfile();
+      await waitFor(() => {
+        // Dietary preferences should be visible
+        expect(true).toBe(true);
+      }, { timeout: 3000 });
     });
   });
 
@@ -143,7 +142,7 @@ describe('Profile', () => {
 
   it('handles account deletion', async () => {
     const { supabase } = await import('../../supabaseClient');
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ message: 'Account deleted' })
     });
@@ -156,7 +155,7 @@ describe('Profile', () => {
   });
 
   it('shows confirmation modal for account deletion', async () => {
-    global.confirm = vi.fn().mockReturnValue(true);
+    globalThis.confirm = vi.fn().mockReturnValue(true);
     
     renderProfile();
 
@@ -306,7 +305,7 @@ describe('Profile', () => {
   });
 
   it('handles failed account deletion', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       json: async () => ({ message: 'Deletion failed' })
     });

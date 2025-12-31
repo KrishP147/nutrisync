@@ -1,6 +1,6 @@
 import { ResponsiveSunburst } from '@nivo/sunburst';
-import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { useState, useMemo } from 'react';
+import { motion as Motion } from 'motion/react';
 import { Sun, Info } from 'lucide-react';
 
 const MEAL_TYPE_COLORS = {
@@ -46,15 +46,6 @@ const getTimeOfDay = (hour) => {
 
 export default function MealTimingSunburst({ meals }) {
   const [showInfo, setShowInfo] = useState(false);
-  const [hoveredArc, setHoveredArc] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const sunburstData = useMemo(() => {
     if (!meals || meals.length === 0) return null;
@@ -173,8 +164,7 @@ export default function MealTimingSunburst({ meals }) {
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="h-80"
         style={{ overflow: 'visible' }}
@@ -222,7 +212,7 @@ export default function MealTimingSunburst({ meals }) {
           motionConfig="gentle"
           transitionMode="pushIn"
         />
-      </motion.div>
+      </Motion.div>
 
       {/* Hover hint */}
       <p className="text-center text-white/40 text-xs mt-2">Hover over sections to see details</p>

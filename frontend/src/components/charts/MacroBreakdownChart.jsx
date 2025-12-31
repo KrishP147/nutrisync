@@ -1,5 +1,5 @@
 import { ResponsivePie } from '@nivo/pie';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Utensils } from 'lucide-react';
 
 const MACRO_COLORS = {

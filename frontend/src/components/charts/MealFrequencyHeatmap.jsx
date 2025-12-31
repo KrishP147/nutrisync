@@ -1,6 +1,6 @@
 import { ResponsiveHeatMap } from '@nivo/heatmap';
 import { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Grid3X3, Info } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -84,8 +84,7 @@ export default function MealFrequencyHeatmap({ meals }) {
         </button>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="h-80"
         style={{ overflow: 'visible' }}
@@ -149,7 +148,7 @@ export default function MealFrequencyHeatmap({ meals }) {
           }}
           animate={true}
         />
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import {
   Camera,
   BarChart3,
@@ -63,13 +63,6 @@ export default function Landing() {
     { step: "03", title: "Track Progress", description: "Monitor your goals with beautiful visualizations" }
   ];
 
-  const colorClasses = {
-    primary: { bg: 'bg-primary-700/10', text: 'text-primary-500', border: 'border-primary-700/30' },
-    secondary: { bg: 'bg-secondary-500/10', text: 'text-secondary-400', border: 'border-secondary-500/30' },
-    amber: { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/30' },
-    purple: { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
-  };
-
   return (
     <div className="min-h-screen bg-black">
       {/* Fixed Header */}
@@ -81,7 +74,7 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-3 sm:gap-6">
             <Link to="/login" className="text-white/70 hover:text-white transition-colors font-medium text-sm sm:text-base">
-              Sign In
+              Login
             </Link>
             <Link to="/register" className="btn-primary text-sm sm:text-base px-3 sm:px-4">
               <span className="hidden sm:inline">Get Started</span>
@@ -106,8 +99,7 @@ export default function Landing() {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-24">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+          <Motion.div             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
@@ -135,11 +127,10 @@ export default function Landing() {
                 View Demo
               </Link>
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Stats Row */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+          <Motion.div             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mt-20 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
@@ -152,7 +143,7 @@ export default function Landing() {
                 <div className="text-white/50 text-sm mt-2">{stat.label}</div>
               </div>
             ))}
-          </motion.div>
+          </Motion.div>
         </div>
 
       </section>
@@ -160,8 +151,7 @@ export default function Landing() {
       {/* Features Section */}
       <section className="py-32 px-6 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-20"
@@ -172,7 +162,7 @@ export default function Landing() {
             <p className="text-xl text-white/50 max-w-2xl mx-auto">
               Everything you need to track, analyze, and optimize your nutrition
             </p>
-          </motion.div>
+          </Motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, index) => {
@@ -184,8 +174,7 @@ export default function Landing() {
               ];
 
               return (
-                <motion.div
-                  key={index}
+                <Motion.div                   key={index}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -208,7 +197,7 @@ export default function Landing() {
                       {feature.description}
                     </p>
                   </div>
-                </motion.div>
+                </Motion.div>
               );
             })}
           </div>
@@ -218,8 +207,7 @@ export default function Landing() {
       {/* How It Works */}
       <section className="py-32 px-6 bg-black">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <Motion.div             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
@@ -228,12 +216,11 @@ export default function Landing() {
               How It Works
             </h2>
             <p className="text-xl text-white/50">Three simple steps to better nutrition</p>
-          </motion.div>
+          </Motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {howItWorks.map((item, index) => (
-              <motion.div
-                key={index}
+              <Motion.div                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -243,7 +230,7 @@ export default function Landing() {
                 <div className="text-6xl font-mono font-bold text-green-500/40 mb-4">{item.step}</div>
                 <h3 className="text-xl font-heading font-semibold text-white mb-3">{item.title}</h3>
                 <p className="text-white/60">{item.description}</p>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         </div>
@@ -260,8 +247,7 @@ export default function Landing() {
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
+        <Motion.div           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           className="relative z-10 max-w-7xl mx-auto px-6"
@@ -282,15 +268,14 @@ export default function Landing() {
               <ArrowRight size={18} />
             </Link>
           </div>
-        </motion.div>
+        </Motion.div>
       </section>
 
       {/* Benefits Section */}
       <section className="py-32 px-6 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
+            <Motion.div               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
@@ -305,8 +290,7 @@ export default function Landing() {
 
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
-                  <motion.div
-                    key={index}
+                  <Motion.div                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -317,13 +301,12 @@ export default function Landing() {
                       <CheckCircle2 size={16} className="text-primary-500" />
                     </div>
                     <span className="text-white/80">{benefit}</span>
-                  </motion.div>
+                  </Motion.div>
                 ))}
               </div>
-            </motion.div>
+            </Motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
+            <Motion.div               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               className="relative"
@@ -371,7 +354,7 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </Motion.div>
           </div>
         </div>
       </section>
@@ -403,8 +386,7 @@ export default function Landing() {
 
       {/* CTA Section */}
       <section className="py-32 px-6 bg-[#0a0a0a]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <Motion.div           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="max-w-4xl mx-auto text-center"
@@ -421,7 +403,7 @@ export default function Landing() {
               <ArrowRight size={20} />
             </Link>
           </div>
-        </motion.div>
+        </Motion.div>
       </section>
 
       {/* Footer */}

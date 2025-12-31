@@ -26,7 +26,7 @@ export default function ForgotPassword() {
         setSuccess(true);
         setLoading(false);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }

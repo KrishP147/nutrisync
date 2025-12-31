@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Info } from 'lucide-react';
 
 export default function GitHubHeatmap({ data, goals, timeRange = 'weekly', currentDate = new Date() }) {
@@ -167,8 +167,7 @@ export default function GitHubHeatmap({ data, goals, timeRange = 'weekly', curre
         {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-1">
             {week.map((day, dayIndex) => (
-              <motion.div
-                key={dayIndex}
+              <Motion.div                 key={dayIndex}
                 whileHover={{ scale: day ? 1.2 : 1 }}
                 className={`
                   w-3 h-3  cursor-pointer transition-all
@@ -199,8 +198,7 @@ export default function GitHubHeatmap({ data, goals, timeRange = 'weekly', curre
 
       {/* Tooltip */}
       {hoveredDay && hoveredDay.data && (
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
+        <Motion.div           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           className="fixed z-50 card p-3 text-sm shadow-xl pointer-events-none"
           style={{
@@ -229,7 +227,7 @@ export default function GitHubHeatmap({ data, goals, timeRange = 'weekly', curre
             </div>
           </div>
           <p className="text-xs text-white/40 mt-2 text-center">Click to view details</p>
-        </motion.div>
+        </Motion.div>
       )}
     </div>
   );

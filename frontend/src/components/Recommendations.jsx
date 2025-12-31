@@ -330,14 +330,14 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
       {/* Regenerate Confirmation Popup */}
       <AnimatePresence>
         {showRegeneratePopup && (
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setShowRegeneratePopup(false)}
           >
-            <motion.div
+            <Motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -370,8 +370,8 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
                   Regenerate
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
 
@@ -380,7 +380,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
           const colors = colorClasses[rec.color] || colorClasses.primary;
           
           return (
-            <motion.div
+            <Motion.div
               key={rec.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -396,7 +396,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
                   <span className="badge-amber text-xs">Priority</span>
                 )}
               </div>
-            </motion.div>
+            </Motion.div>
           );
         })}
       </div>

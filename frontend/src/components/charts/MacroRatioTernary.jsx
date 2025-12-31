@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { Triangle, Info } from 'lucide-react';
 
 // Convert P/C/F ratio to ternary coordinates
@@ -76,8 +76,7 @@ export default function MacroRatioTernary({ meals }) {
         )}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="h-80 relative overflow-hidden"
       >
@@ -154,7 +153,7 @@ export default function MacroRatioTernary({ meals }) {
             </div>
           </div>
         )}
-      </motion.div>
+      </Motion.div>
 
       {/* Legend */}
       <div className="flex justify-center gap-4 mt-2 text-xs text-white/50">

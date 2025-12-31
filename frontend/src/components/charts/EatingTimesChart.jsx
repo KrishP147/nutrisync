@@ -1,5 +1,5 @@
 import { ResponsiveBar } from '@nivo/bar';
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 
@@ -74,8 +74,7 @@ export default function EatingTimesChart({ meals, selectedView = 'calories' }) {
 
   return (
     <div className="space-y-4">
-      <motion.div
-        initial={{ opacity: 0 }}
+      <Motion.div         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         className="h-64"
@@ -135,7 +134,7 @@ export default function EatingTimesChart({ meals, selectedView = 'calories' }) {
           animate={true}
           motionConfig="gentle"
         />
-      </motion.div>
+      </Motion.div>
 
       {/* Insights */}
       {peakHour.calories > 0 && (
