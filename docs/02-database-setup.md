@@ -90,7 +90,7 @@ Each table has 4 standard policies (SELECT, INSERT, UPDATE, DELETE):
 
 ### Tables with Full RLS Protection
 
-Verify these 8 tables have RLS enabled with all 4 policies:
+Verify all 9 tables have RLS enabled with 4 policies each:
 
 1. **user_profile** - Personal details, BMI, dietary restrictions
 2. **user_goals** - Daily nutrition goals and fasting settings
@@ -99,35 +99,7 @@ Verify these 8 tables have RLS enabled with all 4 policies:
 5. **meal_components** - Individual foods within meals
 6. **daily_achievements** - Daily goal completion tracking
 7. **fasting_sessions** - Fasting start/end tracking
-8. **user_foods** - Custom user-created foods
-
-### Security Exception
-
-**⚠️ `user_foods` table**: Currently has RLS **disabled** to allow easier development. 
-
-**To enable RLS on `user_foods` (recommended for production)**:
-
-1. Navigate to **Table Editor** > `user_foods`
-2. Click **Enable RLS** button
-3. Add these 4 policies in **SQL Editor**:
-
-```sql
--- Allow users to view their own custom foods
-CREATE POLICY "Users can view own custom foods" ON user_foods
-  FOR SELECT USING (auth.uid() = user_id);
-
--- Allow users to create custom foods
-CREATE POLICY "Users can insert own custom foods" ON user_foods
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-
--- Allow users to update their custom foods
-CREATE POLICY "Users can update own custom foods" ON user_foods
-  FOR UPDATE USING (auth.uid() = user_id);
-
--- Allow users to delete their custom foods
-CREATE POLICY "Users can delete own custom foods" ON user_foods
-  FOR DELETE USING (auth.uid() = user_id);
-```
+8. **user_foods** - Custom user-created foods (RLS enabled via migration 006)
 
 ### Testing RLS (Optional but Recommended)
 
@@ -228,7 +200,7 @@ Navigate to **Table Editor**. You should see these tables:
 - weight_history ✅ (RLS enabled)
 - meals ✅ (RLS enabled)
 - meal_components ✅ (RLS enabled)
-- user_foods ⚠️ (RLS disabled - see warning above)
+- user_foods ✅ (RLS enabled)
 - daily_achievements ✅ (RLS enabled)
 - fasting_sessions ✅ (RLS enabled)
 
@@ -236,8 +208,8 @@ Navigate to **Storage**. You should see:
 - meal-photos (bucket with 3 policies)
 
 **Security Checklist**:
-- ✅ All tables have RLS enabled (except `user_foods`)
-- ✅ Each protected table has 4 policies (SELECT, INSERT, UPDATE, DELETE)
+- ✅ All 9 tables have RLS enabled
+- ✅ Each table has 4 policies (SELECT, INSERT, UPDATE, DELETE)
 - ✅ Storage bucket has upload, view, and delete policies
 - ✅ Email authentication is enabled
 
