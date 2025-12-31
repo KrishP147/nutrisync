@@ -133,7 +133,7 @@ export default function Landing() {
           <Motion.div             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-20 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
+            className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
           >
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
@@ -149,12 +149,12 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="py-32 px-6 bg-[#0a0a0a]">
+      <section className="py-20 px-6 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <Motion.div             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-20"
+            className="text-center mb-12"
           >
             <h2 className="text-4xl md:text-5xl font-heading font-bold text-white mb-6">
               Powerful Features
@@ -205,7 +205,7 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="py-32 px-6 bg-black">
+      <section className="py-20 px-6 bg-black">
         <div className="max-w-7xl mx-auto">
           <Motion.div             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -272,7 +272,7 @@ export default function Landing() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-32 px-6 bg-[#0a0a0a]">
+      <section className="py-20 px-6 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <Motion.div               initial={{ opacity: 0, x: -30 }}
@@ -385,7 +385,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 px-6 bg-[#0a0a0a]">
+      <section className="py-20 px-6 bg-[#0a0a0a]">
         <Motion.div           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { supabase } from '../supabaseClient';
 import { useGoals } from '../contexts/GoalsContext';
-import { AnimatePresence } from 'motion/react';
+import { motion as Motion, AnimatePresence } from 'motion/react';
 import api from '../services/api';
 
 export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {

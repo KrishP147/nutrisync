@@ -38,7 +38,12 @@ else:
 # CORS middleware (allow frontend to call backend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://nutrisync.me",
+        "https://www.nutrisync.me",
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

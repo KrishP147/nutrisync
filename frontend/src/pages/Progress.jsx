@@ -595,34 +595,35 @@ export default function Progress() {
 
           {/* Streak Display and Stats */}
           {stats && (
-            <div className="flex flex-wrap gap-4">
-              <Motion.div                 initial={{ opacity: 0, scale: 0.9 }}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-xs sm:max-w-sm">
+              <Motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`card px-6 py-4 flex items-center gap-4 relative ${stats.goalsMetStreak > 0 ? 'border-amber-500/30' : ''}`}
+                className={`card p-3 sm:p-4 ${stats.goalsMetStreak > 0 ? 'border-amber-500/30' : ''}`}
               >
-                <div className="flex-1">
-                  <p className={`text-3xl font-mono font-bold ${stats.goalsMetStreak > 0 ? 'text-amber-400' : 'text-white/40'}`}>
-                    {stats.goalsMetStreak}
-                  </p>
-                  <p className="text-white/50 text-sm">Day Streak</p>
-                </div>
+                <p className={`text-xl sm:text-2xl font-mono font-bold ${stats.goalsMetStreak > 0 ? 'text-amber-400' : 'text-white/40'}`}>
+                  {stats.goalsMetStreak}
+                </p>
+                <p className="text-white/50 text-xs mt-1">Streak</p>
               </Motion.div>
 
-              <Motion.div                 initial={{ opacity: 0, y: 20 }}
+              <Motion.div
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card p-5"
+                className="card p-3 sm:p-4"
               >
-                <p className="text-3xl font-mono font-bold text-primary-500">{stats.totalMeals}</p>
-                <p className="text-white/50 text-sm mt-1">Total Meals</p>
+                <p className="text-xl sm:text-2xl font-mono font-bold text-primary-500">{stats.totalMeals}</p>
+                <p className="text-white/50 text-xs mt-1">Meals</p>
               </Motion.div>
 
-              <Motion.div                 initial={{ opacity: 0, y: 20 }}
+              <Motion.div
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="card p-5"
+                className="card p-3 sm:p-4"
               >
-                <p className="text-3xl font-mono font-bold text-secondary-400">{stats.avgCaloriesPerMeal}</p>
-                <p className="text-white/50 text-sm mt-1">Avg Cal/Meal</p>
+                <p className="text-xl sm:text-2xl font-mono font-bold text-secondary-400">{stats.avgCaloriesPerMeal}</p>
+                <p className="text-white/50 text-xs mt-1">Cal/Meal</p>
               </Motion.div>
             </div>
           )}
