@@ -2,20 +2,20 @@
 
 Modern React application for NutriSync, built with Vite, Tailwind CSS, and Framer Motion. Located in the `frontend/` directory of the combined repository.
 
-## 🚀 Features
+## Features
 - **Dashboard**: Real-time stats and fasting tracking
 - **AI Logging**: Log meals via photo analysis or search
 - **Progress**: Visualized nutrition and fasting trends
 - **Recommendations**: Personalized AI-driven health tips
 - **Responsive Design**: Premium dark-mode aesthetic
 
-## 📂 Structure
+## Structure
 - `src/components/`: Reusable UI components
 - `src/contexts/`: Global state management
 - `src/pages/`: Main application pages
 - `src/services/`: API communication layer
 
-## 🛠️ Local Setup
+## Local Setup
 1. Navigate to the frontend directory:
    ```bash
    cd frontend
@@ -35,14 +35,14 @@ Modern React application for NutriSync, built with Vite, Tailwind CSS, and Frame
    npm run dev
    ```
 
-## 🚢 Deployment
+## Deployment
 Recommended deployment on **Vercel**:
 1. Connect your GitHub repository.
 2. Set the **Root Directory** to `frontend`.
 3. Set environment variables.
 4. Deploy!
 
-## 🧪 Testing
+## Testing
 Run the test suite:
 ```bash
 npm test
