@@ -2,21 +2,21 @@
 
 Backend API for the NutriSync application, located within the `backend/` directory of the combined repository.
 
-## 🚀 Features
+## Features
 - **FastAPI**: High-performance Python API
 - **Gemini AI**: Nutrition analysis and fasting recommendations
 - **Supabase Integration**: Data persistence and Auth
 - **USDA API**: Food database integration
 - **Automated Testing**: Pytest suite for API and logic
 
-## 📂 Structure
+## Structure
 - `app/`: Main application logic
 - `tests/`: Automated test suite
 - `nginx.conf`: Nginx configuration for proxying
 - `nutrisync.service`: Systemd service definition
 - `deploy.sh`: Automated deployment script for Ubuntu
 
-## 🛠️ Local Setup
+## Local Setup
 1. Navigate to the backend directory:
    ```bash
    cd backend
