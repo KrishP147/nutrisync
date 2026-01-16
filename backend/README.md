@@ -37,10 +37,10 @@ Backend API for the NutriSync application, located within the `backend/` directo
    uvicorn app.main:app --reload
    ```
 
-## 🚢 Deployment
+## Deployment
 For detailed deployment instructions on Digital Ocean using the combined repository structure, please see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
-## 🧪 Testing
+## Testing
 Run the test suite:
 ```bash
 pytest
