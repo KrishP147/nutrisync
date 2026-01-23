@@ -25,16 +25,46 @@ function App() {
   const [session, setSession] = useState(null);
   const [loading, setloading] = useState(true);
   const [checkingOAuth, setCheckingOAuth] = useState(false);
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(() => {
+    // Check for recovery hash on initial render (before Supabase processes it)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    return hashParams.get('type') === 'recovery';
+  });
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+      // Don't set session if we're in recovery mode
+      if (isPasswordRecovery) {
+        console.log('Recovery mode active - not setting initial session');
+        setSession(null);
+      } else {
+        setSession(session);
+      }
       setloading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription }, } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // Handle password recovery event - set recovery mode and don't set session
+      if (event === 'PASSWORD_RECOVERY') {
+        console.log('PASSWORD_RECOVERY event - enabling recovery mode');
+        setIsPasswordRecovery(true);
+        setSession(null);
+        return;
+      }
+
+      // Check if we should skip setting session due to recovery
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const isRecoveryHash = hashParams.get('type') === 'recovery';
+      
+      if (isRecoveryHash && event === 'SIGNED_IN') {
+        console.log('Recovery hash present - ignoring SIGNED_IN event');
+        setIsPasswordRecovery(true);
+        setSession(null);
+        return;
+      }
+
       // IMPORTANT: Don't set session immediately - wait for OAuth checks to complete
       // This prevents the dashboard from flashing before blocking
 
@@ -167,15 +197,15 @@ function App() {
             <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/change-email" element={<ChangeEmail />} />
-            <Route path="/change-password" element={session ? <ChangePassword /> : <Navigate to="/login" />} />
-            <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
-            <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
-            <Route path="/logging" element={session ? <Logging /> : <Navigate to="/login" />} />
-            <Route path="/progress" element={session ? <Progress /> : <Navigate to="/login" />} />
-            <Route path="/daily-view/:date" element={session ? <DailyView /> : <Navigate to="/login" />} />
-            <Route path="/gallery" element={session ? <PhotoGallery /> : <Navigate to="/login" />} />
-            <Route path="/recommendations" element={session ? <RecommendationsPage /> : <Navigate to="/login" />} />
-            <Route path="/pricing" element={session ? <Pricing /> : <Navigate to="/login" />} />
+            <Route path="/change-password" element={session && !isPasswordRecovery ? <ChangePassword /> : <Navigate to="/login" />} />
+            <Route path="/profile" element={session && !isPasswordRecovery ? <Profile /> : <Navigate to="/login" />} />
+            <Route path="/dashboard" element={session && !isPasswordRecovery ? <Dashboard /> : (isPasswordRecovery ? <Navigate to="/reset-password" /> : <Navigate to="/login" />)} />
+            <Route path="/logging" element={session && !isPasswordRecovery ? <Logging /> : <Navigate to="/login" />} />
+            <Route path="/progress" element={session && !isPasswordRecovery ? <Progress /> : <Navigate to="/login" />} />
+            <Route path="/daily-view/:date" element={session && !isPasswordRecovery ? <DailyView /> : <Navigate to="/login" />} />
+            <Route path="/gallery" element={session && !isPasswordRecovery ? <PhotoGallery /> : <Navigate to="/login" />} />
+            <Route path="/recommendations" element={session && !isPasswordRecovery ? <RecommendationsPage /> : <Navigate to="/login" />} />
+            <Route path="/pricing" element={session && !isPasswordRecovery ? <Pricing /> : <Navigate to="/login" />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
           </Routes>

@@ -25,6 +25,7 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [profile, setProfile] = useState({
     age: '', gender: 'male', height: '', weight: '', activity_level: 'moderately_active', goal_type: 'maintain'
@@ -242,7 +243,7 @@ export default function Profile() {
   const handleResetPassword = async () => {
     if (!user?.email) return;
     
-    setSaving(true);
+    setSendingReset(true);
     setMessage({ type: '', text: '' });
 
     try {
@@ -255,7 +256,7 @@ export default function Profile() {
     } catch (error) {
       setMessage({ type: 'error', text: error.message });
     } finally {
-      setSaving(false);
+      setSendingReset(false);
     }
   };
 
@@ -578,8 +579,8 @@ export default function Profile() {
                   <h2 className="text-lg font-heading font-semibold text-white">Password</h2>
                   <p className="text-sm text-white/50 mt-1">Reset your password via email</p>
                 </div>
-                <button onClick={handleResetPassword} disabled={saving} className="btn-outline w-full">
-                  {saving ? 'Sending...' : 'Send Password Reset Email'}
+                <button onClick={handleResetPassword} disabled={sendingReset} className="btn-outline w-full">
+                  {sendingReset ? 'Sending...' : 'Send Password Reset Email'}
                 </button>
               </div>
 
