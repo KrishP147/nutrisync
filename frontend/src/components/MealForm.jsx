@@ -283,41 +283,43 @@ export default function MealForm({ onMealAdded }) {
             {foods.length > 0 && (
               <div className="space-y-2 mb-3">
                 {foods.map((food, idx) => (
-                  <div key={food.id} className="bg-black border border-[#1a1a1a] p-3 ">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-white">{food.name}</p>
+                  <div key={food.id} className="bg-black border border-[#1a1a1a] p-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-white truncate">{food.name}</p>
                         <p className="text-xs text-white/60">
                           Base: {food.base_calories} cal per 100g
                         </p>
                       </div>
-                      <div className="w-32">
-                        <label className="block text-xs text-white/60 mb-1">
-                          Count (g or x)
-                        </label>
-                        <input
-                          type="text"
-                          value={food.portion_display}
-                          onChange={(e) => updateFoodQuantity(idx, e.target.value)}
-                          placeholder="1"
-                          className="w-full px-2 py-1 bg-black border border-[#1a1a1a]  text-sm focus:ring-2 focus:ring-primary-700 text-white"
-                        />
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-24 sm:w-32">
+                          <label className="block text-xs text-white/60 mb-1">
+                            Count
+                          </label>
+                          <input
+                            type="text"
+                            value={food.portion_display}
+                            onChange={(e) => updateFoodQuantity(idx, e.target.value)}
+                            placeholder="1"
+                            className="w-full px-2 py-1 bg-black border border-[#1a1a1a] text-sm focus:ring-2 focus:ring-primary-700 text-white"
+                          />
+                        </div>
+                        <div className="text-right min-w-[60px]">
+                          <p className="text-sm font-mono font-semibold text-primary-700">
+                            {Math.round(food.calories)} cal
+                          </p>
+                          <p className="text-xs text-white/60">
+                            P: {food.protein_g.toFixed(1)}g
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFood(idx)}
+                          className="text-red-500 hover:text-red-400 text-xs font-medium px-2 py-1"
+                        >
+                          ✕
+                        </button>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-mono font-semibold text-primary-700">
-                          {Math.round(food.calories)} cal
-                        </p>
-                        <p className="text-xs text-white/60">
-                          P: {food.protein_g.toFixed(1)}g
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removeFood(idx)}
-                        className="text-red-500 hover:text-red-400 text-xs font-medium"
-                      >
-                        Remove
-                      </button>
                     </div>
                   </div>
                 ))}

@@ -96,28 +96,31 @@ export default function ReplaceFoodModal({ food, onReplace, onClose }) {
       <div className="bg-[#0a0a0a] border border-white/10  shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-white/10">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-heading font-bold text-white">
-              Replace "{food.component_name || food.name}"
+          <div className="flex justify-between items-start gap-2">
+            <h2 className="text-lg sm:text-xl font-heading font-bold text-white flex-1 min-w-0">
+              <span className="hidden sm:inline">Replace "</span>
+              <span className="sm:hidden">Replace: </span>
+              <span className="truncate block sm:inline">{food.component_name || food.name}</span>
+              <span className="hidden sm:inline">"</span>
             </h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/5  transition text-white/60 hover:text-white"
+              className="p-2 hover:bg-white/5 transition text-white/60 hover:text-white flex-shrink-0"
             >
               <X size={20} />
             </button>
           </div>
-          <p className="text-sm text-white/50 mt-1">
-            Current portion: <span className="font-mono text-white/70">{Math.round(food.portion_size)}g</span> — Will keep same portion size
+          <p className="text-xs sm:text-sm text-white/50 mt-1">
+            Portion: <span className="font-mono text-white/70">{Math.round(food.portion_size)}g</span> (unchanged)
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/10">
+        <div className="flex border-b border-white/10 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
-            
+
             return (
               <button
                 key={tab.id}
@@ -125,14 +128,15 @@ export default function ReplaceFoodModal({ food, onReplace, onClose }) {
                   setActiveTab(tab.id);
                   if (tab.id === 'custom') loadCustomFoods();
                 }}
-                className={`flex-1 py-3 px-4 font-medium transition flex items-center justify-center gap-2 text-sm ${
+                className={`flex-1 py-3 px-2 sm:px-4 font-medium transition flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm whitespace-nowrap ${
                   isActive
                     ? `border-b-2 ${colorClasses[tab.color]}`
                     : 'text-white/50 hover:text-white/80'
                 }`}
               >
-                <Icon size={16} />
-                {tab.label}
+                <Icon size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.id === 'database' ? 'DB' : tab.id === 'custom' ? 'My' : 'New'}</span>
               </button>
             );
           })}

@@ -215,17 +215,17 @@ export default function FastingToggle() {
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden"
                     >
-                        <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-4">
-                            <span className="text-white/60 text-sm">Adjust duration:</span>
+                        <div className="mt-4 pt-4 border-t border-white/10 flex flex-wrap items-center gap-2 sm:gap-4">
+                            <span className="text-white/60 text-sm">Adjust:</span>
                             <input
                                 type="number"
                                 min="1"
                                 max="72"
                                 value={editDuration}
                                 onChange={(e) => setEditDuration(parseInt(e.target.value) || 1)}
-                                className="w-20 bg-black border border-white/20 px-3 py-1.5 text-white text-center"
+                                className="w-16 sm:w-20 bg-black border border-white/20 px-2 sm:px-3 py-1.5 text-white text-center"
                             />
-                            <span className="text-white/40 text-sm">hours</span>
+                            <span className="text-white/40 text-sm">hrs</span>
                             <button onClick={handleSaveDuration} className="btn-primary p-2">
                                 ✓
                             </button>
@@ -276,15 +276,15 @@ export default function FastingToggle() {
                                     onChange={(e) => setEditDuration(parseInt(e.target.value) || 1)}
                                     className="w-full bg-black border border-white/20 px-4 py-3 text-white text-center text-xl font-mono"
                                 />
-                                <div className="flex justify-center gap-2 mt-3">
+                                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-3">
                                     {[12, 14, 16, 18, 20, 24].map((h) => (
                                         <button
                                             key={h}
                                             onClick={() => setEditDuration(h)}
-                                            className={`px-3 py-1 text-sm ${editDuration === h
+                                            className={`px-2.5 sm:px-3 py-1 text-xs sm:text-sm ${editDuration === h
                                                     ? 'bg-orange-500 text-white'
                                                     : 'bg-white/5 text-white/60 hover:bg-white/10'
-                                                }  transition`}
+                                                } transition`}
                                         >
                                             {h}h
                                         </button>
@@ -292,12 +292,12 @@ export default function FastingToggle() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-3">
-                                <button onClick={confirmStartFast} className="btn-primary flex-1 py-3">
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                <button onClick={confirmStartFast} className="btn-primary flex-1 py-3 flex items-center justify-center gap-2">
                                     <Play size={18} />
                                     Start {editDuration}h Fast
                                 </button>
-                                <button onClick={cancelStartFast} className="btn-ghost px-4">
+                                <button onClick={cancelStartFast} className="btn-ghost px-4 py-3 sm:py-2">
                                     Cancel
                                 </button>
                             </div>

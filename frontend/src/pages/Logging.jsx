@@ -307,7 +307,7 @@ export default function Logging() {
               transition={{ delay: 0.3 }}
               className="card p-6"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                 <div>
                   <h2 className="text-lg font-heading font-semibold text-white">My Foods</h2>
                   <p className="text-white/50 text-sm">{customFoods.length} custom foods saved</p>
@@ -317,7 +317,7 @@ export default function Logging() {
                     handleLoggingAttempt(e);
                     if (!isFasting) setCreatingFood(true);
                   }}
-                  className="btn-primary"
+                  className="btn-primary w-full sm:w-auto"
                 >
                   Add Food
                 </button>
@@ -345,9 +345,9 @@ export default function Logging() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={handleCreateFood} className="btn-primary">Save</button>
-                    <button onClick={() => setCreatingFood(false)} className="btn-secondary">Cancel</button>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <button onClick={handleCreateFood} className="btn-primary flex-1 sm:flex-none">Save</button>
+                    <button onClick={() => setCreatingFood(false)} className="btn-secondary flex-1 sm:flex-none">Cancel</button>
                   </div>
                 </div>
               )}
@@ -371,25 +371,25 @@ export default function Logging() {
                               <input type="number" min="0" step="0.1" value={editValues.base_fiber_g} onChange={(e) => setEditValues({ ...editValues, base_fiber_g: e.target.value })} className="input text-center text-xs sm:text-sm" placeholder="Fiber" />
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <button onClick={() => handleSaveFood(food.id)} className="btn-primary text-sm">Save</button>
-                            <button onClick={() => setEditingFood(null)} className="btn-secondary text-sm">Cancel</button>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <button onClick={() => handleSaveFood(food.id)} className="btn-primary text-sm flex-1 sm:flex-none">Save</button>
+                            <button onClick={() => setEditingFood(null)} className="btn-secondary text-sm flex-1 sm:flex-none">Cancel</button>
                           </div>
                         </div>
                       ) : (
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-white">{food.name}</p>
-                            <p className="text-white/50 text-sm">
-                              {food.base_calories} cal | {food.base_protein_g}g P | {food.base_carbs_g}g C | {food.base_fat_g}g F | {food.base_fiber_g}g Fiber
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-white truncate">{food.name}</p>
+                            <p className="text-white/50 text-xs sm:text-sm">
+                              {food.base_calories} cal | {food.base_protein_g}g P | {food.base_carbs_g}g C | {food.base_fat_g}g F
                             </p>
                           </div>
-                          <div className="flex gap-2">
-                            <button onClick={() => handleEditFood(food)} className="p-2  bg-white/5 text-white/60 hover:text-white hover:bg-white/10 text-sm">
+                          <div className="flex gap-2 flex-shrink-0">
+                            <button onClick={() => handleEditFood(food)} className="p-2 bg-white/5 text-white/60 hover:text-white hover:bg-white/10 text-xs sm:text-sm">
                               Edit
                             </button>
-                            <button onClick={() => handleDeleteFood(food.id)} className="p-2  bg-white/5 text-red-400 hover:bg-red-500/10 text-sm">
-                              Delete
+                            <button onClick={() => handleDeleteFood(food.id)} className="p-2 bg-white/5 text-red-400 hover:bg-red-500/10 text-xs sm:text-sm">
+                              Del
                             </button>
                           </div>
                         </div>

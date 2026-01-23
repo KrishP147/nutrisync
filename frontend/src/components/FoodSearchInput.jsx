@@ -102,14 +102,14 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
           type="number"
           value={quantity}
           onChange={(e) => setQuantity(parseFloat(e.target.value) || 1)}
           min="0.1"
           step="0.1"
-          className="w-20 px-3 py-2 bg-black border border-white/10  focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white font-mono"
+          className="w-full sm:w-20 px-3 py-2 bg-black border border-white/10 focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white font-mono"
           placeholder="Qty"
         />
         <div className="relative flex-1">
@@ -119,8 +119,8 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setShowDropdown(true)}
-            placeholder="Search food (e.g., eggs, chicken breast, banana)..."
-            className="w-full pl-10 pr-4 py-2 bg-black border border-white/10  focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white placeholder-white/40"
+            placeholder="Search food..."
+            className="w-full pl-10 pr-4 py-2 bg-black border border-white/10 focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white placeholder-white/40"
           />
         </div>
       </div>

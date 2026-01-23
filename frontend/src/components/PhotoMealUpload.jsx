@@ -812,12 +812,12 @@ export default function PhotoMealUpload({ onMealAdded }) {
             </button>
           </div>
 
-          <div className="bg-[#0a0a0a] border border-[#1a1a1a]  p-4">
-            <div className="flex justify-between items-center mb-3">
+          <div className="bg-[#0a0a0a] border border-[#1a1a1a] p-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
               <h3 className="font-semibold text-white">Detected Foods:</h3>
               <button
                 onClick={addManualFood}
-                className="text-sm bg-primary-700 text-white px-3 py-1  hover:bg-primary-600"
+                className="text-sm bg-primary-700 text-white px-3 py-1.5 hover:bg-primary-600 w-full sm:w-auto"
               >
                 + Add Food
               </button>
@@ -926,22 +926,22 @@ export default function PhotoMealUpload({ onMealAdded }) {
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setEditingIndex(null)}
-                          className="text-sm bg-primary-700 text-white px-3 py-1  hover:bg-primary-600"
+                          className="text-sm bg-primary-700 text-white px-3 py-1.5 hover:bg-primary-600"
                         >
                           Done
                         </button>
                         <button
                           onClick={() => saveAsCustomFood(idx)}
-                          className="text-sm bg-secondary-500 text-white px-3 py-1  hover:bg-secondary-400"
+                          className="text-sm bg-secondary-500 text-white px-3 py-1.5 hover:bg-secondary-400"
                         >
-                          Save as Custom Food
+                          Save as Custom
                         </button>
                         <button
                           onClick={() => removeFood(idx)}
-                          className="text-sm bg-red-500 text-white px-3 py-1  hover:bg-red-400"
+                          className="text-sm bg-red-500 text-white px-3 py-1.5 hover:bg-red-400"
                         >
                           Remove
                         </button>
@@ -956,18 +956,18 @@ export default function PhotoMealUpload({ onMealAdded }) {
                             Base: {food.base_calories} cal per {food.base_portion_size || 100}{food.portion_unit} (enter {food.base_portion_size || 100}{food.portion_unit} or 1)
                           </p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           <button
                             onClick={() => saveAsCustomFood(idx)}
-                            className="text-xs bg-secondary-500 text-white px-2 py-1  hover:bg-secondary-400"
+                            className="text-xs bg-secondary-500 text-white px-2 py-1 hover:bg-secondary-400 whitespace-nowrap"
                           >
                             Save
                           </button>
                           <button
                             onClick={() => setEditingIndex(idx)}
-                            className="text-sm text-primary-700 hover:text-primary-600"
+                            className="text-xs sm:text-sm text-primary-700 hover:text-primary-600 whitespace-nowrap"
                           >
-                            Edit Manually
+                            Edit
                           </button>
                         </div>
                       </div>
@@ -1057,20 +1057,20 @@ export default function PhotoMealUpload({ onMealAdded }) {
             <label className="block text-sm font-medium text-white/60 mb-2">
               Meal Name
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={customMealName}
                 onChange={(e) => handleMealNameChange(e.target.value)}
                 placeholder="Enter meal name"
-                className="flex-1 px-3 py-2 border border-[#1a1a1a]  focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white bg-black"
+                className="flex-1 px-3 py-2 border border-[#1a1a1a] focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white bg-black"
               />
               <button
                 onClick={resetMealName}
-                className="px-4 py-2 bg-[#0a0a0a] border border-[#1a1a1a] text-white  hover:bg-black transition whitespace-nowrap"
+                className="w-full sm:w-auto px-4 py-2 bg-[#0a0a0a] border border-[#1a1a1a] text-white hover:bg-black transition whitespace-nowrap"
                 title="Reset to dynamic name"
               >
-                Reset
+                Reset Name
               </button>
             </div>
             {isNameManuallyEdited && (
@@ -1102,21 +1102,21 @@ export default function PhotoMealUpload({ onMealAdded }) {
             {/* Save as My Food button */}
             <button
               onClick={saveEntireMealAsCustomFood}
-              className="w-full bg-secondary-500 text-white py-2.5  hover:bg-secondary-400 transition shadow-md font-medium"
+              className="w-full bg-secondary-500 text-white py-2.5 hover:bg-secondary-400 transition shadow-md font-medium text-sm sm:text-base"
             >
-              Save Entire Meal as My Food
+              Save as My Food
             </button>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <button
                 onClick={saveMeal}
-                className="flex-1 bg-primary-700 text-white py-3  hover:bg-primary-600 transition"
+                className="flex-1 bg-primary-700 text-white py-3 hover:bg-primary-600 transition font-medium"
               >
                 Save Meal
               </button>
               <button
                 onClick={resetToOriginal}
-                className="px-6 py-3 bg-[#0a0a0a] border border-[#1a1a1a] text-white  hover:bg-black transition"
+                className="w-full sm:w-auto px-6 py-3 bg-[#0a0a0a] border border-[#1a1a1a] text-white hover:bg-black transition"
                 title="Reset to AI-detected values"
               >
                 Reset

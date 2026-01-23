@@ -748,20 +748,20 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
             // Edit Mode
             <div className="space-y-4 p-4">
               <div>
-                <div className="flex items-center gap-2 mb-2 overflow-x-auto">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                   <input
                     type="text"
                     value={editMealName}
                     onChange={(e) => setEditMealName(e.target.value)}
                     placeholder="Meal name"
-                    className={`flex-1 min-w-0 text-base sm:text-lg font-semibold px-3 py-2 ${colors.inputBg} border-2 ${colors.inputBorder} text-white  focus:ring-2 focus:ring-primary-700`}
+                    className={`flex-1 min-w-0 text-base sm:text-lg font-semibold px-3 py-2 ${colors.inputBg} border-2 ${colors.inputBorder} text-white focus:ring-2 focus:ring-primary-700`}
                   />
                   <button
                     onClick={() => setEditMealName(originalMealName)}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2  text-xs sm:text-sm font-medium transition whitespace-nowrap flex-shrink-0"
+                    className="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 text-xs sm:text-sm font-medium transition whitespace-nowrap flex-shrink-0"
                     title="Reset to original name"
                   >
-                    Reset
+                    Reset Name
                   </button>
                 </div>
               </div>
@@ -842,18 +842,18 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                       {editingComponentIndex === idx ? (
                         // Edit mode - show nutrition inputs
                         <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <p className={`text-sm font-medium ${colors.textPrimary}`}>{component.component_name}</p>
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                            <p className={`text-sm font-medium ${colors.textPrimary} truncate`}>{component.component_name}</p>
                             <div className="flex gap-2">
                               <button
                                 onClick={() => setEditingComponentIndex(null)}
-                                className="text-xs bg-green-600 text-white px-2 py-1  hover:bg-green-700"
+                                className="text-xs bg-green-600 text-white px-2 py-1.5 hover:bg-green-700"
                               >
                                 Done
                               </button>
                               <button
                                 onClick={() => saveComponentAsCustomFood(idx)}
-                                className="text-xs bg-amber-500 text-black px-2 py-1  hover:bg-amber-400"
+                                className="text-xs bg-amber-500 text-black px-2 py-1.5 hover:bg-amber-400"
                               >
                                 Save
                               </button>
@@ -922,25 +922,25 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                       ) : (
                         // View mode
                         <div className="space-y-2">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className={`text-sm font-medium ${colors.textPrimary}`}>{component.component_name}</p>
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium ${colors.textPrimary} truncate`}>{component.component_name}</p>
                               <p className={`text-xs ${colors.textSecondary}`}>
                                 Base: {component.base_calories} cal per 100{component.portion_unit}
                               </p>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-shrink-0">
                               <button
                                 onClick={() => setReplacingComponentIndex(idx)}
-                                className="text-xs bg-orange-500 text-white px-2 py-1  hover:bg-orange-600"
+                                className="text-xs bg-orange-500 text-white px-2 py-1 hover:bg-orange-600"
                               >
-                                🔄 Replace
+                                Replace
                               </button>
                               <button
                                 onClick={() => setEditingComponentIndex(idx)}
                                 className={`text-xs ${colors.accentColor} hover:opacity-80`}
                               >
-                                Edit Manually
+                                Edit
                               </button>
                             </div>
                           </div>
@@ -990,17 +990,17 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
               ) : (
                 // Simple food - smart quantity input with Replace button and macro editing
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => setReplacingSimpleMeal(meal.id)}
-                      className="text-xs bg-orange-500 text-white px-3 py-1.5  hover:bg-orange-600 transition font-medium"
+                      className="text-xs bg-orange-500 text-white px-3 py-1.5 hover:bg-orange-600 transition font-medium flex-1 sm:flex-none"
                     >
-                      🔄 Replace Food
+                      Replace Food
                     </button>
                     <button
                       type="button"
                       onClick={() => saveSimpleFoodAsCustomFood(meal)}
-                      className="text-xs bg-amber-500 text-black px-3 py-1.5  hover:bg-amber-400 transition font-medium shadow-md"
+                      className="text-xs bg-amber-500 text-black px-3 py-1.5 hover:bg-amber-400 transition font-medium shadow-md flex-1 sm:flex-none"
                     >
                       Save as My Food
                     </button>
@@ -1162,16 +1162,16 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                 </p>
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
                 <button
                   onClick={() => saveEdit(meal)}
-                  className={`flex-1 ${colors.buttonPrimary} text-white py-2 px-4  text-sm font-medium transition`}
+                  className={`flex-1 ${colors.buttonPrimary} text-white py-2.5 px-4 text-sm font-medium transition`}
                 >
                   Save Changes
                 </button>
                 <button
                   onClick={cancelEditing}
-                  className={`flex-1 ${colors.buttonSecondary} ${colors.textSecondary} py-2 px-4  text-sm font-medium transition`}
+                  className={`flex-1 ${colors.buttonSecondary} ${colors.textSecondary} py-2.5 px-4 text-sm font-medium transition`}
                 >
                   Cancel
                 </button>
@@ -1215,7 +1215,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 sm:ml-4 mt-2 sm:mt-0">
+                  <div className="flex gap-3 sm:gap-2 sm:ml-4 mt-2 sm:mt-0 flex-shrink-0">
                     <button
                       onClick={() => startEditing(meal)}
                       className={`${colors.accentColor} hover:opacity-80 text-xs sm:text-sm font-medium`}
@@ -1226,13 +1226,13 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                       onClick={() => handleDuplicate(meal)}
                       className="text-secondary-500 hover:opacity-80 text-xs sm:text-sm font-medium"
                     >
-                      Duplicate
+                      Copy
                     </button>
                     <button
                       onClick={() => handleDelete(meal.id)}
                       className="text-red-500 hover:opacity-80 text-xs sm:text-sm font-medium"
                     >
-                      Delete
+                      Del
                     </button>
                   </div>
                 </div>
