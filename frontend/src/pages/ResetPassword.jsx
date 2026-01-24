@@ -10,6 +10,7 @@ export default function ResetPassword() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isOAuthAccount, setIsOAuthAccount] = useState(false);
+  const [isRecoverySession, setIsRecoverySession] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
@@ -17,18 +18,23 @@ export default function ResetPassword() {
   useEffect(() => {
     // Check if this is an OAuth-only account (no password set yet)
     const checkAuthProvider = async () => {
-      // Parse URL hash for Supabase auth parameters
+      // Check sessionStorage for recovery flag (set by App.jsx when hash was detected)
+      const recoveryActive = sessionStorage.getItem('password_recovery_active') === 'true';
+
+      // Also check URL hash as fallback (in case user navigated directly)
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const tokenType = hashParams.get('type');
       const accessToken = hashParams.get('access_token');
 
+      console.log('Recovery active from sessionStorage:', recoveryActive);
       console.log('URL hash type:', tokenType);
       console.log('Has access token:', !!accessToken);
 
-      // If coming from password reset email (has type=recovery in hash)
+      // If coming from password reset email (recovery flag set or hash present)
       // ALWAYS show password reset form, never redirect
-      if (tokenType === 'recovery' || accessToken) {
+      if (recoveryActive || tokenType === 'recovery' || accessToken) {
         console.log('Password reset link detected - showing reset form');
+        setIsRecoverySession(true);
         setIsOAuthAccount(false);
         return;
       }
@@ -79,17 +85,16 @@ export default function ResetPassword() {
         setError(updateError.message);
         setLoading(false);
       } else {
-        // Check again if this was a password reset (recovery) session
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const wasRecoverySession = hashParams.get('type') === 'recovery';
-
         console.log('Password updated successfully');
-        console.log('Was recovery session:', wasRecoverySession);
+        console.log('Was recovery session:', isRecoverySession);
         console.log('Is OAuth account:', isOAuthAccount);
 
         // If they came from a password reset link, sign them out regardless of OAuth
-        if (wasRecoverySession) {
+        if (isRecoverySession) {
           console.log('Recovery session - signing out user');
+          // Clear the URL hash and recovery flag to prevent recovery loop
+          window.history.replaceState(null, '', window.location.pathname);
+          sessionStorage.removeItem('password_recovery_active');
           await supabase.auth.signOut();
           setSuccess(true);
         } else if (isOAuthAccount) {

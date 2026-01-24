@@ -28,7 +28,14 @@ function App() {
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(() => {
     // Check for recovery hash on initial render (before Supabase processes it)
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    return hashParams.get('type') === 'recovery';
+    const isRecovery = hashParams.get('type') === 'recovery';
+    // Clear the hash immediately after reading to prevent loops on page reload
+    if (isRecovery) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      // Set flag for auth listener to check (since hash is now cleared)
+      sessionStorage.setItem('password_recovery_active', 'true');
+    }
+    return isRecovery;
   });
 
   useEffect(() => {
@@ -49,20 +56,22 @@ function App() {
       // Handle password recovery event - set recovery mode and don't set session
       if (event === 'PASSWORD_RECOVERY') {
         console.log('PASSWORD_RECOVERY event - enabling recovery mode');
+        sessionStorage.setItem('password_recovery_active', 'true');
         setIsPasswordRecovery(true);
         setSession(null);
         return;
       }
 
-      // Check if we should skip setting session due to recovery
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const isRecoveryHash = hashParams.get('type') === 'recovery';
-      
-      if (isRecoveryHash && event === 'SIGNED_IN') {
-        console.log('Recovery hash present - ignoring SIGNED_IN event');
-        setIsPasswordRecovery(true);
-        setSession(null);
-        return;
+      // Skip setting session if we're already in recovery mode
+      // Note: Hash is cleared on initial load, so we rely on isPasswordRecovery state
+      if (event === 'SIGNED_IN') {
+        // Check current recovery state - use a ref or check localStorage for persistence
+        const recoveryActive = sessionStorage.getItem('password_recovery_active') === 'true';
+        if (recoveryActive) {
+          console.log('Recovery mode active - ignoring SIGNED_IN event');
+          setSession(null);
+          return;
+        }
       }
 
       // IMPORTANT: Don't set session immediately - wait for OAuth checks to complete

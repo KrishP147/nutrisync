@@ -25,6 +25,7 @@ export default function PhotoMealUpload({ onMealAdded }) {
   const [customMealName, setCustomMealName] = useState('');
   const [isNameManuallyEdited, setIsNameManuallyEdited] = useState(false);
   const [dietaryRestrictions, setDietaryRestrictions] = useState([]);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
 
   // Fetch user dietary restrictions on mount
   useEffect(() => {
@@ -716,7 +717,13 @@ export default function PhotoMealUpload({ onMealAdded }) {
       {preview && !result && (
         <div>
           <div className="relative">
-            <img src={preview} alt="Preview" className="w-full  mb-4 max-h-64 object-cover" />
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full mb-4 max-h-64 object-cover cursor-pointer hover:opacity-90 transition"
+              onClick={() => setShowPhotoModal(true)}
+              title="Click to view full size"
+            />
             <button
               onClick={() => {
                 setSelectedFile(null);
@@ -790,7 +797,13 @@ export default function PhotoMealUpload({ onMealAdded }) {
       {editableResult && (
         <div className="space-y-4">
           <div className="relative">
-            <img src={preview} alt="Analyzed" className="w-full  max-h-48 object-cover" />
+            <img
+              src={preview}
+              alt="Analyzed"
+              className="w-full max-h-48 object-cover cursor-pointer hover:opacity-90 transition"
+              onClick={() => setShowPhotoModal(true)}
+              title="Click to view full size"
+            />
             <button
               onClick={() => {
                 setResult(null);
@@ -1122,6 +1135,30 @@ export default function PhotoMealUpload({ onMealAdded }) {
                 Reset
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Photo Preview Modal */}
+      {showPhotoModal && preview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setShowPhotoModal(false)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full">
+            <button
+              onClick={() => setShowPhotoModal(false)}
+              className="absolute -top-10 right-0 text-white/70 hover:text-white transition text-sm flex items-center gap-2"
+            >
+              <span>Close</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <img
+              src={preview}
+              alt="Full size preview"
+              className="w-full h-full object-contain max-h-[85vh]"
+              onClick={(e) => e.stopPropagation()}
+            />
           </div>
         </div>
       )}
