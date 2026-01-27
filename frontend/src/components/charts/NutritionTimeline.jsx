@@ -75,11 +75,11 @@ export default function NutritionTimeline({ meals = [] }) {
   };
 
   const modes = [
-    { key: 'calories', label: 'Calories', icon: Flame, color: 'green' },
-    { key: 'protein', label: 'Protein', icon: Beef, color: 'red' },
-    { key: 'carbs', label: 'Carbs', icon: Wheat, color: 'yellow' },
-    { key: 'fat', label: 'Fat', icon: Droplets, color: 'purple' },
-    { key: 'fiber', label: 'Fiber', icon: Leaf, color: 'blue' },
+    { key: 'calories', label: 'Calories', icon: Flame, activeClass: 'bg-green-500 text-white' },
+    { key: 'protein', label: 'Protein', icon: Beef, activeClass: 'bg-red-500 text-white' },
+    { key: 'carbs', label: 'Carbs', icon: Wheat, activeClass: 'bg-yellow-500 text-black' },
+    { key: 'fat', label: 'Fat', icon: Droplets, activeClass: 'bg-purple-500 text-white' },
+    { key: 'fiber', label: 'Fiber', icon: Leaf, activeClass: 'bg-blue-500 text-white' },
   ];
 
   const hasData = meals.length > 0;
@@ -88,14 +88,13 @@ export default function NutritionTimeline({ meals = [] }) {
     <div>
       {/* View Mode Toggle */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {/* eslint-disable-next-line no-unused-vars */}
-        {modes.map(({ key, label, icon: Icon, color }) => (
+        {modes.map(({ key, label, icon: Icon, activeClass }) => (
           <button
             key={key}
             onClick={() => setViewMode(key)}
             className={`flex items-center gap-2 px-3 py-1.5  text-sm font-medium transition ${
               viewMode === key
-                ? `bg-${color}-500 text-white`
+                ? activeClass
                 : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
             }`}
           >
@@ -113,6 +112,7 @@ export default function NutritionTimeline({ meals = [] }) {
             <XAxis
               dataKey="time"
               stroke="rgba(255,255,255,0.5)"
+              tick={{ fill: 'rgba(255,255,255,0.5)' }}
               fontSize={isMobile ? 8 : 10}
               interval={isMobile ? 7 : 3}
               tickFormatter={(value) => value.split(':')[0] + ':00'}
@@ -122,6 +122,7 @@ export default function NutritionTimeline({ meals = [] }) {
             />
             <YAxis
               stroke="rgba(255,255,255,0.5)"
+              tick={{ fill: 'rgba(255,255,255,0.5)' }}
               fontSize={10}
               tickFormatter={formatYAxis}
             />
@@ -132,6 +133,8 @@ export default function NutritionTimeline({ meals = [] }) {
                 borderRadius: '8px',
                 color: '#fff'
               }}
+              labelStyle={{ color: '#fff' }}
+              itemStyle={{ color: '#fff' }}
               formatter={(value) => [
                 viewMode === 'calories' ? `${Math.round(value)} kcal` : `${value.toFixed(1)}g`,
                 viewMode.charAt(0).toUpperCase() + viewMode.slice(1)

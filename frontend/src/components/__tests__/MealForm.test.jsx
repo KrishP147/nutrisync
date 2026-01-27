@@ -17,7 +17,11 @@ vi.mock('../../supabaseClient', () => ({
     from: vi.fn(() => ({
       insert: vi.fn().mockResolvedValue({ data: null, error: null }),
       update: vi.fn().mockResolvedValue({ data: null, error: null }),
-      select: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: { dietary_restrictions: [] }, error: null })
+        })
+      }),
       eq: vi.fn().mockResolvedValue({ data: [], error: null })
     }))
   }
@@ -101,7 +105,7 @@ describe('MealForm', () => {
 
   it('calculates total nutrition correctly', async () => {
     renderMealForm();
-    
+
     // Verify the form renders
     const buttons = screen.queryAllByRole('button');
     expect(buttons.length).toBeGreaterThan(0);
@@ -109,7 +113,7 @@ describe('MealForm', () => {
 
   it('handles food search integration', async () => {
     renderMealForm();
-    
+
     // Verify food search input is present
     const inputs = screen.queryAllByRole('textbox');
     expect(inputs.length).toBeGreaterThan(0);
@@ -183,9 +187,14 @@ describe('MealForm', () => {
   it('displays error messages on failure', async () => {
     const { supabase } = await import('../../supabaseClient');
     supabase.from.mockImplementationOnce(() => ({
-      insert: vi.fn().mockResolvedValue({ 
-        data: null, 
-        error: { message: 'Database error' } 
+      insert: vi.fn().mockResolvedValue({
+        data: null,
+        error: { message: 'Database error' }
+      }),
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: { dietary_restrictions: [] }, error: null })
+        })
       })
     }));
 
@@ -198,7 +207,7 @@ describe('MealForm', () => {
 
   it('allows adding multiple food items', async () => {
     renderMealForm();
-    
+
     // Verify form renders with buttons
     const buttons = screen.queryAllByRole('button');
     expect(buttons.length).toBeGreaterThan(0);

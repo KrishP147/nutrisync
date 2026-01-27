@@ -14,9 +14,20 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
+      if (!dropdownRef.current) return;
+      // Use contains check first
+      if (dropdownRef.current.contains(event.target)) return;
+      // Also check bounding rect to handle scrollbar clicks (some browsers
+      // report scrollbar clicks with target outside the element)
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const isInsideRect = (
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom + 300 // extra space for absolute dropdown
+      );
+      if (isInsideRect) return;
+      setShowDropdown(false);
     };
 
     document.addEventListener('mousedown', handleClickOutside);

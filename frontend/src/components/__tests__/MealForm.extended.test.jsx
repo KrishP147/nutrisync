@@ -19,7 +19,14 @@ vi.mock('../../supabaseClient', () => ({
           error: null
         })
       })),
-      select: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
+            data: { dietary_restrictions: [] },
+            error: null
+          })
+        })
+      }),
       eq: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({
         data: { calories: 2000 },
@@ -34,6 +41,7 @@ vi.mock('../../supabaseClient', () => ({
     }
   }
 }));
+
 
 // Mock contexts
 vi.mock('../../contexts/GoalsContext', () => ({
@@ -77,7 +85,7 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     expect(screen.getByTestId('food-search-mock')).toBeInTheDocument();
   });
 
@@ -87,12 +95,12 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const mealTypeButtons = screen.queryAllByRole('button');
-    const breakfastButton = mealTypeButtons.find(btn => 
+    const breakfastButton = mealTypeButtons.find(btn =>
       btn.textContent.toLowerCase().includes('breakfast')
     );
-    
+
     if (breakfastButton) {
       fireEvent.click(breakfastButton);
       expect(breakfastButton).toBeInTheDocument();
@@ -105,11 +113,11 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButtons = screen.queryAllByText(/select test food/i);
     if (selectButtons.length > 0) {
       fireEvent.click(selectButtons[0]);
-      
+
       await waitFor(() => {
         expect(screen.queryAllByText(/test food/i).length).toBeGreaterThan(0);
       });
@@ -122,7 +130,7 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const buttons = screen.getAllByRole('button');
     expect(buttons.length).toBeGreaterThan(0);
   });
@@ -133,16 +141,16 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const buttons = screen.getAllByRole('button');
-    const toggleButton = buttons.find(btn => 
+    const toggleButton = buttons.find(btn =>
       btn.textContent.toLowerCase().includes('manual') ||
       btn.textContent.toLowerCase().includes('autocomplete')
     );
-    
+
     if (toggleButton) {
       fireEvent.click(toggleButton);
-      
+
       await waitFor(() => {
         const textInputs = screen.queryAllByRole('textbox');
         expect(textInputs.length).toBeGreaterThan(0);
@@ -156,10 +164,10 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       const content = document.body.textContent;
       expect(content.includes('100') || content.includes('Total')).toBe(true);
@@ -173,30 +181,30 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={onMealAdded} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/test food/i)).toBeInTheDocument();
     });
-    
+
     const submitButton = await waitFor(() => {
       const buttons = screen.getAllByRole('button');
       const btn = buttons.find(b => {
         const text = b.textContent.toLowerCase();
         return (text.includes('log') || text.includes('save') || text.includes('add')) &&
-               !b.disabled &&
-               !text.includes('logging');
+          !b.disabled &&
+          !text.includes('logging');
       });
       if (!btn) {
         throw new Error('Submit button not found or still disabled');
       }
       return btn;
     }, { timeout: 3000 });
-    
+
     fireEvent.click(submitButton);
-    
+
     await waitFor(() => {
       expect(onMealAdded).toHaveBeenCalled();
     }, { timeout: 5000 });
@@ -208,17 +216,17 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       const buttons = screen.getAllByRole('button');
-      const submitButton = buttons.find(btn => 
+      const submitButton = buttons.find(btn =>
         btn.textContent.toLowerCase().includes('save') ||
         btn.textContent.toLowerCase().includes('log')
       );
-      
+
       if (submitButton && !submitButton.disabled) {
         fireEvent.click(submitButton);
       }
@@ -231,24 +239,24 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/test food/i)).toBeInTheDocument();
     });
-    
+
     const allButtons = screen.getAllByRole('button');
-    const removeButton = allButtons.find(btn => 
+    const removeButton = allButtons.find(btn =>
       btn.textContent.includes('×') ||
       btn.textContent.toLowerCase().includes('remove') ||
       btn.textContent.toLowerCase().includes('delete')
     );
-    
+
     if (removeButton) {
       fireEvent.click(removeButton);
-      
+
       await waitFor(() => {
         expect(allButtons.length).toBeGreaterThan(0);
       });
@@ -261,13 +269,13 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const textareas = screen.queryAllByRole('textbox');
-    const notesField = textareas.find(ta => 
+    const notesField = textareas.find(ta =>
       ta.placeholder?.toLowerCase().includes('note') ||
       ta.placeholder?.toLowerCase().includes('comment')
     );
-    
+
     if (notesField) {
       fireEvent.change(notesField, { target: { value: 'Test notes' } });
       expect(notesField.value).toBe('Test notes');
@@ -282,15 +290,15 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       const content = document.body.textContent;
-      const hasNutritionInfo = content.includes('cal') || 
-                               content.includes('protein') ||
-                               content.includes('100');
+      const hasNutritionInfo = content.includes('cal') ||
+        content.includes('protein') ||
+        content.includes('100');
       expect(hasNutritionInfo).toBe(true);
     });
   });
@@ -301,13 +309,13 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const buttons = screen.getAllByRole('button');
-    const submitButton = buttons.find(btn => 
+    const submitButton = buttons.find(btn =>
       btn.textContent.toLowerCase().includes('save') ||
       btn.textContent.toLowerCase().includes('log')
     );
-    
+
     if (submitButton) {
       expect(submitButton).toBeInTheDocument();
     }
@@ -319,10 +327,10 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       const numberInputs = screen.queryAllByRole('spinbutton');
       if (numberInputs.length > 0) {
@@ -338,15 +346,15 @@ describe('MealForm - Comprehensive Tests', () => {
         <MealForm onMealAdded={vi.fn()} />
       </BrowserRouter>
     );
-    
+
     const selectButton = screen.getByText(/select test food/i);
     fireEvent.click(selectButton);
-    
+
     await waitFor(() => {
       const numberInputs = screen.queryAllByRole('spinbutton');
       if (numberInputs.length > 0) {
         fireEvent.change(numberInputs[0], { target: { value: '3' } });
-        
+
         const updatedContent = document.body.textContent;
         expect(updatedContent).toBeTruthy();
       }

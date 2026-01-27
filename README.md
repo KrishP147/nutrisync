@@ -7,35 +7,59 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node 18+](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)
 
-Full-stack nutrition tracking application with AI-powered food recognition and intermittent fasting support.
+NutriSync is a comprehensive full-stack nutrition tracking application designed to simplify and enhance the way users manage their dietary health. The platform combines intelligent meal logging with AI-powered food recognition, personalized nutrition tracking, and intermittent fasting support to create an all-in-one health management solution.
 
-## Overview
+Users can effortlessly log meals by uploading food photos for instant AI analysis or searching through a database of over 400,000 foods from the USDA FoodData Central. The application calculates personalized calorie and macro targets based on individual body metrics, activity levels, and fitness goals (weight loss, maintenance, or muscle gain) using industry-standard BMR and TDEE formulas. Progress is tracked through interactive visualizations, daily nutrition reports, and streak-based achievements to encourage consistent logging habits.
 
-NutriSync combines intelligent meal logging, personalized nutrition tracking, and fasting features into a comprehensive health platform. Upload food photos for instant AI analysis, search a database of 400,000+ foods, track macros against custom goals, and monitor fasting schedules with built-in timers.
+For users practicing intermittent fasting, NutriSync offers built-in fasting timers with support for popular schedules including 16:8, 18:6, 20:4, and OMAD, complete with real-time progress tracking and hydration reminders. The platform also respects dietary preferences and restrictions (Halal, Kosher, Vegan, Vegetarian, Gluten-Free, Dairy-Free, Nut-Free, and more) by flagging incompatible foods during meal logging.
 
-**Note**: This monorepo combines frontend and backend. Original separate repositories ([frontend](https://github.com/KrishP147/nutrisync-frontend), [backend](https://github.com/KrishP147/nutrisync-backend)) are archived.
+## Technical Features
+
+- Google OAuth authentication with email/password fallback
+- Email infrastructure with Resend SMTP (custom domain with SPF/DKIM/DMARC compliance)
+- Password reset, email change verification, and secure account deletion workflows
+- Row Level Security (RLS) policies ensuring complete data privacy
+- Real-time meal photo storage with Supabase Storage
+- AI nutrition assistant chatbot for dietary guidance
+- Responsive design with dark mode theming
+- Comprehensive test coverage (Backend 74.5%, Frontend 60.4%)
+- Separate coverage tracking via Codecov flags
+- CI/CD pipeline with GitHub Actions
 
 ## Features
 
 **Core Functionality**
-- AI food recognition via photo upload (Google Gemini AI)
-- Comprehensive food database search (USDA FoodData Central - 400,000+ foods)
-- Customizable nutrition goals with BMR/TDEE calculations
-- Intermittent fasting tracking (16:8, 18:6, 20:4, OMAD schedules)
-- Progress visualization with interactive charts
-- Achievement system for goal streaks
-- Dietary restriction support (Halal, Kosher, Vegan, Vegetarian, Gluten-Free, etc.)
+- **AI food recognition** via photo upload (Google Gemini AI)
 
-**Technical Features**
-- Google OAuth authentication
-- Email infrastructure with Resend SMTP (custom domain with SPF/DKIM/DMARC)
-- Password reset, email change verification, account deletion
-- Row Level Security (RLS) for data privacy
-- Real-time meal photo storage
-- AI nutrition assistant chatbot
-- Responsive design with dark mode
-- Comprehensive testing (Backend 74.5%, Frontend 60.4% coverage)
-- Separate coverage tracking via Codecov flags
+  ![AI Photo Logging](gifs/photologbullet1.gif)
+
+- **Comprehensive food database search** (USDA FoodData Central - 400,000+ foods)
+
+  ![Manual Food Logging](gifs/manulogbullet2.gif)
+
+- **Customizable nutrition goals** with BMR/TDEE calculations
+
+  ![Goals Setup](gifs/goalsbullet3.gif)
+
+- **Intermittent fasting tracking** (16:8, 18:6, 20:4, OMAD schedules)
+
+  ![Fasting Tracking](gifs/fastingbullet4.gif)
+
+- **Progress visualization** with interactive charts
+
+  ![Progress Charts](gifs/progressbullet5.gif)
+
+- **Personalized daily reports**, saved across each logging day
+
+  ![Daily Reports](gifs/dailyreportbullet6.gif)
+
+- **Dietary restriction support** (Halal, Kosher, Vegan, Vegetarian, Gluten-Free, etc.)
+
+  ![Dietary Restrictions](gifs/dietaryrestbullet7.gif)
+
+## Demo
+
+https://github.com/user-attachments/assets/demov1.mp4
 
 ## Tech Stack
 
@@ -180,3 +204,7 @@ MIT License - see [LICENSE](LICENSE) file
 Run tests before submitting:
 - Backend: `pytest tests/`
 - Frontend: `npm test`
+
+---
+
+**Note**: This monorepo combines frontend and backend. Original separate repositories ([frontend](https://github.com/KrishP147/nutrisync-frontend), [backend](https://github.com/KrishP147/nutrisync-backend)) are archived.

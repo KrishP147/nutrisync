@@ -1,0 +1,176 @@
+
+> nutrisync-frontend@0.0.0 test:run
+> vitest run --reporter=verbose --coverage
+
+
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90mC:/Users/User/nutrisync/nutrisync/frontend[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mrenders registration form[32m 136[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdisplays email input field[32m 26[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdisplays password input fields[32m 42[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mrenders profile page after loading[32m 181[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mrenders goals form with current values including fasting[32m 130[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mdisplays current goal values in inputs when editing including fasting[32m 19[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mdisplays user email[32m 60[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mallows updating fasting schedule[32m 142[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mvalidates numeric input[32m 21[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mshows loading state[32m 19[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mshows fasting indicator when fasting is enabled[32m 16[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mdoes not show fasting indicator when disabled[32m 14[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22mdisplays protein, carbs, and fat in summary[32m 19[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/SetGoals.test.jsx[2m > [22mSetGoals Component[2m > [22muses default values when goals are null[32m 50[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mrenders autocomplete mode by default[32m 110[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mallows selecting meal type[33m 536[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22madds food through search[32m 90[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mshows password requirements[32m 104[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mvalidates password strength[33m 923[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mrenders meal form with all required fields[33m 1038[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles manual meal entry[32m 32[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mvalidates required fields[32m 12[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mrenders login form[33m 932[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mchecks password match confirmation[32m 105[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mvalidates email format[32m 34[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdisplays Google sign-up button[32m 41[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mshows manual entry mode toggle[33m 331[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mcalculates total nutrition correctly[32m 207[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mloads user profile data[32m 128[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mallows switching to manual mode[33m 368[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mcalculates total nutrition from added foods[32m 34[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles food search integration[32m 219[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mallows editing existing meal[32m 30[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mdisplays login button[33m 507[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22maccepts email and password input[32m 63[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mshows dietary tab with restrictions[33m 1232[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles meal type selection[32m 198[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Landing.test.jsx[2m > [22mLanding Page[2m > [22mrenders main heading[33m 1838[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mshows link to login page[32m 65[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles form submission[32m 101[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22msubmits meal successfully[32m 299[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mcalls supabase signIn on form submission[33m 326[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles cancel action[32m 173[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mshows loading state during submission[32m 44[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mdisplays error messages on failure[32m 35[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mdisplays error message on failed login[33m 353[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mincludes link to registration page[32m 30[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mincludes forgot password link[32m 23[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mvalidates email format[32m 26[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mshows loading state during submission[33m 336[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mhandles successful registration[33m 508[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mallows adding multiple food items[32m 154[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mallows removing added foods[32m 188[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mallows adding notes to meal[32m 92[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Landing.test.jsx[2m > [22mLanding Page[2m > [22mdisplays call-to-action buttons[32m 102[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles portion size adjustments[32m 144[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mvalidates nutrition values are non-negative[32m 15[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22msupports meal photo attachment[32m 45[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mremoves food items from list[32m 1[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mupdates serving sizes correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.test.jsx[2m > [22mMealForm[2m > [22mhandles duplicate food additions[32m 0[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mdisplays meal nutrition summary[32m 39[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mhandles Google OAuth login[32m 81[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mdisplays OAuth error from localStorage on mount[32m 41[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdisplays error on registration failure[33m 409[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mvalidates required fields before submission[32m 118[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mallows adjusting portion sizes[32m 31[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/MealForm.extended.test.jsx[2m > [22mMealForm - Comprehensive Tests[2m > [22mupdates nutrition when portions change[32m 24[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mhandles password reset[33m 791[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mtoggles password visibility[32m 260[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Landing.test.jsx[2m > [22mLanding Page[2m > [22mshows feature sections[33m 552[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mshows loading state during registration[33m 334[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Landing.test.jsx[2m > [22mLanding Page[2m > [22mincludes navigation links[33m 453[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mhandles remember me checkbox[33m 324[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Landing.test.jsx[2m > [22mLanding Page[2m > [22mrenders footer with privacy and terms links[32m 147[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mshows loading state during login[32m 248[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mshows password reset success message[33m 459[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdisables submit button with invalid input[32m 292[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mhandles Google OAuth registration[32m 94[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mhandles Google OAuth error[32m 140[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Login.test.jsx[2m > [22mLogin Page[2m > [22mshows link to signup page when no account found[32m 232[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mshows success message after email confirmation sent[33m 388[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mhandles password reset error[33m 528[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mprevents multiple submissions[32m 294[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mopens delete account confirmation dialog[33m 378[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mcalculates and displays nutrition goals[33m 418[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdetects existing user by empty identities array[32m 293[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mvalidates email format before submission[32m 38[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mtoggles password visibility[33m 378[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mdisplays OAuth error from localStorage on mount[32m 41[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Register.test.jsx[2m > [22mRegister[2m > [22mhandles Google OAuth error[32m 62[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mdisplays BMI information[32m 102[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mswitches between profile and dietary tabs[33m 424[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22msaves profile updates[33m 460[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mvalidates required fields before calculating goals[33m 321[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Profile.test.jsx[2m > [22mProfile Page[2m > [22mrenders loading state initially[32m 7[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mrenders dashboard components[32m 231[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mdisplays date selector[32m 16[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mshows reminders card[32m 7[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mrenders chart components[32m 7[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mdisplays sidebar navigation[32m 36[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mhandles component mounting without errors[32m 8[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Dashboard.test.jsx[2m > [22mDashboard Page[2m > [22mrenders page container[32m 58[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mrenders search input[32m 116[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mperforms search on user input[32m 35[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mdisplays search results[32m 10[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mcalls onSelect when food item is clicked[32m 9[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mhandles search errors gracefully[32m 20[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mclears results when input is empty[32m 13[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mhas quantity input field[32m 17[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mallows changing quantity[32m 13[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22mdefaults quantity to 1[32m 11[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22maccepts decimal quantities[32m 22[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/FoodSearchInput.test.jsx[2m > [22mFoodSearchInput Component[2m > [22maccepts initialValue prop[32m 53[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mrenders chart with valid data[32m 98[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mshows empty state when no data[32m 26[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mshows empty state when all values are zero[32m 7[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mfilters out zero values from chart[32m 9[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mrenders with legend by default[32m 23[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mcan hide legend when showLegend is false[32m 10[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mhandles missing macro values gracefully[32m 18[2mms[22m[39m
+ [32m✓[39m src/components/charts/__tests__/MacroBreakdownChart.test.jsx[2m > [22mMacroBreakdownChart[2m > [22mrounds decimal values to one decimal place[32m 15[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/ChartErrorBoundary.test.jsx[2m > [22mChartErrorBoundary[2m > [22mrenders children when there is no error[32m 92[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/ChartErrorBoundary.test.jsx[2m > [22mChartErrorBoundary[2m > [22mrenders error message when child component throws[32m 30[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/ChartErrorBoundary.test.jsx[2m > [22mChartErrorBoundary[2m > [22mdisplays error icon when error occurs[32m 16[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/ChartErrorBoundary.test.jsx[2m > [22mChartErrorBoundary[2m > [22mprevents error from propagating to parent[32m 11[2mms[22m[39m
+ [32m✓[39m src/contexts/__tests__/FastingContext.test.jsx[2m > [22mFastingContext Full[2m > [22mfasting timer functionality works in browser[32m 3[2mms[22m[39m
+ [32m✓[39m src/contexts/__tests__/FastingContext.test.jsx[2m > [22mFastingContext Full[2m > [22mstarts a new fast correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/contexts/__tests__/FastingContext.test.jsx[2m > [22mFastingContext Full[2m > [22mloads active session on mount[32m 0[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Logging.test.jsx[2m > [22mLogging Page[2m > [22mrenders logging page[32m 119[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Logging.test.jsx[2m > [22mLogging Page[2m > [22mshows meal form[32m 7[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Logging.test.jsx[2m > [22mLogging Page[2m > [22mdisplays sidebar navigation[32m 11[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Logging.test.jsx[2m > [22mLogging Page[2m > [22mrenders page container[32m 27[2mms[22m[39m
+ [32m✓[39m src/pages/__tests__/Logging.test.jsx[2m > [22mLogging Page[2m > [22mhandles component mounting without errors[32m 8[2mms[22m[39m
+ [32m✓[39m src/components/fasting/__tests__/FastingToggle.test.jsx[2m > [22mFastingToggle[2m > [22mrenders "Start Fasting" button initially[32m 3[2mms[22m[39m
+ [32m✓[39m src/components/fasting/__tests__/FastingToggle.test.jsx[2m > [22mFastingToggle[2m > [22mshows timer and "End Fast" when fasting is active[32m 0[2mms[22m[39m
+ [32m✓[39m src/components/fasting/__tests__/FastingToggle.test.jsx[2m > [22mFastingToggle[2m > [22mdisplays progress correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/contexts/__tests__/GoalsContext.test.jsx[2m > [22mGoalsContext[2m > [22mprovides default goals when no user data exists[32m 3[2mms[22m[39m
+ [32m✓[39m src/contexts/__tests__/GoalsContext.test.jsx[2m > [22mGoalsContext[2m > [22mloads existing user goals[32m 0[2mms[22m[39m
+ [32m✓[39m src/contexts/__tests__/GoalsContext.test.jsx[2m > [22mGoalsContext[2m > [22mhandles loading state correctly[32m 0[2mms[22m[39m
+ [32m✓[39m src/components/dashboard/__tests__/RemindersCard.test.jsx[2m > [22mRemindersCard[2m > [22mshows hydration reminder during fast[32m 3[2mms[22m[39m
+ [32m✓[39m src/components/dashboard/__tests__/RemindersCard.test.jsx[2m > [22mRemindersCard[2m > [22mshows fasting goal met reminder when time is up[32m 0[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m142 passed[39m[22m[90m (142)[39m
+[2m   Start at [22m 05:20:48
+[2m   Duration [22m 17.21s[2m (transform 6.25s, setup 12.36s, import 11.13s, tests 23.57s, environment 41.89s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   52.95 |       50 |   34.92 |   55.49 |                   
+ components        |    42.8 |    38.97 |   31.57 |   43.75 |                   
+  ...rBoundary.jsx |     100 |      100 |     100 |     100 |                   
+  ...archInput.jsx |   37.87 |    16.27 |   38.88 |   38.98 | ...97-111,132-223 
+  MealForm.jsx     |   43.42 |    36.36 |   31.42 |   44.44 | ...70-429,458-568 
+  SetGoals.jsx     |    37.5 |       50 |   10.52 |   36.66 | ...9,72-73,85-286 
+ components/charts |   72.72 |     90.9 |      40 |   72.72 |                   
+  ...downChart.jsx |   72.72 |     90.9 |      40 |   72.72 | 25-37,69          
+ pages             |   57.64 |    55.55 |   36.71 |   61.11 |                   
+  Dashboard.jsx    |   87.87 |    59.52 |    62.5 |   96.66 | 71                
+  Landing.jsx      |     100 |      100 |     100 |     100 |                   
+  Logging.jsx      |   33.84 |     25.8 |   11.32 |   37.83 | ...44-146,186-494 
+  Login.jsx        |   86.95 |       95 |     100 |   86.95 | 29-30,53,82-84    
+  Profile.jsx      |   52.23 |    51.48 |   30.23 |   54.41 | ...88,624,686-768 
+  Register.jsx     |   80.59 |    88.46 |    90.9 |   80.59 | ...85,115-117,289 
+-------------------|---------|----------|---------|---------|-------------------

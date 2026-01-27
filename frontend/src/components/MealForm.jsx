@@ -1,8 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useGoals } from '../contexts/GoalsContext';
 import { updateDailyAchievement } from '../utils/updateDailyAchievement';
 import FoodSearchInput from './FoodSearchInput';
+import { AlertTriangle } from 'lucide-react';
+
+const RESTRICTION_KEYWORDS = {
+  halal: ['pork', 'bacon', 'ham', 'prosciutto', 'salami', 'pepperoni', 'lard', 'gelatin', 'wine', 'beer', 'alcohol', 'rum', 'vodka', 'whiskey'],
+  kosher: ['pork', 'bacon', 'ham', 'prosciutto', 'shellfish', 'shrimp', 'lobster', 'crab', 'clam', 'oyster', 'lard'],
+  vegetarian: ['chicken', 'beef', 'pork', 'fish', 'salmon', 'tuna', 'shrimp', 'lamb', 'turkey', 'bacon', 'ham', 'steak', 'meat', 'sausage', 'pepperoni', 'anchov'],
+  vegan: ['chicken', 'beef', 'pork', 'fish', 'salmon', 'tuna', 'shrimp', 'lamb', 'turkey', 'bacon', 'ham', 'steak', 'meat', 'sausage', 'pepperoni', 'anchov', 'milk', 'cheese', 'butter', 'cream', 'yogurt', 'egg', 'honey', 'whey', 'casein', 'gelatin'],
+  gluten_free: ['bread', 'pasta', 'wheat', 'flour', 'cereal', 'barley', 'rye', 'cracker', 'croissant', 'bagel', 'muffin', 'cake', 'cookie', 'pretzel', 'noodle', 'couscous'],
+  dairy_free: ['milk', 'cheese', 'butter', 'cream', 'yogurt', 'whey', 'casein', 'ice cream', 'ghee', 'mozzarella', 'cheddar', 'parmesan', 'brie'],
+  nut_free: ['almond', 'peanut', 'walnut', 'cashew', 'pistachio', 'pecan', 'hazelnut', 'macadamia', 'brazil nut', 'nutella'],
+  shellfish_free: ['shrimp', 'lobster', 'crab', 'clam', 'oyster', 'mussel', 'scallop', 'crawfish', 'prawn'],
+  low_sodium: ['soy sauce', 'teriyaki', 'pickl', 'cured', 'brine'],
+  low_carb: ['sugar', 'candy', 'soda', 'syrup', 'donut', 'doughnut'],
+};
+
+const RESTRICTION_LABELS = {
+  halal: 'Halal',
+  kosher: 'Kosher',
+  vegetarian: 'Vegetarian',
+  vegan: 'Vegan',
+  gluten_free: 'Gluten-Free',
+  dairy_free: 'Dairy-Free',
+  nut_free: 'Nut-Free',
+  shellfish_free: 'Shellfish-Free',
+  low_sodium: 'Low Sodium',
+  low_carb: 'Low Carb',
+};
+
+function checkDietaryViolations(foodName, restrictions) {
+  if (!foodName || !restrictions || restrictions.length === 0) return [];
+  const lower = foodName.toLowerCase();
+  const violations = [];
+  for (const restriction of restrictions) {
+    const keywords = RESTRICTION_KEYWORDS[restriction] || [];
+    const matched = keywords.find(kw => lower.includes(kw));
+    if (matched) {
+      violations.push(RESTRICTION_LABELS[restriction] || restriction);
+    }
+  }
+  return violations;
+}
 
 export default function MealForm({ onMealAdded }) {
   const { goals } = useGoals();
@@ -12,6 +53,7 @@ export default function MealForm({ onMealAdded }) {
   const [useAutocomplete, setUseAutocomplete] = useState(true);
   const [foods, setFoods] = useState([]);
   const [showFoodSearch, setShowFoodSearch] = useState(true);
+  const [dietaryRestrictions, setDietaryRestrictions] = useState([]);
 
   // For manual entry mode (single food, no autocomplete)
   const [mealName, setMealName] = useState('');
@@ -22,6 +64,32 @@ export default function MealForm({ onMealAdded }) {
   const [fiber, setFiber] = useState('');
   const [notes, setNotes] = useState('');
   const [saveAsCustom, setSaveAsCustom] = useState(false);
+
+  useEffect(() => {
+    const fetchDietaryRestrictions = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('user_profile')
+        .select('dietary_restrictions')
+        .eq('user_id', user.id)
+        .single();
+      if (data?.dietary_restrictions) {
+        setDietaryRestrictions(data.dietary_restrictions);
+      }
+    };
+    fetchDietaryRestrictions();
+  }, []);
+
+  // Check all current foods for dietary violations
+  const allViolations = foods.reduce((acc, food) => {
+    const v = checkDietaryViolations(food.name, dietaryRestrictions);
+    if (v.length > 0) acc.push({ food: food.name, violations: v });
+    return acc;
+  }, []);
+
+  // Also check manual entry name
+  const manualViolations = checkDietaryViolations(mealName, dietaryRestrictions);
 
   const handleFoodSelect = (food) => {
     const newFood = {
@@ -351,6 +419,21 @@ export default function MealForm({ onMealAdded }) {
               </div>
             )}
 
+            {/* Dietary restriction warnings */}
+            {allViolations.length > 0 && (
+              <div className="bg-amber-500/10 border border-amber-500/30 p-3 mb-3 flex items-start gap-2">
+                <AlertTriangle size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-amber-400 mb-1">Dietary Restriction Warning</p>
+                  {allViolations.map((v, i) => (
+                    <p key={i} className="text-amber-300/80">
+                      <span className="font-medium">{v.food}</span> may not be compatible with your <span className="font-medium">{v.violations.join(', ')}</span> restriction{v.violations.length > 1 ? 's' : ''}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Add food button or search */}
             {showFoodSearch ? (
               <FoodSearchInput onFoodSelect={handleFoodSelect} />
@@ -386,6 +469,15 @@ export default function MealForm({ onMealAdded }) {
               className="w-full px-4 py-2 border border-[#1a1a1a]  focus:ring-2 focus:ring-primary-700 focus:border-transparent text-white bg-black"
               required
             />
+
+            {manualViolations.length > 0 && (
+              <div className="bg-amber-500/10 border border-amber-500/30 p-3 mt-2 flex items-start gap-2">
+                <AlertTriangle size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-amber-300/80">
+                  This food may not be compatible with your <span className="font-medium">{manualViolations.join(', ')}</span> restriction{manualViolations.length > 1 ? 's' : ''}
+                </p>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div>

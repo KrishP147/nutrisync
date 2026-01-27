@@ -203,16 +203,17 @@ export default function WeeklyTrends() {
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={weekData} margin={{ top: 10, right: 10, left: 0, bottom: isMobile ? 50 : 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-            <XAxis 
-              dataKey="date" 
-              stroke="rgba(255,255,255,0.5)" 
+            <XAxis
+              dataKey="date"
+              stroke="rgba(255,255,255,0.5)"
+              tick={{ fill: 'rgba(255,255,255,0.5)' }}
               fontSize={isMobile ? 9 : 12}
               interval={isMobile ? 1 : 0}
               angle={isMobile ? -45 : 0}
               textAnchor={isMobile ? 'end' : 'middle'}
               height={isMobile ? 60 : 30}
             />
-            <YAxis stroke="rgba(255,255,255,0.5)" fontSize={12} />
+            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fill: 'rgba(255,255,255,0.5)' }} fontSize={12} />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#000000',
@@ -220,6 +221,8 @@ export default function WeeklyTrends() {
                 borderRadius: '8px',
                 color: '#fff'
               }}
+              labelStyle={{ color: '#fff' }}
+              itemStyle={{ color: '#fff' }}
               labelFormatter={(label, payload) => {
                 if (payload && payload[0] && payload[0].payload.fullDate) {
                   return payload[0].payload.fullDate;

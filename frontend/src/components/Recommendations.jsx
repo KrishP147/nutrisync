@@ -15,6 +15,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
   const cooldownIntervalRef = useRef(null);
   const hasInitializedRef = useRef(false);
   const isInitialLoadRef = useRef(true);
+  const [restrictionsLoaded, setRestrictionsLoaded] = useState(false);
   const { goals } = useGoals();
 
   // Memoize goals to prevent unnecessary re-renders
@@ -153,6 +154,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
       if (profileData?.dietary_restrictions) {
         setDietaryRestrictions(profileData.dietary_restrictions);
       }
+      setRestrictionsLoaded(true);
 
       // Fetch today's meal count for auto-refresh
       const today = new Date();
@@ -195,11 +197,11 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
     };
   }, []);
 
-  // Start loading immediately on mount (use cache for initial load)
+  // Start loading once dietary restrictions are fetched (use cache for initial load)
   useEffect(() => {
-    if (!hasInitializedRef.current) {
+    if (restrictionsLoaded && !hasInitializedRef.current) {
       hasInitializedRef.current = true;
-      // Initial load: use cache (fast)
+      // Initial load: use cache (fast), but now with correct dietary restrictions
       generateRecommendations(false);
       // Mark that initial load is done
       setTimeout(() => {
@@ -207,7 +209,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
       }, 100);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [restrictionsLoaded]);
 
   // Auto-refresh when goals, dietary restrictions, meal count, or refreshTrigger changes
   // Force refresh (bypass cache) when any of these change

@@ -93,7 +93,7 @@ export default function ReplaceFoodModal({ food, onReplace, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#0a0a0a] border border-white/10  shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-[#0a0a0a] border border-white/10  shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col" style={{ overflow: activeTab === 'database' ? 'visible' : 'hidden' }}>
         {/* Header */}
         <div className="p-4 border-b border-white/10">
           <div className="flex justify-between items-start gap-2">
@@ -143,7 +143,7 @@ export default function ReplaceFoodModal({ food, onReplace, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 max-h-[500px]">
+        <div className={`flex-1 p-4 ${activeTab === 'database' ? 'overflow-visible' : 'overflow-y-auto max-h-[500px]'}`}>
           {activeTab === 'database' && (
             <div>
               <p className="text-sm text-white/50 mb-4">
