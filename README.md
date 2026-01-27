@@ -13,19 +13,6 @@ Users can effortlessly log meals by uploading food photos for instant AI analysi
 
 For users practicing intermittent fasting, NutriSync offers built-in fasting timers with support for popular schedules including 16:8, 18:6, 20:4, and OMAD, complete with real-time progress tracking and hydration reminders. The platform also respects dietary preferences and restrictions (Halal, Kosher, Vegan, Vegetarian, Gluten-Free, Dairy-Free, Nut-Free, and more) by flagging incompatible foods during meal logging.
 
-## Technical Features
-
-- Google OAuth authentication with email/password fallback
-- Email infrastructure with Resend SMTP (custom domain with SPF/DKIM/DMARC compliance)
-- Password reset, email change verification, and secure account deletion workflows
-- Row Level Security (RLS) policies ensuring complete data privacy
-- Real-time meal photo storage with Supabase Storage
-- AI nutrition assistant chatbot for dietary guidance
-- Responsive design with dark mode theming
-- Comprehensive test coverage (Backend 74.5%, Frontend 60.4%)
-- Separate coverage tracking via Codecov flags
-- CI/CD pipeline with GitHub Actions
-
 ## Features
 
 **Core Functionality**
@@ -56,6 +43,19 @@ For users practicing intermittent fasting, NutriSync offers built-in fasting tim
 - **Dietary restriction support** (Halal, Kosher, Vegan, Vegetarian, Gluten-Free, etc.)
 
   ![Dietary Restrictions](gifs/dietaryrestbullet7.gif)
+
+## Technical Features
+
+- Google OAuth authentication with email/password fallback
+- Email infrastructure with Resend SMTP (custom domain with SPF/DKIM/DMARC compliance)
+- Password reset, email change verification, and secure account deletion workflows
+- Row Level Security (RLS) policies ensuring complete data privacy
+- Real-time meal photo storage with Supabase Storage
+- AI nutrition assistant chatbot for dietary guidance
+- Responsive design with dark mode theming
+- Comprehensive test coverage (Backend 74.5%, Frontend 60.4%)
+- Separate coverage tracking via Codecov flags
+- CI/CD pipeline with GitHub Actions
 
 ## Demo
 
