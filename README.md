@@ -59,7 +59,7 @@ For users practicing intermittent fasting, NutriSync offers built-in fasting tim
 
 ## Demo
 
-https://github.com/user-attachments/assets/demov1.mp4
+https://github.com/user-attachments/assets/f1217762-c269-4474-9f93-19e1be9ed174
 
 ## Tech Stack
 
