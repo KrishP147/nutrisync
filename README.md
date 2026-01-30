@@ -53,8 +53,7 @@ For users practicing intermittent fasting, NutriSync offers built-in fasting tim
 - Real-time meal photo storage with Supabase Storage
 - AI nutrition assistant chatbot for dietary guidance
 - Responsive design with dark mode theming
-- Comprehensive test coverage (Backend 74.5%, Frontend 60.4%)
-- Separate coverage tracking via Codecov flags
+- Comprehensive testing suite with coverage tracking via Codecov flags
 - CI/CD pipeline with GitHub Actions
 
 ## Demo
@@ -158,9 +157,6 @@ nutrisync/
 ```
 
 ## Testing
-
-**Coverage**: Backend 74.5% | Frontend 60.4% | Overall 65.28%
-
 Backend:
 ```bash
 cd backend
@@ -176,8 +172,8 @@ npm run test:coverage    # With coverage report
 ```
 
 **Test Organization**:
-- Backend: 85 tests across 13 files (API endpoints, AI services, user management, fasting, edge cases)
-- Frontend: 137 tests across 16 files (contexts, components, pages, charts)
+- Backend: (API endpoints, AI services, user management, fasting, edge cases)
+- Frontend: (contexts, components, pages, charts)
 
 **CI/CD**: Automated testing on every push via GitHub Actions with separate coverage tracking for backend and frontend
 
