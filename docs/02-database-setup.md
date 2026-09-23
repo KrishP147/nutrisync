@@ -240,7 +240,7 @@ For production email reliability:
 
 Not required for development, but recommended for production:
 - Frontend: Configure in Vercel/Netlify (e.g., `app.yourdomain.com`)
-- Backend: Configure in Digital Ocean (e.g., `api.yourdomain.com`)
+- Backend: Edge Functions are served from `https://[project-ref].supabase.co/functions/v1` - no separate custom domain/DNS needed
 - Update OAuth redirect URLs to use custom domain
 
 See [Deployment Guide](07-deployment.md#domain-configuration) for detailed DNS setup.

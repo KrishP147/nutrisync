@@ -43,38 +43,25 @@ Use `DEMO_KEY` instead of registering:
 
 ## Configure Environment Variables
 
-### Backend Configuration
+### Backend Configuration (Supabase Edge Function secrets)
 
-Create `backend/.env` (new file in backend folder):
+The backend is now Supabase Edge Functions (`supabase/functions/`), not a
+FastAPI app with a `.env` file. `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+are injected automatically by the platform - you only need to set the two
+external API keys, via the Supabase CLI:
 
-```env
-# Supabase Configuration
-SUPABASE_URL=https://[your-project-ref].supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
-SUPABASE_KEY=your_anon_key_here
-
-# Google Gemini AI
-GOOGLE_API_KEY=AIzaSy_your_key_here
-
-# USDA FoodData Central
-USDA_API_KEY=your_usda_key_here
-# Or for testing: USDA_API_KEY=DEMO_KEY
+```bash
+supabase secrets set GOOGLE_API_KEY=AIzaSy_your_key_here
+supabase secrets set USDA_API_KEY=your_usda_key_here
+# Or for testing: supabase secrets set USDA_API_KEY=DEMO_KEY
 ```
 
 **Important Notes**:
-- **No quotes** around values
-- Replace `[your-project-ref]` with your actual Supabase project reference
-- `SUPABASE_SERVICE_ROLE_KEY` must be kept **secret** (never commit to git or expose in frontend)
-- Use the **service_role** key from Supabase dashboard (not anon key)
 - `GOOGLE_API_KEY` must start with `AIzaSy`
-- This file should already be in `.gitignore` - verify it's not tracked by git
-
-**Security Checklist**:
-- [ ] File named exactly `.env` (not `.env.txt` or `.env.example`)
-- [ ] Located in `backend/` directory
-- [ ] Listed in `.gitignore`
-- [ ] No quotes around any values
-- [ ] All keys are from your Supabase Project Settings > API page
+- These are set once per Supabase project and apply to all deployed functions
+- Verify what's set (values are hidden) with `supabase secrets list`
+- For local development with `supabase functions serve`, put the same keys
+  in a `supabase/.env` file (gitignored) instead
 
 ### Frontend Configuration
 
@@ -85,15 +72,15 @@ Create `frontend/.env.local` (new file in frontend folder):
 VITE_SUPABASE_URL=https://[your-project-ref].supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key_here
 
-# Backend API
-VITE_API_URL=http://localhost:8000
+# Edge Functions base URL
+VITE_API_URL=http://localhost:54321/functions/v1
 ```
 
 **Important Notes**:
 - File **must** be named `.env.local` (not `.env`)
 - All frontend variables **must** have `VITE_` prefix
 - Use **anon** key (not service_role key) - safe for public exposure
-- `VITE_API_URL` points to your backend server (localhost for development)
+- `VITE_API_URL` points to your Edge Functions base URL (`supabase functions serve` locally, or `https://[project-ref].supabase.co/functions/v1` in production)
 - No quotes around values
 - **Restart dev server** after creating or modifying this file
 
@@ -115,13 +102,12 @@ After creating the file, verify it's loaded:
 
 | Variable | Location | Value From | Public? |
 |----------|----------|------------|---------|
-| `SUPABASE_URL` | Backend | Supabase Project Settings > API | Yes |
-| `SUPABASE_SERVICE_ROLE_KEY` | Backend | Supabase Project Settings > API (service_role) | **No** - Keep secret |
-| `SUPABASE_KEY` | Backend | Supabase Project Settings > API (anon) | Yes |
-| `GOOGLE_API_KEY` | Backend | Google AI Studio | **No** - Keep secret |
-| `USDA_API_KEY` | Backend | USDA API Key Signup | No |
-| `VITE_SUPABASE_URL` | Frontend | Same as backend SUPABASE_URL | Yes |
-| `VITE_SUPABASE_ANON_KEY` | Frontend | Same as backend SUPABASE_KEY | Yes |
-| `VITE_API_URL` | Frontend | `http://localhost:8000` (dev) | Yes |
+| `SUPABASE_URL` | Edge Functions | Auto-injected by Supabase | n/a |
+| `SUPABASE_SERVICE_ROLE_KEY` | Edge Functions | Auto-injected by Supabase | n/a |
+| `GOOGLE_API_KEY` | Edge Functions (`supabase secrets set`) | Google AI Studio | **No** - Keep secret |
+| `USDA_API_KEY` | Edge Functions (`supabase secrets set`) | USDA API Key Signup | No |
+| `VITE_SUPABASE_URL` | Frontend | Supabase Project Settings > API | Yes |
+| `VITE_SUPABASE_ANON_KEY` | Frontend | Supabase Project Settings > API (anon) | Yes |
+| `VITE_API_URL` | Frontend | `https://[project-ref].supabase.co/functions/v1` (prod) | Yes |
 
 Next: [Running the Application](04-running-locally.md)

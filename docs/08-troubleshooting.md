@@ -30,13 +30,13 @@ Solution:
 
 ### Environment Variable Issues
 
-**Backend variables not loading**
+**Backend (Edge Function) secrets not loading**
 
 Check:
-- `.env` file exists in `backend/` directory
+- Deployed: set via `supabase secrets set GOOGLE_API_KEY=...` / `supabase secrets list`
+- Local dev: `supabase/.env` exists and `supabase functions serve --env-file supabase/.env` was used
 - No quotes around values
-- Virtual environment is activated
-- Restart backend server after changes
+- Restart `supabase functions serve` after changes
 
 **Frontend variables not loading**
 
@@ -53,7 +53,7 @@ Check:
 Check:
 - Copy full API key from Google AI Studio
 - No spaces or newlines
-- Remove quotes in `.env` file
+- Re-set with `supabase secrets set GOOGLE_API_KEY=...`
 - API key starts with `AIzaSy`
 
 **Backend: "403 Forbidden" (USDA API)**
@@ -65,10 +65,11 @@ Check:
 
 **Backend: "Supabase not configured"**
 
-Check:
-- `SUPABASE_URL` set correctly
-- `SUPABASE_SERVICE_ROLE_KEY` set (not anon key)
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically by
+the Edge Functions platform - this error means the function isn't actually
+running as a deployed/served Supabase Edge Function. Check:
 - Supabase project is active
+- You're hitting a real deployed function or `supabase functions serve`, not a stale URL
 
 ## Runtime Issues
 
@@ -112,7 +113,7 @@ Solutions:
 **AI food recognition not working**
 
 Check:
-- `GOOGLE_API_KEY` is set in backend `.env`
+- `GOOGLE_API_KEY` is set (`supabase secrets set` / `supabase/.env` locally)
 - Photo file size under 10MB
 - Photo format is JPEG or PNG
 - Check backend logs for Gemini API errors
@@ -140,8 +141,8 @@ Solutions:
 **Slow API responses**
 
 Check:
-- Backend server is running
-- USDA API not timing out (increase timeout in `main.py`)
+- Edge Functions are deployed and responding
+- USDA API not timing out (the `search-food`/`food-details` functions use a 10s fetch timeout)
 - Gemini API rate limits not exceeded
 - Network connectivity
 
@@ -173,23 +174,20 @@ Solutions:
 
 ## Deployment Issues
 
-### Backend Deployment
+### Backend Deployment (Supabase Edge Functions)
 
-**Service won't start on Digital Ocean**
+**Function fails to deploy**
 
 Check:
-- Environment variables set in App Platform dashboard
-- Python version matches requirements (3.11+)
-- All dependencies in `requirements.txt`
-- Check deployment logs for specific errors
+- Logged in and linked: `supabase login`, `supabase link --project-ref <ref>`
+- `supabase functions deploy` output for a specific error
+- Deno syntax errors in the changed `index.ts`
 
-**SSL certificate errors**
+**Function deploys but returns errors at runtime**
 
-Solutions:
-- Verify domain DNS points to correct IP
-- Run certbot manually: `certbot --nginx -d api.yourdomain.com`
-- Check Nginx configuration
-- Renew certificates: `certbot renew`
+Check:
+- Secrets are set: `supabase secrets list` (`GOOGLE_API_KEY`, `USDA_API_KEY`)
+- Function logs: `supabase functions logs <function-name>`
 
 ### Frontend Deployment
 
@@ -205,9 +203,9 @@ Check:
 **App loads but API calls fail**
 
 Check:
-- `VITE_API_URL` points to deployed backend (not localhost)
-- Backend has CORS enabled for frontend domain
-- Backend is running and accessible
+- `VITE_API_URL` points to `https://[project-ref].supabase.co/functions/v1` (not localhost)
+- The calling origin is in `ALLOWED_ORIGINS` in `supabase/functions/_shared/cors.ts`
+- The Edge Functions are deployed (`supabase functions list`)
 - Check browser Network tab for specific errors
 
 ### Database Connection
@@ -225,11 +223,9 @@ Check:
 
 **Backend tests fail locally**
 
-Check:
-- Virtual environment activated
-- All dev dependencies installed: `pip install -r requirements-dev.txt`
-- Environment variables set for tests
-- Mock services configured properly
+There is no automated backend test suite currently (see
+[Testing](06-testing.md)) - verify Edge Functions manually with
+`supabase functions serve` and `curl` instead.
 
 **Frontend tests fail**
 
@@ -252,7 +248,7 @@ Check:
 If issues persist:
 
 1. **Check logs**:
-   - Backend: Terminal output or `journalctl -u nutrisync -f`
+   - Backend: `supabase functions logs <function-name>`
    - Frontend: Browser console (F12)
    - Supabase: **Logs** section in dashboard
 

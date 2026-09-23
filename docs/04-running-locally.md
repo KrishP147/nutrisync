@@ -6,78 +6,43 @@
 
 ## Backend Setup
 
-### Install Dependencies
+The backend is Supabase Edge Functions (Deno/TypeScript), run locally through
+the Supabase CLI - there's no Python virtual environment anymore.
 
-Open a terminal and navigate to the backend directory:
+### Install the Supabase CLI
+
+See https://supabase.com/docs/guides/cli/getting-started for your platform.
+
+### Set local secrets
+
+Create `supabase/.env` (gitignored) with your API keys:
+```env
+GOOGLE_API_KEY=your_gemini_api_key
+USDA_API_KEY=your_usda_key
+```
+
+### Start the Edge Functions server
 
 ```bash
-cd backend
+supabase functions serve --env-file supabase/.env
 ```
 
-**Create virtual environment**:
-```bash
-python -m venv venv
+You should see each function listed as served, e.g.:
 ```
-
-**Activate virtual environment**:
-
-On **macOS/Linux**:
-```bash
-source venv/bin/activate
-```
-You should see `(venv)` at the start of your terminal prompt.
-
-On **Windows** (Command Prompt):
-```bash
-venv\Scripts\activate
-```
-
-On **Windows** (PowerShell):
-```bash
-venv\Scripts\Activate.ps1
-```
-
-**Install dependencies**:
-```bash
-pip install -r requirements.txt
-```
-
-This will install all required Python packages (~2-3 minutes).
-
-### Start Backend Server
-
-**Ensure virtual environment is activated** (look for `(venv)` in prompt):
-```bash
-uvicorn app.main:app --reload
-```
-
-You should see output like:
-```
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process
-INFO:     Started server process
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
+Serving functions on http://127.0.0.1:54321/functions/v1/<function-name>
 ```
 
 **Server URLs**:
-- API: `http://localhost:8000`
-- Interactive API docs: `http://localhost:8000/docs`
-- Alternative docs: `http://localhost:8000/redoc`
+- Functions: `http://localhost:54321/functions/v1/<function-name>`
 
 ### Verify Backend
 
-**Test the health endpoint** (open a new terminal):
+**Test an endpoint** (open a new terminal):
 ```bash
-curl http://localhost:8000/health
+curl "http://localhost:54321/functions/v1/search-food?query=apple"
 ```
 
-**Expected response**:
-```json
-{"status": "healthy"}
-```
-
-Or visit `http://localhost:8000/docs` in your browser to see the interactive API documentation.
+**Expected response**: a JSON object with a `foods` array.
 
 ## Frontend Setup
 
@@ -172,41 +137,22 @@ VITE v5.x.x  ready in xxx ms
 
 ## Troubleshooting
 
-### Backend won't start
+### Backend (Edge Functions) won't start
 
-**Check virtual environment**:
+**Check local secrets file**:
 ```bash
-# Verify .env file exists
-ls backend/.env  # macOS/Linux
-dir backend\.env  # Windows
-
-# Check if virtual environment is activated
-# You should see (venv) at the start of your prompt
-```
-
-**If you don't see (venv)**:
-```bash
-# macOS/Linux:
-source venv/bin/activate
-
-# Windows:
-venv\Scripts\activate
-```
-
-**Check Python version**:
-```bash
-python --version
-# Should show 3.11.x or higher
+# Verify supabase/.env exists with GOOGLE_API_KEY and USDA_API_KEY
+ls supabase/.env  # macOS/Linux
+dir supabase\.env  # Windows
 ```
 
 **Common issues**:
-- Missing API keys in `.env` file
-- Virtual environment not activated
-- Wrong Python version
-- Missing dependencies - run `pip install -r requirements.txt`
-- Port 8000 already in use - stop other processes or change port
+- Missing API keys in `supabase/.env`
+- Supabase CLI not installed or out of date (`supabase --version`)
+- Docker not running (the CLI's local emulator needs it)
+- Port 54321 already in use - stop other `supabase functions serve` instances
 
-**Check backend logs** in the terminal for specific error messages.
+**Check the CLI's terminal output** for specific error messages per function.
 
 ### Frontend won't start
 
@@ -220,8 +166,8 @@ dir frontend\.env.local  # Windows
 **Common issues**:
 - Missing `.env.local` file in frontend directory
 - Variables not prefixed with `VITE_`
-- Backend not running (must be started first)
-- Incorrect `VITE_API_URL` (should be `http://localhost:8000`)
+- `supabase functions serve` not running (must be started first)
+- Incorrect `VITE_API_URL` (should be `http://localhost:54321/functions/v1`)
 - Port 5173 already in use - Vite will try 5174 automatically
 
 **After creating/modifying `.env.local`**: Restart the dev server (Ctrl+C, then `npm run dev` again).
@@ -247,50 +193,48 @@ dir frontend\.env.local  # Windows
 
 **Verify USDA API**:
 ```bash
-# Check backend .env has USDA_API_KEY
-cat backend/.env | grep USDA  # macOS/Linux
-findstr USDA backend\.env  # Windows
+# Check supabase/.env has USDA_API_KEY
+cat supabase/.env | grep USDA  # macOS/Linux
+findstr USDA supabase\.env  # Windows
 ```
 
 **Common issues**:
-- `USDA_API_KEY` not set in backend `.env`
-- Backend server not running
+- `USDA_API_KEY` not set (falls back to rate-limited `DEMO_KEY`)
+- `supabase functions serve` not running
 - Rate limit exceeded (DEMO_KEY: 30/hour, Personal key: 1,000/hour)
 - Network connectivity issues
 
-**Check backend terminal** for USDA API error messages.
+**Check the CLI terminal** for USDA API error messages.
 
 ### AI features don't work
 
 **Verify Gemini API**:
 ```bash
-# Check backend .env has GOOGLE_API_KEY
-cat backend/.env | grep GOOGLE  # macOS/Linux
-findstr GOOGLE backend\.env  # Windows
+# Check supabase/.env has GOOGLE_API_KEY
+cat supabase/.env | grep GOOGLE  # macOS/Linux
+findstr GOOGLE supabase\.env  # Windows
 ```
 
 **Common issues**:
 - `GOOGLE_API_KEY` not set or invalid
 - API key doesn't start with `AIzaSy`
 - Rate limit exceeded (Free tier: 60/minute, 1,500/day)
-- Photo file too large (>10MB)
 - Photo format not supported
 
-**Check backend terminal** for Gemini API error messages.
+**Check the CLI terminal** for Gemini API error messages.
 
 ### Port already in use
 
-**Backend (port 8000)**:
+**Backend (port 54321)**:
 ```bash
-# Find process using port 8000
+# Find process using port 54321
 # macOS/Linux:
-lsof -i :8000
+lsof -i :54321
 
 # Windows:
-netstat -ano | findstr :8000
+netstat -ano | findstr :54321
 
-# Kill the process or use different port:
-uvicorn app.main:app --reload --port 8001
+# Stop other `supabase functions serve` / `supabase start` instances
 ```
 
 **Frontend (port 5173)**:
@@ -299,19 +243,18 @@ Vite will automatically try the next available port (5174, 5175, etc.).
 ### CORS errors in browser console
 
 **Verify**:
-- Backend is running at `http://localhost:8000`
-- `VITE_API_URL` in frontend `.env.local` matches backend URL
-- No typos in URL (http not https for local development)
+- `supabase functions serve` is running at `http://localhost:54321`
+- `VITE_API_URL` in frontend `.env.local` is `http://localhost:54321/functions/v1`
+- The calling origin is listed in `supabase/functions/_shared/cors.ts`
 
 **Check browser console** for specific CORS error details.
 
 ## Development Tips
 
-- Use two terminal windows/tabs: one for backend, one for frontend
+- Use two terminal windows/tabs: one for `supabase functions serve`, one for frontend
 - Both must be running for the app to work
-- Backend logs show API requests and errors
+- The Supabase CLI terminal shows Edge Function requests and errors
 - Browser console (F12) shows frontend errors
-- Use `http://localhost:8000/docs` to test API endpoints directly
 - Check Supabase dashboard to verify data is being saved
 
 Next: [Google OAuth Setup](05-google-oauth.md) (Optional)

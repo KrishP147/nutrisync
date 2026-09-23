@@ -28,7 +28,7 @@ Modern React application for NutriSync, built with Vite, Tailwind CSS, and Frame
    ```env
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_key
-   VITE_API_URL=http://localhost:8000
+   VITE_API_URL=http://localhost:54321/functions/v1
    ```
 4. Run the development server:
    ```bash

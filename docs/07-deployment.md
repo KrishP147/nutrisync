@@ -1,82 +1,78 @@
 # Deployment
 
+NutriSync's backend now runs entirely as Supabase Edge Functions - there is
+no Digital Ocean droplet, nginx, systemd service, or certbot cert to manage
+anymore. The functions live in `supabase/functions/`, one directory per
+endpoint (see `supabase/functions/*/index.ts`).
+
 ## Production Environment Variables
 
-### Backend (Digital Ocean)
+### Backend (Supabase Edge Function secrets)
 
-Set these in Digital Ocean App Platform dashboard under **Settings** > **Environment Variables**:
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically
+into every Edge Function - you do not set them yourself. You only need to set
+the two external API keys, once per project:
 
+```bash
+supabase secrets set GOOGLE_API_KEY=<GOOGLE_API_KEY>
+supabase secrets set USDA_API_KEY=<USDA_API_KEY>
 ```
-SUPABASE_URL=https://[project-ref].supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-SUPABASE_KEY=your_anon_key
-GOOGLE_API_KEY=your_gemini_api_key
-USDA_API_KEY=your_usda_key
-```
 
-Mark `SUPABASE_SERVICE_ROLE_KEY` and `GOOGLE_API_KEY` as encrypted/secret.
+(`USDA_API_KEY` is optional - functions fall back to USDA's public `DEMO_KEY`,
+which is rate-limited to 30 requests/hour.)
 
 ### Frontend (Vercel)
 
-Set these in Vercel dashboard under **Project Settings** > **Environment Variables**:
+Set these in the Vercel dashboard under **Project Settings** > **Environment
+Variables** (all environments: Production, Preview, Development):
 
 ```
 VITE_SUPABASE_URL=https://[project-ref].supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_API_URL=https://api.yourdomain.com
+VITE_API_URL=https://[project-ref].supabase.co/functions/v1
 ```
 
-Select all environments: Production, Preview, Development.
+`VITE_API_URL` previously pointed at `https://api.nutrisync.me` (the dead
+droplet). Point it at the Edge Functions base URL instead. The
+`api.nutrisync.me` DNS record is no longer needed and can be removed from
+Namecheap - nothing serves that hostname anymore.
 
 ## Backend Deployment
 
-### Using Deploy Script
-
-The repository includes an automated deployment script for Digital Ocean.
+### First-time setup
 
 ```bash
-cd backend
-./deploy.sh
+supabase login
+supabase link --project-ref <project-ref>
 ```
 
-This script:
-- Updates system packages
-- Installs Python and dependencies
-- Configures Nginx reverse proxy
-- Sets up systemd service
-- Configures SSL with Certbot
+### Deploy all functions
 
-### Manual Steps After Deployment
-
-1. SSH into your server
-2. Edit `/opt/nutrisync/backend/.env` with actual API keys
-3. Restart service:
 ```bash
-systemctl restart nutrisync
+supabase functions deploy
 ```
 
-4. Configure SSL:
+Or deploy a single function while iterating:
+
 ```bash
-certbot --nginx -d api.yourdomain.com
+supabase functions deploy chat
 ```
 
-5. Verify:
+### Local development
+
 ```bash
-curl https://api.yourdomain.com/health
+supabase functions serve
 ```
 
-### Configuration Files
+Serves all functions locally at `http://localhost:54321/functions/v1/<name>`.
+Set `frontend/.env.local`'s `VITE_API_URL` to that URL to test against it.
 
-**Systemd service** (`backend/nutrisync.service`):
-- Manages backend process
-- Auto-restart on failure
-- Environment variable loading
+### CI/CD
 
-**Nginx config** (`backend/nginx.conf`):
-- Reverse proxy configuration
-- Security headers
-- File upload limits
-- WebSocket support
+The `deploy-backend` job in `.github/workflows/ci.yml` runs
+`supabase functions deploy` automatically on pushes to `main`, gated on a
+`SUPABASE_ACCESS_TOKEN` repository secret (see below) - it does not deploy on
+every PR.
 
 ## Frontend Deployment
 
@@ -93,7 +89,8 @@ cd frontend
 vercel --prod
 ```
 
-Or connect repository to Vercel dashboard for automatic deployments on push.
+Or connect the repository to Vercel dashboard for automatic deployments on
+push.
 
 ### Configuration
 
@@ -105,17 +102,7 @@ The `vercel.json` file at repository root handles:
 
 ## Domain Configuration
 
-### Backend (api.yourdomain.com)
-
-Point A record to your Digital Ocean droplet IP:
-```
-Type: A
-Name: api
-Value: [droplet-ip-address]
-TTL: 3600
-```
-
-### Frontend (yourdomain.com)
+### Frontend (nutrisync.me)
 
 For Vercel deployment:
 1. Add domain in Vercel dashboard
@@ -132,51 +119,53 @@ Value: cname.vercel-dns.com
 
 Vercel automatically handles SSL certificates.
 
+### Backend (api.nutrisync.me)
+
+No longer needed. The old DNS `A` record pointing `api.nutrisync.me` at the
+retired droplet IP can be deleted in Namecheap - the frontend now calls the
+Supabase Edge Functions URL directly (`https://[project-ref].supabase.co/functions/v1`),
+so there's nothing to host on that subdomain. Keeping the record around is
+harmless (it'll just point at a dead IP) but removing it avoids confusion.
+
 ## CI/CD Pipeline
 
 GitHub Actions workflow (`.github/workflows/ci.yml`) runs on each push:
 
 1. **Frontend Tests**: Linting and Vitest tests
-2. **Backend Tests**: pytest with coverage
+2. **Backend Tests**: none currently (the FastAPI test suite was retired with
+   the FastAPI app; Edge Function tests would use `deno test`, not yet added)
 3. **Security Scan**: Trivy vulnerability scanning
 4. **Deploy Frontend**: Automatic Vercel deployment (main branch)
-5. **Deploy Backend**: Automatic Digital Ocean deployment (main branch)
+5. **Deploy Backend**: `supabase functions deploy` (main branch)
 
 ### Required GitHub Secrets
 
 Configure in repository **Settings** > **Secrets and variables** > **Actions**:
 
 ```
-GOOGLE_API_KEY          # For tests
-SUPABASE_URL            # For tests
-SUPABASE_KEY            # For tests
 VERCEL_TOKEN            # For frontend deployment
 VERCEL_ORG_ID           # For frontend deployment
 VERCEL_PROJECT_ID       # For frontend deployment
-DIGITALOCEAN_ACCESS_TOKEN # For backend deployment
+SUPABASE_ACCESS_TOKEN   # For `supabase functions deploy` in CI
+SUPABASE_PROJECT_REF    # For `supabase functions deploy` in CI
 CODECOV_TOKEN           # For coverage reports (optional)
 ```
 
+`SUPABASE_ACCESS_TOKEN` is a personal access token generated at
+https://supabase.com/dashboard/account/tokens. `SUPABASE_PROJECT_REF` is the
+project ref shown in the Supabase dashboard URL / Project Settings > General.
+Neither is set by this repo's tooling - create and add both yourself.
+
 ## Monitoring
 
-### Backend Health Check
+### Edge Function logs
 
 ```bash
-curl https://api.yourdomain.com/health
+supabase functions logs <function-name>
 ```
 
-### View Logs
-
-**Systemd service logs**:
-```bash
-journalctl -u nutrisync -f
-```
-
-**Nginx logs**:
-```bash
-tail -f /var/log/nginx/access.log
-tail -f /var/log/nginx/error.log
-```
+Or view logs in the Supabase dashboard under **Edge Functions** > select a
+function > **Logs**.
 
 ### Vercel Logs
 
@@ -184,17 +173,11 @@ View in Vercel dashboard under **Deployments** > Select deployment > **Logs**
 
 ## Troubleshooting
 
-### Backend not responding
+### Edge Function returns 500 / not found
 
-Check service status:
-```bash
-systemctl status nutrisync
-```
-
-Restart if needed:
-```bash
-systemctl restart nutrisync
-```
+- Confirm the function is deployed: `supabase functions list`
+- Check `GOOGLE_API_KEY`/`USDA_API_KEY` are set: `supabase secrets list`
+- Check function logs: `supabase functions logs <function-name>`
 
 ### Frontend build fails
 
@@ -203,17 +186,15 @@ Check build logs in Vercel dashboard. Common issues:
 - Incorrect `VITE_` prefix
 - Build timeout (increase in Vercel settings)
 
-### SSL certificate errors
+### CORS errors calling Edge Functions
 
-Renew certificate:
-```bash
-certbot renew
-nginx -s reload
-```
+- Confirm the calling origin is in the `ALLOWED_ORIGINS` list in
+  `supabase/functions/_shared/cors.ts`
+- Redeploy the function after changing it
 
 ### Database connection errors
 
 Verify:
 - Supabase project is running
-- Correct `SUPABASE_URL` in environment variables
+- Correct `VITE_SUPABASE_URL` in environment variables
 - Network connectivity from deployment platform to Supabase

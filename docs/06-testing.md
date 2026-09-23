@@ -2,37 +2,16 @@
 
 ## Backend Tests
 
-### Run All Tests
+The backend is now Supabase Edge Functions (`supabase/functions/`). The old
+FastAPI pytest suite (85 tests) was retired along with the FastAPI app - it
+tested code that no longer exists. There is no automated backend test suite
+yet; adding one would mean `deno test` specs per function (not set up here).
 
+Manually verify a function locally with:
 ```bash
-cd backend
-pytest tests/ -v
+supabase functions serve --env-file supabase/.env
+curl "http://localhost:54321/functions/v1/search-food?query=apple"
 ```
-
-### Run with Coverage
-
-```bash
-pytest tests/ --cov=app --cov-report=html
-```
-
-Coverage report generated in `htmlcov/index.html`
-
-### Test Structure
-
-```
-backend/tests/
-├── conftest.py           # Test fixtures and configuration
-├── test_main.py          # API endpoint tests
-├── test_gemini_service.py # AI service tests
-├── test_integration.py   # Integration tests
-└── test_fasting.py       # Fasting feature tests
-```
-
-### Current Status
-
-- Total tests: 85
-- Coverage: 74.5%
-- All critical paths tested
 
 ## Frontend Tests
 
@@ -90,15 +69,6 @@ See `.github/workflows/ci.yml` for CI configuration.
 
 ## Writing Tests
 
-### Backend Test Example
-
-```python
-def test_search_food(client):
-    response = client.get("/api/search-food?query=apple")
-    assert response.status_code == 200
-    assert "foods" in response.json()
-```
-
 ### Frontend Test Example
 
 ```javascript
@@ -113,14 +83,6 @@ test('renders login form', () => {
 
 ## Troubleshooting
 
-### Backend tests fail with import errors
-
-Ensure virtual environment is activated:
-```bash
-source venv/bin/activate  # macOS/Linux
-venv\Scripts\activate     # Windows
-```
-
 ### Frontend tests fail with module errors
 
 Clear cache and reinstall:
@@ -133,7 +95,7 @@ npm install
 
 Check:
 - Environment variables are set in GitHub Secrets
-- Dependencies are correctly specified in `requirements.txt` and `package.json`
+- Dependencies are correctly specified in `package.json`
 - No system-specific paths in tests
 
 Next: [Deployment](07-deployment.md)

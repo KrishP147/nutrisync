@@ -13,17 +13,13 @@ coverage:
       default:
         target: 70%
 
-# Separate coverage flags for backend and frontend
+# Backend is now Supabase Edge Functions with no automated test/coverage
+# suite (see docs/06-testing.md), so only frontend coverage is tracked.
 flag_management:
   default_rules:
     carryforward: true
-    
+
 flags:
-  backend:
-    paths:
-      - backend/
-    carryforward: true
-      
   frontend:
     paths:
       - frontend/src/

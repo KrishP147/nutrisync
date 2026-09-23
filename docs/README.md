@@ -32,30 +32,26 @@ See [backend/migrations/README.md](../backend/migrations/README.md) for details.
 
 ### Environment Variables
 
-**Backend** (`backend/.env`):
-```env
-SUPABASE_URL=https://[project-ref].supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-SUPABASE_KEY=your_anon_key
-GOOGLE_API_KEY=your_gemini_api_key
-USDA_API_KEY=your_usda_key
+**Backend** (Supabase Edge Function secrets - `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` are auto-injected):
+```bash
+supabase secrets set GOOGLE_API_KEY=your_gemini_api_key
+supabase secrets set USDA_API_KEY=your_usda_key
 ```
 
 **Frontend** (`frontend/.env.local`):
 ```env
 VITE_SUPABASE_URL=https://[project-ref].supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://localhost:54321/functions/v1
 ```
 
 ### Common Commands
 
 **Backend**:
 ```bash
-cd backend
-source venv/bin/activate  # Activate virtual environment
-uvicorn app.main:app --reload  # Start server
-pytest tests/ -v  # Run tests
+supabase functions serve --env-file supabase/.env  # Local dev server
+supabase functions deploy  # Deploy all functions
+supabase functions logs <name>  # View logs
 ```
 
 **Frontend**:
