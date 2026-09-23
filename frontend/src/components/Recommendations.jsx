@@ -85,7 +85,7 @@ export default function Recommendations({ limit = 3, refreshTrigger = 0 }) {
           fiber: Math.max(0, userGoals.fiber - totals.fiber)
         };
 
-        const response = await api.post('/api/generate-food-recommendations', {
+        const response = await api.post('/generate-food-recommendations', {
           goals: userGoals,
           current: totals,
           lacking: lacking,

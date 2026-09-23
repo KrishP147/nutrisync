@@ -38,7 +38,7 @@ export default function FastingToggle() {
 
         try {
             // Get AI recommendation
-            const response = await api.post('/api/fasting/recommend', {
+            const response = await api.post('/fasting-recommend', {
                 goals: goals,
                 current_time: new Date().toISOString()
             });

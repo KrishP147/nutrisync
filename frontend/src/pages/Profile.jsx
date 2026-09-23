@@ -298,9 +298,9 @@ export default function Profile() {
         throw new Error('No active session');
       }
 
-      // Call backend API to delete account
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${backendUrl}/api/user/${user.id}`, {
+      // Call the Edge Function to delete account
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || 'http://localhost:54321/functions/v1';
+      const response = await fetch(`${backendUrl}/delete-user-account/${user.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,

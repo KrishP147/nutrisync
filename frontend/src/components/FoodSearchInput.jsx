@@ -45,7 +45,7 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
       setLoading(true);
       try {
         const [dbResponse, customResponse] = await Promise.all([
-          api.get(`/api/search-food?query=${encodeURIComponent(query)}`),
+          api.get(`/search-food?query=${encodeURIComponent(query)}`),
           searchCustomFoods(query)
         ]);
 

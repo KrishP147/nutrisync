@@ -74,22 +74,22 @@ export default function PhotoMealUpload({ onMealAdded }) {
     e.preventDefault();
   };
 
-  const uploadPhotoToStorage = async (file) => {
+  // Shared compression options. Also reused in analyzeImage() below before
+  // sending the file to the analyze-meal-image Edge Function: the old nginx
+  // proxy allowed up to 10MB request bodies, but Supabase Edge Functions
+  // don't document a specific request body size cap, and phone-camera
+  // originals can easily be 5-15MB - compressing client-side first removes
+  // that risk instead of relying on an undocumented limit.
+  const COMPRESSION_OPTIONS = {
+    maxSizeMB: 1, // Max file size in MB
+    maxWidthOrHeight: 1200, // Max width or height
+    useWebWorker: true,
+    fileType: 'image/jpeg', // Convert to JPEG for better compression
+  };
+
+  const uploadPhotoToStorage = async (compressedFile) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-
-      // Compression options
-      const options = {
-        maxSizeMB: 1, // Max file size in MB
-        maxWidthOrHeight: 1200, // Max width or height
-        useWebWorker: true,
-        fileType: 'image/jpeg', // Convert to JPEG for better compression
-      };
-
-      // Compress the image
-      console.log(`Original file size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
-      const compressedFile = await imageCompression(file, options);
-      console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
 
       // Create a unique filename (always use .jpg since we're converting to JPEG)
       const fileName = `${user.id}/${Date.now()}.jpg`;
@@ -131,19 +131,26 @@ export default function PhotoMealUpload({ onMealAdded }) {
     setError(null);
 
     try {
+      // Compress once and reuse for both the storage upload and the analyze
+      // call (see COMPRESSION_OPTIONS comment above for why the analyze call
+      // needs this too, not just the storage upload).
+      console.log(`Original file size: ${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`);
+      const compressedFile = await imageCompression(selectedFile, COMPRESSION_OPTIONS);
+      console.log(`Compressed file size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+
       // Upload photo to Supabase Storage BEFORE AI analysis (only if savePhoto is true)
       if (savePhoto) {
-        const uploadedPhotoUrl = await uploadPhotoToStorage(selectedFile);
+        const uploadedPhotoUrl = await uploadPhotoToStorage(compressedFile);
         if (uploadedPhotoUrl) {
           setPhotoUrl(uploadedPhotoUrl);
         }
       }
 
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      formData.append('file', compressedFile, 'meal.jpg');
       formData.append('dietaryRestrictions', JSON.stringify(dietaryRestrictions));
 
-      const response = await api.post('/api/analyze-meal-image', formData, {
+      const response = await api.post('/analyze-meal-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

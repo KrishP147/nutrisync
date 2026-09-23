@@ -91,7 +91,7 @@ export default function RecommendationsPage() {
       const avgFat = mealCount > 0 ? recentMeals.reduce((sum, m) => sum + (m.total_fat_g || 0), 0) / 7 : 0;
       const avgFiber = mealCount > 0 ? recentMeals.reduce((sum, m) => sum + (m.total_fiber_g || 0), 0) / 7 : 0;
 
-      const response = await api.post('/api/chat', {
+      const response = await api.post('/chat', {
         message: userMessage,
         userGoals: goals,
         recentMeals: { avgProtein, avgCarbs, avgFat, avgFiber },
