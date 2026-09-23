@@ -1,0 +1,45 @@
+# Supabase project config for NutriSync Edge Functions.
+# Replace project_id with the actual project ref before running `supabase link`.
+project_id = "<SUPABASE_PROJECT_REF>"
+
+# None of the original FastAPI endpoints required a Supabase-issued JWT (the
+# two /api/user/{id} routes did their own manual bearer-token verification in
+# code instead). verify_jwt = false on every function preserves that behavior
+# at the gateway level; each function still enforces its own auth where the
+# original did.
+
+[functions.search-food]
+verify_jwt = false
+
+[functions.food-details]
+verify_jwt = false
+
+[functions.analyze-meal-image]
+verify_jwt = false
+
+[functions.chat]
+verify_jwt = false
+
+[functions.recommendations]
+verify_jwt = false
+
+[functions.generate-food-recommendations]
+verify_jwt = false
+
+[functions.generate-health-tip]
+verify_jwt = false
+
+[functions.upload-meal-photo]
+verify_jwt = false
+
+[functions.fasting-recommend]
+verify_jwt = false
+
+[functions.reminders-smart]
+verify_jwt = false
+
+[functions.get-user-profile]
+verify_jwt = false
+
+[functions.delete-user-account]
+verify_jwt = false
