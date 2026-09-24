@@ -119,7 +119,7 @@ describe('resolveOAuthAction', () => {
   ];
 
   it.each(table)(
-    'origin=%s hasProfile=%s -> %s',
+    'origin=%s user=%o hasProfile=%s -> %s',
     (origin, user, hasProfile, expected) => {
       expect(resolveOAuthAction({ origin, user, hasProfile })).toBe(expected);
     }
