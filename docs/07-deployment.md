@@ -70,9 +70,10 @@ Set `frontend/.env.local`'s `VITE_API_URL` to that URL to test against it.
 ### CI/CD
 
 The `deploy-backend` job in `.github/workflows/ci.yml` runs
-`supabase functions deploy` automatically on pushes to `main`, gated on a
-`SUPABASE_ACCESS_TOKEN` repository secret (see below) - it does not deploy on
-every PR.
+`supabase functions deploy` automatically on pushes to `main` (not on PRs). It
+needs the `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` repository secrets
+(see below); if either is unset the deploy steps are skipped with a notice and
+the job still passes.
 
 ## Frontend Deployment
 
@@ -136,7 +137,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs on each push:
    the FastAPI app; Edge Function tests would use `deno test`, not yet added)
 3. **Security Scan**: Trivy vulnerability scanning
 4. **Deploy Frontend**: Automatic Vercel deployment (main branch)
-5. **Deploy Backend**: `supabase functions deploy` (main branch)
+5. **Deploy Backend**: `supabase functions deploy` (main branch; skipped if Supabase secrets unset)
 
 ### Required GitHub Secrets
 
