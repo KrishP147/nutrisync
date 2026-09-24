@@ -869,7 +869,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                                   min="0"
                                   value={component.base_calories}
                                   onChange={(e) => updateComponentNutrition(idx, 'base_calories', e.target.value)}
-                                  className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                                  className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                                 />
                               </div>
                               <div>
@@ -880,7 +880,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                                   min="0"
                                   value={component.base_protein_g}
                                   onChange={(e) => updateComponentNutrition(idx, 'base_protein_g', e.target.value)}
-                                  className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                                  className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                                 />
                               </div>
                               <div>
@@ -891,7 +891,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                                   min="0"
                                   value={component.base_carbs_g}
                                   onChange={(e) => updateComponentNutrition(idx, 'base_carbs_g', e.target.value)}
-                                  className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                                  className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                                 />
                               </div>
                               <div>
@@ -902,7 +902,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                                   min="0"
                                   value={component.base_fat_g}
                                   onChange={(e) => updateComponentNutrition(idx, 'base_fat_g', e.target.value)}
-                                  className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                                  className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                                 />
                               </div>
                               <div>
@@ -913,7 +913,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                                   min="0"
                                   value={component.base_fiber_g}
                                   onChange={(e) => updateComponentNutrition(idx, 'base_fiber_g', e.target.value)}
-                                  className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                                  className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                                 />
                               </div>
                             </div>
@@ -1027,7 +1027,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                               min="0"
                               value={simpleMacros.base_calories}
                               onChange={(e) => updateSimpleMacro('base_calories', e.target.value)}
-                              className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                              className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                             />
                           </div>
                           <div>
@@ -1038,7 +1038,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                               min="0"
                               value={simpleMacros.base_protein_g}
                               onChange={(e) => updateSimpleMacro('base_protein_g', e.target.value)}
-                              className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                              className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                             />
                           </div>
                           <div>
@@ -1049,7 +1049,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                               min="0"
                               value={simpleMacros.base_carbs_g}
                               onChange={(e) => updateSimpleMacro('base_carbs_g', e.target.value)}
-                              className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                              className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                             />
                           </div>
                           <div>
@@ -1060,7 +1060,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                               min="0"
                               value={simpleMacros.base_fat_g}
                               onChange={(e) => updateSimpleMacro('base_fat_g', e.target.value)}
-                              className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                              className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                             />
                           </div>
                           <div>
@@ -1071,7 +1071,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
                               min="0"
                               value={simpleMacros.base_fiber_g}
                               onChange={(e) => updateSimpleMacro('base_fiber_g', e.target.value)}
-                              className="w-full px-1 sm:px-2 py-1 border  text-xs sm:text-sm text-white"
+                              className={`w-full px-1 sm:px-2 py-1 border ${colors.inputBorder} ${colors.inputBg} text-xs sm:text-sm text-white`}
                             />
                           </div>
                         </div>
