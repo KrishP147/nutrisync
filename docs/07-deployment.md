@@ -191,6 +191,8 @@ Check build logs in Vercel dashboard. Common issues:
 
 - Confirm the calling origin is in the `ALLOWED_ORIGINS` list in
   `supabase/functions/_shared/cors.ts`
+- Vercel preview origins (`https://nutrisync-frontend-*.vercel.app`) are
+  allowed via the `VERCEL_PREVIEW_ORIGIN` regex in the same file
 - Redeploy the function after changing it
 
 ### Database connection errors
