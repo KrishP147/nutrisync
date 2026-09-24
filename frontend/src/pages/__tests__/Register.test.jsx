@@ -4,7 +4,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Register from '../Register';
+import Register, { isExistingAccount, EXISTING_ACCOUNT_AGE_MS } from '../Register';
 
 // Mock Supabase
 vi.mock('../../supabaseClient', () => ({
@@ -42,6 +42,7 @@ describe('Register', () => {
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   it('renders registration form', () => {
@@ -313,7 +314,7 @@ describe('Register', () => {
     });
   });
 
-  it('detects existing user by empty identities array', async () => {
+  it('detects existing user by empty identities array (confirmed duplicate)', async () => {
     const { supabase } = await import('../../supabaseClient');
     supabase.auth.signUp.mockResolvedValue({
       data: {
@@ -339,9 +340,118 @@ describe('Register', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText(/email is already in use/i)).toBeInTheDocument();
-      expect(screen.getByText(/go to login/i)).toBeInTheDocument();
+      expect(screen.getByText(/account with this email already exists/i)).toBeInTheDocument();
+      const loginLink = screen.getByRole('link', { name: /^log in$/i });
+      expect(loginLink).toHaveAttribute('href', `/login?email=${encodeURIComponent('existing@example.com')}`);
+      const resetLink = screen.getByRole('link', { name: /^reset password$/i });
+      expect(resetLink).toHaveAttribute('href', '/forgot-password');
     }, { timeout: 3000 });
+  });
+
+  it('detects unconfirmed duplicate account by old created_at', async () => {
+    const { supabase } = await import('../../supabaseClient');
+    const fixedNow = new Date('2026-09-23T00:00:00.000Z').getTime();
+    vi.spyOn(Date, 'now').mockReturnValue(fixedNow);
+    const oldCreatedAt = new Date(fixedNow - (EXISTING_ACCOUNT_AGE_MS + 60_000)).toISOString();
+
+    supabase.auth.signUp.mockResolvedValue({
+      data: {
+        user: {
+          id: '123',
+          email: 'unconfirmed@example.com',
+          identities: [{ provider: 'email' }],
+          created_at: oldCreatedAt
+        },
+        session: null
+      },
+      error: null
+    });
+
+    renderRegister();
+
+    const emailInput = screen.getByPlaceholderText(/you@example.com/i);
+    const passwordInputs = screen.getAllByPlaceholderText(/password/i);
+    const passwordInput = passwordInputs.find(input => input.placeholder.includes('Create'));
+    const confirmInput = passwordInputs.find(input => input.placeholder.includes('Confirm'));
+    const submitButton = screen.getByRole('button', { name: /create account/i });
+
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: 'unconfirmed@example.com' } });
+      fireEvent.change(passwordInput, { target: { value: 'ValidPass123!' } });
+      fireEvent.change(confirmInput, { target: { value: 'ValidPass123!' } });
+      fireEvent.click(submitButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/account with this email already exists/i)).toBeInTheDocument();
+      expect(screen.queryByText(/check your email/i)).not.toBeInTheDocument();
+    }, { timeout: 3000 });
+  });
+
+  it('reaches success screen for a fresh signup with created_at = now', async () => {
+    const { supabase } = await import('../../supabaseClient');
+    const fixedNow = new Date('2026-09-23T00:00:00.000Z').getTime();
+    vi.spyOn(Date, 'now').mockReturnValue(fixedNow);
+
+    supabase.auth.signUp.mockResolvedValue({
+      data: {
+        user: {
+          id: '123',
+          email: 'brandnew@example.com',
+          identities: [{ provider: 'email' }],
+          created_at: new Date(fixedNow).toISOString()
+        },
+        session: null
+      },
+      error: null
+    });
+
+    renderRegister();
+
+    const emailInput = screen.getByPlaceholderText(/you@example.com/i);
+    const passwordInputs = screen.getAllByPlaceholderText(/password/i);
+    const passwordInput = passwordInputs.find(input => input.placeholder.includes('Create'));
+    const confirmInput = passwordInputs.find(input => input.placeholder.includes('Confirm'));
+    const submitButton = screen.getByRole('button', { name: /create account/i });
+
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: 'brandnew@example.com' } });
+      fireEvent.change(passwordInput, { target: { value: 'ValidPass123!' } });
+      fireEvent.change(confirmInput, { target: { value: 'ValidPass123!' } });
+      fireEvent.click(submitButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
+      expect(screen.getByText(/signed in and taken to your dashboard/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
+  });
+
+  describe('isExistingAccount', () => {
+    it('returns false for undefined user', () => {
+      expect(isExistingAccount(undefined)).toBe(false);
+    });
+
+    it('returns true when identities is an empty array', () => {
+      expect(isExistingAccount({ identities: [] })).toBe(true);
+    });
+
+    it('returns false when created_at is missing or unparseable', () => {
+      expect(isExistingAccount({ identities: [{ provider: 'email' }] })).toBe(false);
+      expect(isExistingAccount({ identities: [{ provider: 'email' }], created_at: 'not-a-date' })).toBe(false);
+    });
+
+    it('returns true when created_at is older than the threshold', () => {
+      const now = 1_000_000_000;
+      const old = new Date(now - EXISTING_ACCOUNT_AGE_MS - 1).toISOString();
+      expect(isExistingAccount({ identities: [{ provider: 'email' }], created_at: old }, now)).toBe(true);
+    });
+
+    it('returns false when created_at is within the threshold', () => {
+      const now = 1_000_000_000;
+      const recent = new Date(now - 1000).toISOString();
+      expect(isExistingAccount({ identities: [{ provider: 'email' }], created_at: recent }, now)).toBe(false);
+    });
   });
 
   it('validates email format before submission', async () => {
