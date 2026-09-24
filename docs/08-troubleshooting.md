@@ -63,6 +63,11 @@ Check:
 - Not using `DEMO_KEY` in production
 - Haven't exceeded rate limits (1000/hour with personal key, 30/hour with DEMO_KEY)
 
+**Backend: "503 Food database rate-limited" / UI shows "Search unavailable, try again"**
+
+USDA returned 429; `search-food`/`food-details` map it to 503. Wait and retry, or set a personal
+`USDA_API_KEY` (functions log a warning when falling back to `DEMO_KEY`). Users can still "Add manually".
+
 **Backend: "Supabase not configured"**
 
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically by
@@ -102,6 +107,9 @@ Check:
 ### Feature Issues
 
 **Food search returns no results**
+
+"No foods found" means the search succeeded with zero matches; a failed search shows
+"Search unavailable, try again" instead (see the 503 entry above).
 
 Solutions:
 - Try simpler search terms (e.g., "apple" instead of "green apple")
