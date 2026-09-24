@@ -97,6 +97,7 @@ jobs:
 
   deploy-backend:
     name: Deploy Backend to Supabase Edge Functions
+    needs: [frontend-tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
@@ -104,16 +105,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Requires SUPABASE_ACCESS_TOKEN and SUPABASE_PROJECT_REF repo secrets -
+      # generate a token at https://supabase.com/dashboard/account/tokens and
+      # add both yourself under Settings > Secrets and variables > Actions.
+      # Not set by this workflow or by any automated process. Deploy steps
+      # below are skipped when either secret is unset.
+      - name: Check Supabase secrets
+        id: check
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_PROJECT_REF" ]; then
+            echo "has_secrets=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_secrets=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Supabase secrets unset, skipping Edge Functions deploy"
+          fi
+          exit 0
+
       - name: Setup Supabase CLI
+        if: steps.check.outputs.has_secrets == 'true'
         uses: supabase/setup-cli@v1
         with:
           version: latest
 
-      # Requires a SUPABASE_ACCESS_TOKEN repo secret - generate one at
-      # https://supabase.com/dashboard/account/tokens and add it yourself
-      # under Settings > Secrets and variables > Actions. Not set by this
-      # workflow or by any automated process.
       - name: Deploy Edge Functions
+        if: steps.check.outputs.has_secrets == 'true'
         run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
