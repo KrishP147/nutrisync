@@ -143,6 +143,50 @@ describe('FoodSearchInput Component', () => {
     expect(searchInput.value).toBe('chicken');
   });
 
+  describe('handleSelect payload (per-100g data contract)', () => {
+    it('passes raw per-100g macros plus quantity, without multiplying', async () => {
+      const mockFood = { name: 'Chicken Breast', portion: '100g', calories: 165, protein_g: 31, carbs_g: 0, fat_g: 3.6, fiber_g: 0 };
+      api.get.mockResolvedValue({ data: { foods: [mockFood] } });
+
+      render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+
+      const qtyInput = screen.getByPlaceholderText(/qty/i);
+      fireEvent.change(qtyInput, { target: { value: '2' } });
+
+      fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'chicken' } });
+
+      const resultButton = await screen.findByText('Chicken Breast');
+      fireEvent.click(resultButton);
+
+      expect(mockOnSelect).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Chicken Breast',
+          calories: 165,
+          protein_g: 31,
+          carbs_g: 0,
+          fat_g: 3.6,
+          fiber_g: 0,
+          quantity: 2,
+        })
+      );
+    });
+
+    it('defaults quantity to 1 when selecting without changing it', async () => {
+      const mockFood = { name: 'Rice', portion: '100g', calories: 130, protein_g: 2.7, carbs_g: 28, fat_g: 0.3, fiber_g: 0.4 };
+      api.get.mockResolvedValue({ data: { foods: [mockFood] } });
+
+      render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+      fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'rice' } });
+
+      const resultButton = await screen.findByText('Rice');
+      fireEvent.click(resultButton);
+
+      expect(mockOnSelect).toHaveBeenCalledWith(
+        expect.objectContaining({ calories: 130, quantity: 1 })
+      );
+    });
+  });
+
   describe('search error + stale responses', () => {
     const food = (name) => ({
       name, portion: '100g', calories: 100, protein_g: 1, carbs_g: 1, fat_g: 1, fiber_g: 0,

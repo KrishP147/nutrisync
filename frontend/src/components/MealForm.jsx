@@ -92,22 +92,25 @@ export default function MealForm({ onMealAdded }) {
   const manualViolations = checkDietaryViolations(mealName, dietaryRestrictions);
 
   const handleFoodSelect = (food) => {
+    // food.calories/protein_g/etc are raw per-100g values; food.quantity is
+    // the multiplier chosen in FoodSearchInput (defaults to 1 unit = 100g).
+    const q = food.quantity || 1;
     const newFood = {
       id: `food-${Date.now()}`,
       name: food.name,
-      portion_size: 100,
-      portion_display: '1',
+      portion_size: q * 100,
+      portion_display: String(q),
       portion_unit: 'g',
       base_calories: food.calories,
       base_protein_g: food.protein_g,
       base_carbs_g: food.carbs_g,
       base_fat_g: food.fat_g,
       base_fiber_g: food.fiber_g || 0,
-      calories: food.calories,
-      protein_g: food.protein_g,
-      carbs_g: food.carbs_g,
-      fat_g: food.fat_g,
-      fiber_g: food.fiber_g || 0,
+      calories: Math.round(food.calories * q),
+      protein_g: parseFloat((food.protein_g * q).toFixed(1)),
+      carbs_g: parseFloat((food.carbs_g * q).toFixed(1)),
+      fat_g: parseFloat((food.fat_g * q).toFixed(1)),
+      fiber_g: parseFloat(((food.fiber_g || 0) * q).toFixed(1)),
     };
 
     setFoods([...foods, newFood]);
