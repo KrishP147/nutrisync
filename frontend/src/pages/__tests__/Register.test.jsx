@@ -4,7 +4,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Register, { isExistingAccount, EXISTING_ACCOUNT_AGE_MS } from '../Register';
+import Register from '../Register';
+import { isExistingAccount, EXISTING_ACCOUNT_AGE_MS } from '../../utils/registerHelpers';
 
 // Mock Supabase
 vi.mock('../../supabaseClient', () => ({
@@ -494,6 +495,14 @@ describe('Register', () => {
 
     expect(screen.getByText(/google signup failed/i)).toBeInTheDocument();
     expect(localStorage.getItem('oauth_login_error')).toBeNull();
+  });
+
+  it('shows log-in link for OAuth existing-account error from localStorage', () => {
+    localStorage.setItem('oauth_login_error', 'An account with this Google account already exists. Please login instead.');
+
+    renderRegister();
+
+    expect(screen.getByRole('link', { name: /^log in$/i })).toBeInTheDocument();
   });
 
   it('handles Google OAuth error', async () => {
