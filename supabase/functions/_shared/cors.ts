@@ -8,8 +8,15 @@ export const ALLOWED_ORIGINS = [
   "http://localhost:3000",
 ];
 
+// Vercel production + preview deployments of the frontend project.
+export const VERCEL_PREVIEW_ORIGIN = /^https:\/\/nutrisync-frontend(-[a-z0-9-]+)?\.vercel\.app$/;
+
+function isAllowedOrigin(origin: string): boolean {
+  return ALLOWED_ORIGINS.includes(origin) || VERCEL_PREVIEW_ORIGIN.test(origin);
+}
+
 export function corsHeaders(origin: string | null): Record<string, string> {
-  const allowOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allowOrigin = origin && isAllowedOrigin(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
