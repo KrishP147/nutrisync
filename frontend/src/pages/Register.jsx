@@ -4,12 +4,37 @@ import { Link } from 'react-router-dom';
 import { motion as Motion } from 'motion/react';
 import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
+/* eslint-disable react-refresh/only-export-components -- test-only helper exports */
+// Generous 5 min: a false "already exists" for a genuinely new user is worse
+// than missing a duplicate.
+export const EXISTING_ACCOUNT_AGE_MS = 300_000;
+
+export const DUPLICATE_ACCOUNT_MESSAGE =
+  "An account with this email already exists — log in or reset your password.";
+
+// Supabase returns identities: [] when the email is already registered (confirmed
+// account). For an unconfirmed duplicate, identities come back non-empty but the
+// account's created_at is old (Supabase re-signup doesn't reset it). A missing or
+// unparseable created_at, or missing identities, is treated as a fresh account.
+export function isExistingAccount(user, now = Date.now()) {
+  if (!user) return false;
+  if (user.identities?.length === 0) return true;
+  if (user.created_at) {
+    const createdAt = Date.parse(user.created_at);
+    if (!Number.isNaN(createdAt) && now - createdAt > EXISTING_ACCOUNT_AGE_MS) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [errorKind, setErrorKind] = useState(null);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -19,6 +44,7 @@ export default function Register() {
     const oauthError = localStorage.getItem('oauth_login_error');
     if (oauthError) {
       setError(oauthError);
+      setErrorKind(null);
       localStorage.removeItem('oauth_login_error');
     }
   }, []);
@@ -39,21 +65,25 @@ export default function Register() {
     
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       setError('Please enter a valid email address');
+      setErrorKind(null);
       return;
     }
-    
+
     if (!isPasswordValid) {
       setError('Please meet all password requirements');
+      setErrorKind(null);
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setErrorKind(null);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
+    setErrorKind(null);
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -69,14 +99,16 @@ export default function Register() {
         if (error.message.toLowerCase().includes('already registered') ||
             error.message.toLowerCase().includes('user already exists') ||
             error.message.toLowerCase().includes('email already in use')) {
-          setError('This email is already in use. Please log in instead or use a different email.');
+          setError(DUPLICATE_ACCOUNT_MESSAGE);
+          setErrorKind('duplicate');
         } else {
           setError(error.message);
         }
-      } else if (data?.user?.identities?.length === 0) {
-        // Supabase returns empty identities array if email already exists
-        // This happens when the email is already registered (via email or OAuth)
-        setError('This email is already in use. Please log in instead or use a different email.');
+      } else if (isExistingAccount(data?.user)) {
+        // Confirmed duplicate: Supabase returns an empty identities array.
+        // Unconfirmed duplicate: identities come back, but created_at is old.
+        setError(DUPLICATE_ACCOUNT_MESSAGE);
+        setErrorKind('duplicate');
       } else {
         setSuccess(true);
       }
@@ -91,6 +123,7 @@ export default function Register() {
   const handleGoogleSignup = async () => {
     setLoading(true);
     setError(null);
+    setErrorKind(null);
 
     try {
       // Store that OAuth flow started from register page
@@ -140,7 +173,7 @@ export default function Register() {
             <ol className="text-white/60 text-sm space-y-2 ml-4 list-decimal">
               <li>Check your inbox (and spam folder)</li>
               <li>Click the confirmation link in the email</li>
-              <li>You'll be redirected to login</li>
+              <li>You'll be signed in and taken to your dashboard</li>
             </ol>
           </div>
           <p className="text-white/50 text-sm mb-6">
@@ -201,10 +234,16 @@ export default function Register() {
               <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <span>{error}</span>
-                {(error.includes('already in use') || error.includes('already exists') || error.includes('already has an account')) && (
-                  <div className="mt-2">
-                    <Link to="/login" className="text-primary-500 hover:text-primary-400 font-medium underline">
-                      Go to Login
+                {errorKind === 'duplicate' && (
+                  <div className="mt-2 flex gap-4">
+                    <Link
+                      to={`/login?email=${encodeURIComponent(email)}`}
+                      className="text-primary-500 hover:text-primary-400 font-medium underline"
+                    >
+                      Log in
+                    </Link>
+                    <Link to="/forgot-password" className="text-primary-500 hover:text-primary-400 font-medium underline">
+                      Reset password
                     </Link>
                   </div>
                 )}
