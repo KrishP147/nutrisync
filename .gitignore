@@ -18,6 +18,9 @@
 **/coverage.xml
 **/htmlcov/
 **/coverage/
+frontend/test_results.txt
+frontend/test_output.txt
+frontend/final_test_results.txt
 
 # Uploads and cache
 **/uploads/
