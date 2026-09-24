@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion as Motion } from 'motion/react';
 import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
+/* eslint-disable react-refresh/only-export-components -- test-only helper exports */
 // Generous 5 min: a false "already exists" for a genuinely new user is worse
 // than missing a duplicate.
 export const EXISTING_ACCOUNT_AGE_MS = 300_000;
