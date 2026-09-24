@@ -14,7 +14,9 @@ Deno.serve(async (req) => {
       return jsonResponse({ detail: "food_id must be provided as a path segment" }, { status: 422 }, origin);
     }
 
-    const usdaApiKey = Deno.env.get("USDA_API_KEY") ?? "DEMO_KEY";
+    const envKey = Deno.env.get("USDA_API_KEY");
+    if (!envKey) console.warn("[FOOD DETAILS] USDA_API_KEY not set, falling back to DEMO_KEY (heavily rate-limited)");
+    const usdaApiKey = envKey ?? "DEMO_KEY";
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10_000);
@@ -32,6 +34,10 @@ Deno.serve(async (req) => {
       throw e;
     } finally {
       clearTimeout(timeoutId);
+    }
+
+    if (usdaRes.status === 429) {
+      return jsonResponse({ detail: "Food database rate-limited, try again shortly" }, { status: 503 }, origin);
     }
 
     if (!usdaRes.ok) {
