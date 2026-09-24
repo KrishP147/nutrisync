@@ -27,6 +27,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
   });
   const [editMealName, setEditMealName] = useState('');
   const [originalMealName, setOriginalMealName] = useState('');
+  const [actionError, setActionError] = useState(null);
 
   // Dark theme color scheme
   const colors = {
@@ -51,6 +52,11 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
   const fetchMeals = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     let query = supabase
       .from('meals')
@@ -129,7 +135,13 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
   };
 
   const handleDuplicate = async (meal) => {
+    setActionError(null);
     const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setActionError('You must be signed in to duplicate a meal.');
+      return;
+    }
 
     // Create duplicate meal with current time
     const duplicatedMeal = {
@@ -157,7 +169,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
 
     if (error) {
       console.error('Error duplicating meal:', error);
-      alert('Failed to duplicate meal');
+      setActionError('Failed to duplicate meal: ' + error.message);
       return;
     }
 
@@ -170,17 +182,24 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
           component_name: c.component_name,
           portion_size: c.portion_size,
           portion_unit: c.portion_unit,
-          calories: c.calories,
-          protein_g: c.protein_g,
-          carbs_g: c.carbs_g,
-          fat_g: c.fat_g,
-          fiber_g: c.fiber_g,
-          custom_food_id: c.custom_food_id || null
+          base_calories: c.base_calories,
+          base_protein_g: c.base_protein_g,
+          base_carbs_g: c.base_carbs_g,
+          base_fat_g: c.base_fat_g,
+          base_fiber_g: c.base_fiber_g ?? 0,
+          custom_food_id: c.custom_food_id ?? null
         }));
 
-        await supabase
+        const { error: componentError } = await supabase
           .from('meal_components')
           .insert(duplicatedComponents);
+
+        if (componentError) {
+          console.error('Error duplicating meal components:', componentError);
+          await supabase.from('meals').delete().eq('id', newMeal.id);
+          setActionError('Failed to duplicate meal components: ' + componentError.message);
+          return;
+        }
       }
     }
 
@@ -545,6 +564,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
   };
 
   const handleReplaceSimpleMeal = async (newFoodData) => {
+    setActionError(null);
     // Update the meal in the meals list
     const meal = meals.find(m => m.id === replacingSimpleMeal);
     if (!meal) return;
@@ -564,7 +584,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
     };
 
     // Persist to database
-    await supabase
+    const { error } = await supabase
       .from('meals')
       .update({
         meal_name: updatedMeal.meal_name,
@@ -578,11 +598,18 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
       })
       .eq('id', meal.id);
 
+    if (error) {
+      console.error('Error replacing meal:', error);
+      setActionError('Failed to replace food: ' + error.message);
+      return;
+    }
+
     setMeals(meals.map(m => m.id === meal.id ? updatedMeal : m));
     setReplacingSimpleMeal(null);
   };
 
   const saveEdit = async (meal) => {
+    setActionError(null);
     // Parse editQuantity with smart input parsing
     let portionSize;
     const containsLetters = /[a-zA-Z]/.test(editQuantity);
@@ -600,7 +627,7 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
     if (meal.is_compound && editComponents.length > 0) {
       // Update each component (both portion and nutrition if edited)
       for (const component of editComponents) {
-        await supabase
+        const { error: componentError } = await supabase
           .from('meal_components')
           .update({
             portion_size: component.portion_size,
@@ -611,6 +638,12 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
             base_fiber_g: component.base_fiber_g
           })
           .eq('id', component.id);
+
+        if (componentError) {
+          console.error('Error updating component:', componentError);
+          setActionError('Failed to save component: ' + componentError.message);
+          return;
+        }
       }
 
       // Recalculate total macros from components
@@ -668,6 +701,9 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
         setEditingMealId(null);
         setEditComponents([]);
         if (onMealUpdated) onMealUpdated();
+      } else {
+        console.error('Error saving meal:', error);
+        setActionError('Failed to save meal: ' + error.message);
       }
     } else {
       // Simple food - use manually edited macros if available, otherwise calculate from base
@@ -712,6 +748,9 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
         setEditQuantity('1');
         setEditingSimpleMacros(false);
         if (onMealUpdated) onMealUpdated();
+      } else {
+        console.error('Error saving meal:', error);
+        setActionError('Failed to save meal: ' + error.message);
       }
     }
   };
@@ -742,6 +781,18 @@ export default function MealList({ refreshTrigger, onMealDeleted, onMealUpdated,
 
   return (
     <div className="space-y-3">
+      {actionError && (
+        <div role="alert" className="flex items-start justify-between gap-3 border border-red-500 bg-red-500/10 text-red-500 px-4 py-3 text-sm">
+          <span>{actionError}</span>
+          <button
+            onClick={() => setActionError(null)}
+            className="text-red-500 hover:opacity-80 font-medium flex-shrink-0"
+            aria-label="Dismiss error"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       {meals.map((meal) => (
         <div key={meal.id} className={`${colors.cardBg} border ${colors.cardBorder}  overflow-hidden hover:border-primary-700/50 transition-all`}>
           {editingMealId === meal.id ? (
