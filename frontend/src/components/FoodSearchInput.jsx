@@ -10,7 +10,9 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState(null);
   const dropdownRef = useRef(null);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,33 +37,48 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
   }, []);
 
   useEffect(() => {
+    setError(null);
     if (query.length < 2) {
+      requestIdRef.current += 1;
       setResults([]);
       setCustomFoods([]);
+      setLoading(false);
       return;
     }
 
+    const controller = new AbortController();
     const timer = setTimeout(async () => {
+      const requestId = ++requestIdRef.current;
+      const isStale = () => controller.signal.aborted || requestId !== requestIdRef.current;
       setLoading(true);
       try {
         const [dbResponse, customResponse] = await Promise.all([
-          api.get(`/search-food?query=${encodeURIComponent(query)}`),
+          api.get(`/search-food?query=${encodeURIComponent(query)}`, { signal: controller.signal }),
           searchCustomFoods(query)
         ]);
+        if (isStale()) return;
 
         setResults(dbResponse.data.foods || []);
         setCustomFoods(customResponse);
+        setError(null);
         setShowDropdown(true);
-      } catch (error) {
-        console.error('[FoodSearch] Search failed:', error);
+      } catch (err) {
+        const canceled = err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED';
+        if (canceled || isStale()) return;
+        console.error('[FoodSearch] Search failed:', err);
         setResults([]);
         setCustomFoods([]);
+        setShowDropdown(false);
+        setError('Search unavailable, try again');
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) setLoading(false);
       }
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [query]);
 
   const searchCustomFoods = async (searchQuery) => {
@@ -109,6 +126,18 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
     setResults([]);
     setShowDropdown(false);
     setQuantity(1);
+  };
+
+  const handleAddManually = () => {
+    onFoodSelect({
+      name: query,
+      portion: `${quantity} serving`,
+      calories: 0,
+      protein_g: 0,
+      carbs_g: 0,
+      fat_g: 0,
+      fiber_g: 0,
+    });
   };
 
   return (
@@ -204,24 +233,28 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
         </div>
       )}
 
-      {showDropdown && !loading && results.length === 0 && customFoods.length === 0 && query.length >= 2 && (
+      {error && !loading && query.length >= 2 && (
+        <div role="alert" className="absolute top-full left-0 right-0 mt-1 bg-[#0a0a0a] border border-red-500/40  shadow-lg p-4 z-50">
+          <p className="text-center text-red-400 text-sm mb-3">
+            {error}
+          </p>
+          <button
+            onClick={handleAddManually}
+            className="w-full px-4 py-2 bg-primary-700 text-white  hover:bg-primary-600 text-sm font-medium flex items-center justify-center gap-2"
+          >
+            <Plus size={16} />
+            Add "{query}" manually
+          </button>
+        </div>
+      )}
+
+      {showDropdown && !error && !loading && results.length === 0 && customFoods.length === 0 && query.length >= 2 && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-[#0a0a0a] border border-white/10  shadow-lg p-4 z-50">
           <p className="text-center text-white/50 text-sm mb-3">
             No foods found. Try a different search term or add manually:
           </p>
           <button
-            onClick={() => {
-              const manualFood = {
-                name: query,
-                portion: `${quantity} serving`,
-                calories: 0,
-                protein_g: 0,
-                carbs_g: 0,
-                fat_g: 0,
-                fiber_g: 0,
-              };
-              onFoodSelect(manualFood);
-            }}
+            onClick={handleAddManually}
             className="w-full px-4 py-2 bg-primary-700 text-white  hover:bg-primary-600 text-sm font-medium flex items-center justify-center gap-2"
           >
             <Plus size={16} />

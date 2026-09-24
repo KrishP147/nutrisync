@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import FoodSearchInput from '../FoodSearchInput';
 
 // Mock api service
@@ -31,6 +31,10 @@ describe('FoodSearchInput Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('renders search input', () => {
@@ -137,5 +141,92 @@ describe('FoodSearchInput Component', () => {
     
     const searchInput = screen.getByPlaceholderText(/search/i);
     expect(searchInput.value).toBe('chicken');
+  });
+
+  describe('search error + stale responses', () => {
+    const food = (name) => ({
+      name, portion: '100g', calories: 100, protein_g: 1, carbs_g: 1, fat_g: 1, fiber_g: 0,
+    });
+
+    it('shows error state (not "No foods found") when backend fails', async () => {
+      const err = new Error('Request failed with status code 503');
+      api.get.mockRejectedValue(err);
+      const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+      fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'chicken' } });
+
+      expect(await screen.findByText(/search unavailable, try again/i, {}, { timeout: 3000 })).toBeInTheDocument();
+      expect(screen.queryByText(/no foods found/i)).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /add "chicken" manually/i })).toBeInTheDocument();
+      errSpy.mockRestore();
+    });
+
+    it('shows "No foods found" only on successful empty response', async () => {
+      api.get.mockResolvedValue({ data: { foods: [] } });
+
+      render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+      fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'zzzz' } });
+
+      expect(await screen.findByText(/no foods found/i, {}, { timeout: 3000 })).toBeInTheDocument();
+      expect(screen.queryByText(/search unavailable/i)).not.toBeInTheDocument();
+    });
+
+    it('ignores stale responses and passes an AbortSignal', async () => {
+      const deferred = {};
+      api.get.mockImplementation((url) => {
+        const q = new URL(url, 'http://x').searchParams.get('query');
+        return new Promise((resolve, reject) => {
+          deferred[q] = { resolve, reject };
+        });
+      });
+
+      render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+      const input = screen.getByPlaceholderText(/search/i);
+
+      // slow request for 'chi'
+      fireEvent.change(input, { target: { value: 'chi' } });
+      await waitFor(() => expect(deferred.chi).toBeDefined(), { timeout: 3000 });
+
+      // fast request for 'chicken'
+      fireEvent.change(input, { target: { value: 'chicken' } });
+      await waitFor(() => expect(deferred.chicken).toBeDefined(), { timeout: 3000 });
+
+      await act(async () => {
+        deferred.chicken.resolve({ data: { foods: [food('Chicken Breast')] } });
+      });
+      expect(await screen.findByText('Chicken Breast')).toBeInTheDocument();
+
+      // slow one resolves last, must be ignored
+      await act(async () => {
+        deferred.chi.resolve({ data: { foods: [food('Chia Seeds')] } });
+      });
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 50));
+      });
+
+      expect(screen.queryByText('Chia Seeds')).not.toBeInTheDocument();
+      expect(screen.getByText('Chicken Breast')).toBeInTheDocument();
+      expect(screen.queryByText(/searching/i)).not.toBeInTheDocument();
+      expect(api.get).toHaveBeenCalledWith(
+        expect.stringContaining('query=chi'),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+      expect(api.get.mock.calls[0][1].signal.aborted).toBe(true);
+    });
+
+    it('does not show error when a request is canceled', async () => {
+      const cancel = Object.assign(new Error('canceled'), { name: 'CanceledError', code: 'ERR_CANCELED' });
+      api.get.mockRejectedValue(cancel);
+
+      render(<FoodSearchInput onFoodSelect={mockOnSelect} />);
+      fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'chicken' } });
+
+      await waitFor(() => expect(api.get).toHaveBeenCalled(), { timeout: 3000 });
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 50));
+      });
+      expect(screen.queryByText(/search unavailable/i)).not.toBeInTheDocument();
+    });
   });
 });

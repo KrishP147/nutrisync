@@ -18,7 +18,9 @@ Deno.serve(async (req) => {
       return jsonResponse({ foods: [] }, { status: 200 }, origin);
     }
 
-    const usdaApiKey = Deno.env.get("USDA_API_KEY") ?? "DEMO_KEY";
+    const envKey = Deno.env.get("USDA_API_KEY");
+    if (!envKey) console.warn("[FOOD SEARCH] USDA_API_KEY not set, falling back to DEMO_KEY (heavily rate-limited)");
+    const usdaApiKey = envKey ?? "DEMO_KEY";
 
     console.log(`[FOOD SEARCH] Searching for: ${query}`);
 
@@ -49,6 +51,10 @@ Deno.serve(async (req) => {
     }
 
     console.log(`[FOOD SEARCH] Status: ${usdaRes.status}`);
+
+    if (usdaRes.status === 429) {
+      return jsonResponse({ detail: "Food database rate-limited, try again shortly" }, { status: 503 }, origin);
+    }
 
     if (!usdaRes.ok) {
       const errText = await usdaRes.text();
