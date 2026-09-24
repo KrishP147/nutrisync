@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import { resolveOAuthAction } from './utils/authHelpers';
 import { GoalsProvider } from './contexts/GoalsContext';
 import { FastingProvider } from './contexts/FastingContext';
 import Landing from './pages/Landing';
@@ -88,27 +89,12 @@ function App() {
             // Keep loading state active during OAuth checks
             setCheckingOAuth(true);
 
-            // User clicked "Continue with Google" on register page
-            // Use Supabase's identity metadata to determine if this is truly a new account
-            // When OAuth creates a new account, the user object is created fresh
-            // When OAuth logs into existing account, the user object already existed
+            // User clicked "Continue with Google" on register page.
+            // Decide new-vs-existing from server timestamps only (see
+            // authHelpers.js) - no client clock, no user_profile lookup.
+            const action = resolveOAuthAction({ origin: 'register', user: session.user, hasProfile: null });
 
-            console.log('OAuth signup attempt');
-            console.log('User created_at:', session.user.created_at);
-            console.log('User email confirmed:', session.user.email_confirmed_at);
-            console.log('User identities:', session.user.identities);
-
-            // Check if user was created very recently (within last 3 seconds)
-            const createdAt = new Date(session.user.created_at);
-            const now = new Date();
-            const accountAge = now - createdAt;
-
-            console.log('Account age (ms):', accountAge);
-            console.log('Account age (seconds):', accountAge / 1000);
-
-            // If account is more than 3 seconds old, it's an existing account trying to sign up
-            if (accountAge > 3000) {
-              console.log('Blocking OAuth signup - account exists (age > 3s)');
+            if (action === 'block_existing') {
               await supabase.auth.signOut();
               localStorage.removeItem('oauth_flow_origin');
               localStorage.removeItem('oauth_account_check');
@@ -118,8 +104,7 @@ function App() {
               return;
             }
 
-            // Account is brand new (< 3 seconds old) - allow signup
-            console.log('New OAuth signup - allowing (account age < 3s)');
+            // New account, or account age unknown - allow signup
             localStorage.removeItem('oauth_flow_origin');
             localStorage.removeItem('oauth_account_check');
             setCheckingOAuth(false);
@@ -137,30 +122,35 @@ function App() {
                 .eq('user_id', session.user.id)
                 .maybeSingle();
 
-              const hasProfile = profileData !== null && !profileError;
-
-              console.log('OAuth login - Profile exists:', hasProfile);
-
-              if (!hasProfile) {
-                // No profile found - brand new account created during login attempt
-                // DO NOT set session - this prevents dashboard from showing
-                console.log('New account created during login - blocking');
-                await supabase.auth.signOut();
-                localStorage.removeItem('oauth_flow_origin');
-                localStorage.removeItem('oauth_account_check');
-                localStorage.setItem('oauth_login_error', 'No account found with this Google account. Please signup first.');
-                setCheckingOAuth(false);
-                window.location.replace('/login');
-                return; // Exit without setting session
-              } else {
-                // Existing account - allow login
-                console.log('Existing OAuth user logging in - allowing');
+              if (profileError) {
+                // Profile state unknown (query failed) - fail open to
+                // dashboard rather than treating it as a missing row.
                 localStorage.removeItem('oauth_flow_origin');
                 localStorage.removeItem('oauth_account_check');
                 setCheckingOAuth(false);
                 setSession(session);
                 return;
               }
+
+              const hasProfile = profileData !== null;
+              const action = resolveOAuthAction({ origin: 'login', user: session.user, hasProfile });
+
+              localStorage.removeItem('oauth_flow_origin');
+              localStorage.removeItem('oauth_account_check');
+
+              if (action === 'allow_to_profile') {
+                // No profile row - never sign out over this; let them
+                // finish setting up their profile instead of locking out.
+                window.history.replaceState(null, '', '/profile');
+                setCheckingOAuth(false);
+                setSession(session);
+                return;
+              }
+
+              // Existing account with a profile - allow login
+              setCheckingOAuth(false);
+              setSession(session);
+              return;
             } catch (err) {
               console.error('Error checking profile:', err);
               // On error, default to allowing (fail open for better UX)
