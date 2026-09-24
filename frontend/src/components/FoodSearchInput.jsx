@@ -111,18 +111,13 @@ export default function FoodSearchInput({ onFoodSelect, initialValue = '' }) {
   };
 
   const handleSelect = (food) => {
-    const multipliedFood = {
-      ...food,
-      portion: `${quantity} x ${food.portion}`,
-      calories: Math.round(food.calories * quantity),
-      protein_g: parseFloat((food.protein_g * quantity).toFixed(1)),
-      carbs_g: parseFloat((food.carbs_g * quantity).toFixed(1)),
-      fat_g: parseFloat((food.fat_g * quantity).toFixed(1)),
-      fiber_g: parseFloat((food.fiber_g * quantity).toFixed(1)),
-    };
-
+    // search-food/custom-food results are always per 100g. Pass the raw
+    // per-100g macros through untouched, plus the chosen quantity, and let
+    // the consumer (MealForm, PhotoMealUpload, ...) compute portion_size /
+    // shown totals - baking quantity into calories/macros here corrupted
+    // the per-100g data contract downstream.
     setQuery(food.name);
-    onFoodSelect(multipliedFood);
+    onFoodSelect({ ...food, quantity });
     setResults([]);
     setShowDropdown(false);
     setQuantity(1);

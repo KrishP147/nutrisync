@@ -70,6 +70,17 @@ vi.mock('../FoodSearchInput', () => ({
       })}>
         Select Test Food
       </button>
+      <button onClick={() => onFoodSelect({
+        name: 'Test Food',
+        calories: 100,
+        protein_g: 10,
+        carbs_g: 15,
+        fat_g: 5,
+        fiber_g: 2,
+        quantity: 2
+      })}>
+        Select Double-Quantity Food
+      </button>
     </div>
   )
 }));
@@ -358,6 +369,42 @@ describe('MealForm - Comprehensive Tests', () => {
         const updatedContent = document.body.textContent;
         expect(updatedContent).toBeTruthy();
       }
+    });
+  });
+
+  describe('per-100g data contract', () => {
+    it('quantity 2 from search -> portion_size 200, totals doubled, base unchanged', async () => {
+      render(
+        <BrowserRouter>
+          <MealForm onMealAdded={vi.fn()} />
+        </BrowserRouter>
+      );
+
+      fireEvent.click(screen.getByText(/select double-quantity food/i));
+
+      await waitFor(() => {
+        expect(screen.getByText(/base: 100 cal per 100g/i)).toBeInTheDocument();
+      });
+      // portion_display shows quantity (2); shown calories/macros are base * 2
+      expect(screen.getByDisplayValue('2')).toBeInTheDocument();
+      expect(screen.getByText('200 cal')).toBeInTheDocument();
+      expect(screen.getByText(/P: 20\.0g/)).toBeInTheDocument();
+    });
+
+    it('no quantity from search -> defaults to 1, portion_size 100', async () => {
+      render(
+        <BrowserRouter>
+          <MealForm onMealAdded={vi.fn()} />
+        </BrowserRouter>
+      );
+
+      fireEvent.click(screen.getByText(/^select test food$/i));
+
+      await waitFor(() => {
+        expect(screen.getByText(/base: 100 cal per 100g/i)).toBeInTheDocument();
+      });
+      expect(screen.getByDisplayValue('1')).toBeInTheDocument();
+      expect(screen.getByText('100 cal')).toBeInTheDocument();
     });
   });
 });

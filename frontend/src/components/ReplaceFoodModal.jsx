@@ -35,6 +35,9 @@ export default function ReplaceFoodModal({ food, onReplace, onClose }) {
   };
 
   const handleDatabaseFoodSelect = (selectedFood) => {
+    // selectedFood.calories/etc are raw per-100g values (FoodSearchInput no
+    // longer bakes its quantity in); we ignore selectedFood.quantity here
+    // and keep the replaced component's existing portion_size.
     onReplace({
       name: selectedFood.name,
       base_calories: selectedFood.calories,

@@ -2,7 +2,7 @@
  * Tests for MealForm component
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import MealForm from '../MealForm';
 
@@ -48,6 +48,9 @@ vi.mock('../FoodSearchInput', () => ({
       <input placeholder="Search food" onChange={(e) => {
         if (e.target.value === 'test') {
           onFoodSelect({ name: 'Test Food', calories: 100, protein_g: 10, carbs_g: 5, fat_g: 3, fiber_g: 2 });
+        }
+        if (e.target.value === 'test-qty2') {
+          onFoodSelect({ name: 'Test Food', calories: 100, protein_g: 10, carbs_g: 5, fat_g: 3, fiber_g: 2, quantity: 2 });
         }
       }} />
     </div>
@@ -254,5 +257,34 @@ describe('MealForm', () => {
   it('handles duplicate food additions', () => {
     // Basic test - should handle adding same food multiple times
     expect(true).toBe(true);
+  });
+
+  describe('per-100g data contract', () => {
+    it('defaults to quantity 1 -> portion_size 100, base unchanged', async () => {
+      renderMealForm();
+      const searchInput = screen.getByPlaceholderText('Search food');
+      fireEvent.change(searchInput, { target: { value: 'test' } });
+
+      await waitFor(() => {
+        expect(screen.getByText(/base: 100 cal per 100g/i)).toBeInTheDocument();
+      });
+      expect(screen.getByDisplayValue('1')).toBeInTheDocument();
+      expect(screen.getByText('100 cal')).toBeInTheDocument();
+    });
+
+    it('quantity 2 from search -> portion_size 200, totals doubled, base unchanged', async () => {
+      renderMealForm();
+      const searchInput = screen.getByPlaceholderText('Search food');
+      fireEvent.change(searchInput, { target: { value: 'test-qty2' } });
+
+      await waitFor(() => {
+        // base_* stays the raw per-100g value FoodSearchInput returned
+        expect(screen.getByText(/base: 100 cal per 100g/i)).toBeInTheDocument();
+      });
+      // portion_display reflects the quantity (2), and shown calories are doubled
+      expect(screen.getByDisplayValue('2')).toBeInTheDocument();
+      expect(screen.getByText('200 cal')).toBeInTheDocument();
+      expect(screen.getByText(/P: 20\.0g/)).toBeInTheDocument();
+    });
   });
 });

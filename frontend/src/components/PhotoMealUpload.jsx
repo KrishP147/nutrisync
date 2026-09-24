@@ -5,6 +5,7 @@ import { updateDailyAchievement } from '../utils/updateDailyAchievement';
 import api from '../services/api';
 import FoodSearchInput from './FoodSearchInput';
 import imageCompression from 'browser-image-compression';
+import { toPer100g } from '../utils/foodMacros';
 
 export default function PhotoMealUpload({ onMealAdded }) {
   const { goals } = useGoals();
@@ -474,19 +475,12 @@ export default function PhotoMealUpload({ onMealAdded }) {
       const { data: { user } } = await supabase.auth.getUser();
 
       // Convert base values to per 100g for consistency
-      const basePortionSize = food.base_portion_size || 100;
-      const conversionMultiplier = 100 / basePortionSize;
-
       const { error } = await supabase
         .from('user_foods')
         .insert([{
           user_id: user.id,
           name: foodName,
-          base_calories: Math.round(food.base_calories * conversionMultiplier),
-          base_protein_g: parseFloat((food.base_protein_g * conversionMultiplier).toFixed(1)),
-          base_carbs_g: parseFloat((food.base_carbs_g * conversionMultiplier).toFixed(1)),
-          base_fat_g: parseFloat((food.base_fat_g * conversionMultiplier).toFixed(1)),
-          base_fiber_g: parseFloat((food.base_fiber_g * conversionMultiplier).toFixed(1)),
+          ...toPer100g(food),
           source: 'edited_from_ai',
           original_food_name: food.name
         }]);
@@ -571,12 +565,15 @@ export default function PhotoMealUpload({ onMealAdded }) {
   };
 
   const handleFoodSelect = (food) => {
+    // food.calories/protein_g/etc are raw per-100g values; food.quantity is
+    // the multiplier chosen in FoodSearchInput (defaults to 1 unit = 100g).
+    const q = food.quantity || 1;
     const updated = { ...editableResult };
     updated.foods.push({
       name: food.name,
       portion: food.portion || '100g',
-      portion_size: 100,
-      portion_display: '1', // Default to "1" (representing 100g)
+      portion_size: q * 100,
+      portion_display: String(q),
       portion_unit: 'g',
       base_calories: food.calories,
       base_protein_g: food.protein_g,
@@ -584,11 +581,11 @@ export default function PhotoMealUpload({ onMealAdded }) {
       base_fat_g: food.fat_g,
       base_fiber_g: food.fiber_g || 0,
       base_portion_size: 100, // Database foods are per 100g
-      calories: food.calories,
-      protein_g: food.protein_g,
-      carbs_g: food.carbs_g,
-      fat_g: food.fat_g,
-      fiber_g: food.fiber_g || 0,
+      calories: Math.round(food.calories * q),
+      protein_g: parseFloat((food.protein_g * q).toFixed(1)),
+      carbs_g: parseFloat((food.carbs_g * q).toFixed(1)),
+      fat_g: parseFloat((food.fat_g * q).toFixed(1)),
+      fiber_g: parseFloat(((food.fiber_g || 0) * q).toFixed(1)),
       confidence: 1.0,
     });
 
@@ -650,16 +647,15 @@ export default function PhotoMealUpload({ onMealAdded }) {
 
       // Save individual components if it's a compound food
       if (editableResult.foods.length > 1 && mealData[0]) {
+        // base_* on meal_components is always per 100g (see data contract in
+        // foodMacros.js); photo-analyzed foods carry base_* per
+        // base_portion_size, so normalize before persisting.
         const components = editableResult.foods.map(food => ({
           meal_id: mealData[0].id,
           component_name: food.name,
           portion_size: food.portion_size || 100,
           portion_unit: food.portion_unit || 'g',
-          base_calories: food.base_calories,
-          base_protein_g: food.base_protein_g,
-          base_carbs_g: food.base_carbs_g,
-          base_fat_g: food.base_fat_g,
-          base_fiber_g: food.base_fiber_g || 0,
+          ...toPer100g(food),
         }));
 
         const { error: componentsError } = await supabase
